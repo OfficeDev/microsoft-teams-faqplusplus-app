@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Microsoft.Teams.Apps.FAQPlusPlus.MvcApplication" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Microsoft.Teams.Apps.FAQPlusPlus.Configuration.MvcApplication" Language="C#" %>
