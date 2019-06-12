@@ -1,30 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿// <copyright file="HomeController.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
+// </copyright>
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
+    using System.Web.Mvc;
+
+    /// <summary>
+    /// Home Controller
+    /// </summary>
     public class HomeController : Controller
     {
+        /// <summary>
+        /// Home
+        /// </summary>
+        /// <returns>Action Result</returns>
         public ActionResult Index()
         {
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            return this.View();
         }
     }
 }
