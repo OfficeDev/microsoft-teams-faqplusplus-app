@@ -9,12 +9,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     /// <summary>
     /// Home Controller
     /// </summary>
+    [Authorize]
     public class HomeController : Controller
     {
         /// <summary>
-        /// Home
+        /// Index
         /// </summary>
-        /// <returns>Action Result</returns>
+        /// <returns>View</returns>
+        [HttpGet]
         public ActionResult Index()
         {
             return this.View();

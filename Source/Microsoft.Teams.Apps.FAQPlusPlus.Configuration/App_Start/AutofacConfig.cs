@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using System.Web.Mvc;
     using Autofac;
     using Autofac.Integration.Mvc;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers;
 
     /// <summary>
     /// Autofac configuration
@@ -22,6 +23,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
         {
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
+
+            builder.RegisterType<HomeController>().InstancePerRequest();
 
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
