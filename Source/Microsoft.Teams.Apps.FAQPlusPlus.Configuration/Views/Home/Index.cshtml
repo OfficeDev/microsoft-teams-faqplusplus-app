@@ -47,13 +47,13 @@
             });
     });
 
-    // Perform changes when Edit related UI has to be displayed
+    // Perform changes when Edit related UI has to be displayed for team
     function performEditChanges() {
         $("#teamSubmitButton").val("Edit");
         $("#TeamId").attr("disabled", "disabled");
     }
 
-    // Display a green tick with success text message
+    // Display a green tick with success text message for team
     function OnSuccess() {
         $("#teamStorageStatusIcon").removeAttr("class");
         $("#teamStorageStatusMessage").removeAttr("class");
@@ -68,7 +68,7 @@
         performEditChanges();
     }
 
-    // Display a red cross with error text message
+    // Display a red cross with error text message for team
     function OnFailure(errorText) {
         $("#teamStorageStatusIcon").removeAttr("class");
         $("#teamStorageStatusMessage").removeAttr("class");
