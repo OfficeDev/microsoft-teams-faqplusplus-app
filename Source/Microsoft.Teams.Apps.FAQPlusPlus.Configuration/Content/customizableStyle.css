@@ -1,19 +1,30 @@
-﻿.font-bold{
+﻿.font-bold {
     font-weight: 700;
 }
 
-.error-message{
-    color:red;
+.error-message {
+    color: red;
+    margin-top: 10px;
 }
 
 .success-message {
     color: green;
+    margin-top: 10px;
 }
 
-.storageStatusIcon-success{
-    color:green;
+.storageStatusIcon-success {
+    color: green;
 }
 
 .storageStatusIcon-failure {
     color: red;
+}
+
+.marginBetweenView {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.contentMargin {
+    padding-top: 100px;
 }

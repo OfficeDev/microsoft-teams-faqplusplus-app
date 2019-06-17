@@ -72,5 +72,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         {
             return await this.teamHelper.GetSavedTeamIdAsync();
         }
+
+        /// <summary>
+        /// SaveKnowledgeBaseUrl
+        /// </summary>
+        /// <param name="knowledgeBaseUrl">KnowledgeBaseUrl</param>
+        /// <returns>View</returns>
+        [HttpPost]
+        public ActionResult SaveKnowledgeBaseUrl(string knowledgeBaseUrl)
+        {
+            // Default placeholder for implementation. Will be changed once its related changes implemented
+            // To be changed to Async method
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+
+        /// <summary>
+        /// SaveUpnEmailAddress
+        /// </summary>
+        /// <param name="upnEmailAddress">upnEmailAddress</param>
+        /// <returns>View</returns>
+        [HttpPost]
+        public ActionResult SaveUpnEmailAddress(string upnEmailAddress)
+        {
+            // Default placeholder for implementation. Will be changed once its related changes implemented
+            // To be changed to Async method
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
     }
 }
