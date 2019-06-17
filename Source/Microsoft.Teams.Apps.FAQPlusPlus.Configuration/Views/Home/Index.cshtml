@@ -1,7 +1,92 @@
-﻿@{
+﻿@model Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models.TeamViewModel
+
+@{
+
     ViewBag.Title = "Home Page";
 }
 
 <div class="jumbotron">
-    <h1>Welcome to Configuration Application</h1>    
+    <h3>Welcome to Configuration Application</h3>
 </div>
+<div class="row">
+    <div class="col-lg-6">
+        @using (Ajax.BeginForm("SaveTeamIdAsync", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }))
+        {
+
+            <div class="form-group">
+                <div class="col-lg-2">
+                    @Html.LabelFor(model => model.TeamId, htmlAttributes: new { @class = "font-bold" })
+                </div>
+                <div class="col-lg-6">
+                    @Html.TextBoxFor(model => model.TeamId, htmlAttributes: new { @class = "form-control", @placeholder = "Enter Team Id" })
+                    @Html.ValidationMessageFor(model => model.TeamId, "", htmlAttributes: new { @class = "error-message" })
+
+                </div>
+                <div class="col-lg-1" style="padding:0px !important;">
+                    <span id="storageStatusIcon"></span>
+                </div>
+                <div class="col-lg-3">
+                    <input type="submit" value="OK" class="btn btn-primary" id="teamSubmitButton" />
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                </div>
+                <div class="col-lg-offset-2 col-lg-12">
+                    <div id="storageStatusMessage" class="error-message"></div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+
+        //Get team Id if its saved and then enable edit button
+         $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSavedTeamIdAsync")',
+             success: function (result) {
+                 if (result != "") {                //Display the default UI when no team Id results are available for display
+                     $("#TeamId").val(result);
+                     performEditChanges();
+                 }
+                },
+                error: function () {
+                    alert("Unable to display team Id");
+                }
+            });
+    });
+
+    // Perform changes when Edit related UI has to be displayed
+    function performEditChanges() {
+        $("#teamSubmitButton").val("Edit");
+        $("#TeamId").attr("disabled", "disabled");
+    }
+
+    // Display a green tick with success text message
+    function OnSuccess() {
+        $("#storageStatusIcon").removeAttr("class");
+        $("#storageStatusMessage").removeAttr("class");
+
+        $("#storageStatusMessage").addClass("success-message");
+        $("#storageStatusIcon").addClass("glyphicon glyphicon-ok");
+
+        $("#storageStatusIcon").addClass("storageStatusIcon-success");
+
+        $("#storageStatusMessage").text("Team Id is saved sucessfully");
+
+        performEditChanges();
+    }
+
+    // Display a red cross with error text message
+    function OnFailure(errorText) {
+        $("#storageStatusIcon").removeAttr("class");
+        $("#storageStatusMessage").removeAttr("class");
+
+        $("#storageStatusMessage").addClass("error-message");
+        $("#storageStatusIcon").addClass("glyphicon glyphicon-remove");
+
+        $("#storageStatusIcon").addClass("storageStatusIcon-failure");
+
+        $("#storageStatusMessage").text(errorText.statusText);
+    }
+</script>

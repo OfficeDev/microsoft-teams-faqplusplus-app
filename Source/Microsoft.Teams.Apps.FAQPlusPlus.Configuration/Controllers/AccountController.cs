@@ -1,4 +1,8 @@
-﻿namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
+﻿// <copyright file="AccountController.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
+// </copyright>
+
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
     using System.Web;
     using System.Web.Mvc;

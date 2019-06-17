@@ -1,0 +1,19 @@
+﻿.font-bold{
+    font-weight: 700;
+}
+
+.error-message{
+    color:red;
+}
+
+.success-message {
+    color: green;
+}
+
+.storageStatusIcon-success{
+    color:green;
+}
+
+.storageStatusIcon-failure {
+    color: red;
+}

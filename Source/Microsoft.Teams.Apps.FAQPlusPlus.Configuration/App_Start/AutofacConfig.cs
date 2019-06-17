@@ -4,10 +4,12 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 {
+    using System.Configuration;
     using System.Reflection;
     using System.Web.Mvc;
     using Autofac;
     using Autofac.Integration.Mvc;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers;
 
     /// <summary>
@@ -23,6 +25,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
         {
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
+
+            builder.Register(c => new TeamHelper(ConfigurationManager.AppSettings["StorageConnectionString"]))
+                .As<TeamHelper>()
+                .SingleInstance();
 
             builder.RegisterType<HomeController>().InstancePerRequest();
 
