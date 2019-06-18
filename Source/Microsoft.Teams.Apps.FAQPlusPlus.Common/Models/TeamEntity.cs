@@ -8,19 +8,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Represents Team entity in storage.
+    /// Represents team entity used for storage and retrieval.
     /// </summary>
     public class TeamEntity : TableEntity
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TeamEntity"/> class.
-        /// </summary>
-        public TeamEntity()
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets gets Team Id
+        /// Gets or sets gets team Id
         /// </summary>
         [JsonProperty("TeamId")]
         public string TeamId { get; set; }

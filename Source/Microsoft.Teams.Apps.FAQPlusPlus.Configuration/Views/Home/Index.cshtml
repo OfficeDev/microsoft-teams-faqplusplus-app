@@ -10,7 +10,7 @@
 </div>
 <div class="row">
     <div class="col-lg-6">
-        @using (Ajax.BeginForm("SaveTeamIdAsync", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "OnSuccess", OnFailure = "OnFailure" }))
+        @using (Ajax.BeginForm("SaveOrUpdateTeamIdAsync", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "onSuccess", OnFailure = "onFailure" }))
         {
 
             <div class="form-group">
@@ -56,14 +56,14 @@
             });
     });
 
-    // Perform changes when Edit related UI has to be displayed
+    // Perform changes when edit related UI has to be displayed
     function performEditChanges() {
         $("#teamSubmitButton").val("Edit");
         $("#TeamId").attr("disabled", "disabled");
     }
 
     // Display a green tick with success text message
-    function OnSuccess() {
+    function onSuccess() {
         $("#storageStatusIcon").removeAttr("class");
         $("#storageStatusMessage").removeAttr("class");
 
@@ -78,7 +78,7 @@
     }
 
     // Display a red cross with error text message
-    function OnFailure(errorText) {
+    function onFailure(errorText) {
         $("#storageStatusIcon").removeAttr("class");
         $("#storageStatusMessage").removeAttr("class");
 
