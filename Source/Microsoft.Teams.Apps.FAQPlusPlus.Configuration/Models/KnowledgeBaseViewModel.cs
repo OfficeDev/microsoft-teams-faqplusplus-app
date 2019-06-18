@@ -11,13 +11,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     public class KnowledgeBaseViewModel
     {
         /// <summary>
-        /// Gets or sets Knowledge base Url
+        /// Gets or sets knowledge base Url text box
         /// </summary>
         [Required(ErrorMessage = "Knowledge base URL is required")]
         [MinLength(1)]
         [DataType(DataType.Text)]
         [Display(Name = "Knowledge base URL")]
         [RegularExpression(@"(\S)+", ErrorMessage = "White space is not allowed")]
-        public string KnowledgeBaseUrl { get; set; }
+        public string KnowledgeBaseUrlTextBox { get; set; }
     }
 }

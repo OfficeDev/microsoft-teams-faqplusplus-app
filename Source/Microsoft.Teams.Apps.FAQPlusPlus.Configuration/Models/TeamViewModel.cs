@@ -19,6 +19,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         [DataType(DataType.Text)]
         [Display(Name ="Team Id")]
         [RegularExpression(@"(\S)+", ErrorMessage = "White space is not allowed")]
-        public string TeamId { get; set; }
+        public string TeamIdTextBox { get; set; }
     }
 }

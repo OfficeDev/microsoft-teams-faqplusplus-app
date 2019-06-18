@@ -4,18 +4,19 @@
 {
     <div class="form-group">
         <div class="col-lg-3">
-            @Html.LabelFor(model => model.UpnEmailAddress, htmlAttributes: new { @class = "font-bold" })
+            @Html.LabelFor(model => model.UpnEmailAddressTextBox, htmlAttributes: new { @class = "font-bold" })
+            <span class="mandatoryField">*</span>
         </div>
         <div class="col-lg-5">
-            @Html.TextBoxFor(model => model.UpnEmailAddress, htmlAttributes: new { @class = "form-control", @placeholder = "Enter UPN's email address" })
-            @Html.ValidationMessageFor(model => model.UpnEmailAddress, "", htmlAttributes: new { @class = "error-message" })
+            @Html.TextBoxFor(model => model.UpnEmailAddressTextBox, htmlAttributes: new { @class = "form-control", @placeholder = "Enter UPN's email address" })
+            @Html.ValidationMessageFor(model => model.UpnEmailAddressTextBox, "", htmlAttributes: new { @class = "error-message" })
         </div>
-        <div class="col-lg-1" style="padding:0px !important;">
+        <div class="col-lg-1">
             <span id="upnStorageStatusIcon"></span>
         </div>
         <div class="col-lg-3">
             <input type="submit" value="Add" class="btn btn-primary" id="upnSubmitButton" />
-            <span class="glyphicon glyphicon-info-sign"></span>
+            <span class="glyphicon glyphicon-info-sign infoSignMargin"></span>
         </div>
         <div class="col-lg-offset-3 col-lg-5">
             <div id="upnStorageStatusMessage" class="error-message"></div>

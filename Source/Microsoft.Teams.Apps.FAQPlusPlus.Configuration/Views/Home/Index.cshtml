@@ -30,15 +30,14 @@
 
 <script type="text/javascript">
     $(function () {
-
-        //Get team Id if its saved and then enable edit button
+        //Display team Id if its saved if yes then perform edit action
          $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetSavedTeamIdAsync")',
              success: function (result) {
                  if (result != "") {                //Display the default UI when no team Id results are available for display
-                     $("#TeamId").val(result);
-                     performEditChanges();
+                     $("#TeamIdTextBox").val(result);
+                     performEditChanges("team");
                  }
                 },
                 error: function () {
@@ -48,36 +47,34 @@
     });
 
     // Perform changes when Edit related UI has to be displayed for team
-    function performEditChanges() {
-        $("#teamSubmitButton").val("Edit");
-        $("#TeamId").attr("disabled", "disabled");
+    function performEditChanges(section) {
+        if (section === "team") {
+            $("#teamSubmitButton").val("Edit");
+            $("#TeamIdTextBox").attr("disabled", "disabled");
+        }
     }
 
-    // Display a green tick with success text message for team
-    function OnSuccess() {
-        $("#teamStorageStatusIcon").removeAttr("class");
-        $("#teamStorageStatusMessage").removeAttr("class");
-
-        $("#teamStorageStatusMessage").addClass("success-message alert alert-success");
+    // Display a green tick when team id save is success
+    function onTeamSaveSuccess() {
+        clearStatusIconAndMessage("team");
         $("#teamStorageStatusIcon").addClass("glyphicon glyphicon-ok");
-
         $("#teamStorageStatusIcon").addClass("storageStatusIcon-success");
-
-        $("#teamStorageStatusMessage").text("Team Id is saved sucessfully");
-
-        performEditChanges();
+        performEditChanges("team");
     }
 
     // Display a red cross with error text message for team
-    function OnFailure(errorText) {
-        $("#teamStorageStatusIcon").removeAttr("class");
-        $("#teamStorageStatusMessage").removeAttr("class");
-
+    function onTeamSaveFailure(errorText) {
+        clearStatusIconAndMessage("team");
         $("#teamStorageStatusMessage").addClass("error-message alert alert-danger");
         $("#teamStorageStatusIcon").addClass("glyphicon glyphicon-remove");
-
         $("#teamStorageStatusIcon").addClass("storageStatusIcon-failure");
-
         $("#teamStorageStatusMessage").text(errorText.statusText);
+    }
+
+    function clearStatusIconAndMessage(section) {
+        if (section === "team") {
+            $("#teamStorageStatusIcon").removeAttr("class");
+            $("#teamStorageStatusMessage").removeAttr("class");
+        }
     }
 </script>

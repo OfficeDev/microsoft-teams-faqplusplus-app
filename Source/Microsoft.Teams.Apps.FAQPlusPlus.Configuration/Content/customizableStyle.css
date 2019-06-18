@@ -14,10 +14,12 @@
 
 .storageStatusIcon-success {
     color: green;
+    margin-top: 9px;
 }
 
 .storageStatusIcon-failure {
     color: red;
+    margin-top: 9px;
 }
 
 .marginBetweenView {
@@ -27,4 +29,37 @@
 
 .contentMargin {
     padding-top: 100px;
+}
+
+.mandatoryField {
+    color: red;
+}
+
+.col-lg-1 {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    width: 4% !important;
+}
+
+.col-lg-3 {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    width: 22% !important;
+}
+
+.col-lg-5 {
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+}
+
+.col-lg-offset-3 {
+    margin-left: 22% !important;
+}
+
+label {
+    margin-top: 9px !important;
+}
+
+.infoSignMargin {
+    padding-left: 10px;
 }

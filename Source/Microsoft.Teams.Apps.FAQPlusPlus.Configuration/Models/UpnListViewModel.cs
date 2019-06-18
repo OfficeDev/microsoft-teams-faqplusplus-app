@@ -11,13 +11,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     public class UpnListViewModel
     {
         /// <summary>
-        /// Gets or sets Upn email
+        /// Gets or sets Upn email text box
         /// </summary>
         [Required(ErrorMessage = "UPN's email address is required")]
         [MinLength(10)]
         [DataType(DataType.Text)]
         [Display(Name = "UPN's email address")]
         [EmailAddress]
-        public string UpnEmailAddress { get; set; }
+        public string UpnEmailAddressTextBox { get; set; }
     }
 }
