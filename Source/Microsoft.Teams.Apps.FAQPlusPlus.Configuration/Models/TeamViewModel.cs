@@ -7,12 +7,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
-    /// Team View Model
+    /// Team view model
     /// </summary>
     public class TeamViewModel
     {
         /// <summary>
-        /// Gets or sets Team Id to be used for Data annotation
+        /// Gets or sets Team Id to be used in View
         /// </summary>
         [Required(ErrorMessage ="Team Id is required")]
         [MinLength(1)]

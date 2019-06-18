@@ -28,9 +28,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// Index
+        /// The landing page
         /// </summary>
-        /// <returns>View</returns>
+        /// <returns>Default landing page view</returns>
         [HttpGet]
         public ActionResult Index()
         {
@@ -38,16 +38,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// SaveTeamIdAsync
+        /// Save or update teamId in table storage which is received from View
         /// </summary>
         /// <param name="teamId">team Id is the unique string associated with each team</param>
         /// <returns>View</returns>
         [HttpPost]
-        public async Task<ActionResult> SaveTeamIdAsync(string teamId)
+        public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
         {
             try
             {
-                bool saved = await this.teamHelper.SaveTeamIdDetailAsync(teamId);
+                bool saved = await this.teamHelper.SaveOrUpdateTeamIdAsync(teamId);
                 if (saved)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -64,7 +64,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// GetSavedTeamIdAsync
+        /// Get already saved team Id from table storage
         /// </summary>
         /// <returns>Team Id</returns>
         [HttpGet]

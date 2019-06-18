@@ -3,6 +3,7 @@
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
+    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
@@ -31,11 +32,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         }
 
         /// <summary>
-        /// Store Team Id.
+        /// Save or update team Id.
         /// </summary>
-        /// <param name="teamId">Team Id.</param>
-        /// <returns><see cref="Task"/> that represents if team id is saved or not.</returns>
-        public async Task<bool> SaveTeamIdDetailAsync(string teamId)
+        /// <param name="teamId">Team Id received from view page</param>
+        /// <returns><see cref="Task"/> boolean value that represents if team Id is saved or updated.</returns>
+        public async Task<bool> SaveOrUpdateTeamIdAsync(string teamId)
         {
             TeamEntity teamEntity = new TeamEntity()
             {
@@ -44,57 +45,46 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 TeamId = teamId
             };
 
-            // Since one team Id will be stored. Check if team id is already added or not
-            string getSavedTeamId = await this.GetSavedTeamIdAsync();
-            if (getSavedTeamId == string.Empty)
-            {
-                var result = await this.StoreTeamEntity(teamEntity);
+            var result = await this.StoreOrUpdateTeamEntity(teamEntity);
 
-                if (result.HttpStatusCode != (int)System.Net.HttpStatusCode.NoContent)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
+            if (result.HttpStatusCode != (int)HttpStatusCode.NoContent)
+            {
+                return false;
             }
             else
             {
-                return false;
+                return true;
             }
         }
 
         /// <summary>
-        /// Get saved Team Id.
+        /// Get already saved team Id from storage table
         /// </summary>
-        /// <returns><see cref="Task"/> Saved team Id.</returns>
+        /// <returns><see cref="Task"/> Already saved team Id.</returns>
         public async Task<string> GetSavedTeamIdAsync()
         {
-            string teamId = string.Empty;
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
             TableOperation searchOperation = TableOperation.Retrieve<TeamEntity>(PartitionKey, RowKey);
             TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
+
             var result = (TeamEntity)searchResult.Result;
-            if (result != null && !string.IsNullOrEmpty(result.TeamId))
-            {
-                teamId = result.TeamId;
-            }
+            string teamId = string.IsNullOrEmpty(result?.TeamId) ? string.Empty : result.TeamId;
 
             return teamId;
         }
 
         /// <summary>
-        /// Store TeamEntity.
+        /// Store or update team entity in table storage
         /// </summary>
         /// <param name="teamEntity">Team entity.</param>
-        /// <returns><see cref="Task"/> that represents store team function.</returns>
-        private Task<TableResult> StoreTeamEntity(TeamEntity teamEntity)
+        /// <returns><see cref="Task"/> that represents team id is saved or updated.</returns>
+        private Task<TableResult> StoreOrUpdateTeamEntity(TeamEntity teamEntity)
         {
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
             cloudTable.CreateIfNotExists();
-            TableOperation addOperation = TableOperation.InsertOrMerge(teamEntity);
-            return cloudTable.ExecuteAsync(addOperation);
+            TableOperation addorUpdateOperation = TableOperation.InsertOrMerge(teamEntity);
+
+            return cloudTable.ExecuteAsync(addorUpdateOperation);
         }
     }
 }
