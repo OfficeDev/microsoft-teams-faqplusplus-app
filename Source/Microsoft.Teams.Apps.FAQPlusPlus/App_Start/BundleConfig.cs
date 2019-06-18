@@ -3,9 +3,15 @@ using System.Web.Optimization;
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus
 {
+    /// <summary>
+    /// Bundle config for Task Module app.
+    /// </summary>
     public class BundleConfig
     {
-        // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
+        /// <summary>
+        /// Register the bundles
+        /// </summary>
+        /// <param name="bundles">Collection of bundles</param>
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
