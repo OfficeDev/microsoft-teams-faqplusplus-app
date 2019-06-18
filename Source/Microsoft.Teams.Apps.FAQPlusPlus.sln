@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlusPlus.Configuration", "Microsoft.Teams.Apps.FAQPlusPlus.Configuration\Microsoft.Teams.Apps.FAQPlusPlus.Configuration.csproj", "{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlusPlus", "Microsoft.Teams.Apps.FAQPlusPlus\Microsoft.Teams.Apps.FAQPlusPlus.csproj", "{055149A6-01FF-4C2A-8CD5-DD0061A28CD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055149A6-01FF-4C2A-8CD5-DD0061A28CD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055149A6-01FF-4C2A-8CD5-DD0061A28CD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055149A6-01FF-4C2A-8CD5-DD0061A28CD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055149A6-01FF-4C2A-8CD5-DD0061A28CD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
