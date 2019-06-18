@@ -1,6 +1,6 @@
 ﻿@model Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models.TeamViewModel
 
-@using (Ajax.BeginForm("SaveTeamIdAsync", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "onTeamSaveSuccess", OnFailure = "onTeamSaveFailure" }))
+@using (Ajax.BeginForm("SaveOrUpdateTeamIdAsync", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "onTeamSaveSuccess", OnFailure = "onTeamSaveFailure" }))
 {
     <div class="form-group">
         <div class="col-lg-3">
