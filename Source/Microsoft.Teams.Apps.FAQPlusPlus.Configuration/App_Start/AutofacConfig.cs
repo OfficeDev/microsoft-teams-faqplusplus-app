@@ -5,6 +5,7 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 {
     using System.Configuration;
+    using System.Net.Http;
     using System.Reflection;
     using System.Web.Mvc;
     using Autofac;
@@ -28,6 +29,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 
             builder.Register(c => new TeamHelper(ConfigurationManager.AppSettings["StorageConnectionString"]))
                 .As<TeamHelper>()
+                .SingleInstance();
+
+            builder.Register(c => new HttpClient())
+                .As<HttpClient>()
+                .SingleInstance();
+
+            builder.Register(c => new KnowledgeBaseHelper(
+                 c.Resolve<HttpClient>(),
+                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"],
+                 ConfigurationManager.AppSettings["StorageConnectionString"]))
+                .As<KnowledgeBaseHelper>()
                 .SingleInstance();
 
             builder.RegisterType<HomeController>().InstancePerRequest();

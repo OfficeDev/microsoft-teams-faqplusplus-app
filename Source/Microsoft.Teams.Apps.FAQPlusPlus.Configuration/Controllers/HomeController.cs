@@ -17,14 +17,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     public class HomeController : Controller
     {
         private TeamHelper teamHelper;
+        private KnowledgeBaseHelper knowledgeBaseHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="teamHelper">Team Helper.</param>
-        public HomeController(TeamHelper teamHelper)
+        /// <param name="knowledgeBaseHelper">knowledge Base Helper.</param>
+        public HomeController(TeamHelper teamHelper, KnowledgeBaseHelper knowledgeBaseHelper)
         {
             this.teamHelper = teamHelper;
+            this.knowledgeBaseHelper = knowledgeBaseHelper;
         }
 
         /// <summary>
@@ -74,16 +77,64 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// SaveKnowledgeBaseUrl
+        /// Save or update knowledge base Id in table storage which is received from View
         /// </summary>
-        /// <param name="knowledgeBaseUrl">KnowledgeBaseUrl</param>
+        /// <param name="knowledgeBaseIdTextBox">knowledgeBaseIdTextBox is the unique string knowledge Id</param>
+        /// <returns>View</returns>
+        public async Task<ActionResult> SaveOrUpdateKnowledgeBaseIdAsync(string knowledgeBaseIdTextBox)
+        {
+            try
+            {
+                bool saved = await this.knowledgeBaseHelper.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseIdTextBox);
+                if (saved)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.OK);
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, unable to save data due to HTTP status code 204");
+                }
+            }
+            catch (Exception error)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save data due to: " + error.Message);
+            }
+        }
+
+        /// <summary>
+        /// Validate knowledge base Id from QnA Maker service first and then proceed to save it on success
+        /// </summary>
+        /// <param name="knowledgeBaseIdTextBox">knowledgeBaseIdTextBox is the unique string knowledge Id</param>
         /// <returns>View</returns>
         [HttpPost]
-        public ActionResult SaveKnowledgeBaseUrl(string knowledgeBaseUrl)
+        public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseIdTextBox)
         {
-            // Default placeholder for implementation. Will be changed once its related changes implemented
-            // To be changed to Async method
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            try
+            {
+                bool isValidKnowledgeBaseId = await this.knowledgeBaseHelper.IsKnowledgeBaseIdValid(knowledgeBaseIdTextBox);
+                if (isValidKnowledgeBaseId)
+                {
+                    return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseIdTextBox);
+                }
+                else
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, provided knowledge base Id is not valid");
+                }
+            }
+            catch (Exception error)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to validate knowledge base Id due to: " + error.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get already saved knowledge base Id from table storage
+        /// </summary>
+        /// <returns>knowledge base Id</returns>
+        [HttpGet]
+        public async Task<string> GetSavedKnowledgeBaseIdAsync()
+        {
+            return await this.knowledgeBaseHelper.GetSavedKnowledgeBaseIdAsync();
         }
 
         /// <summary>
