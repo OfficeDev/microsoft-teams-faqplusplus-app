@@ -40,21 +40,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <summary>
         /// Save or update teamId in table storage which is received from View
         /// </summary>
-        /// <param name="teamId">team Id is the unique string associated with each team</param>
+        /// <param name="teamIdTextBox">teamIdTextBox is the unique string associated with each team</param>
         /// <returns>View</returns>
         [HttpPost]
-        public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
+        public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamIdTextBox)
         {
             try
             {
-                bool saved = await this.teamHelper.SaveOrUpdateTeamIdAsync(teamId);
+                bool saved = await this.teamHelper.SaveOrUpdateTeamIdAsync(teamIdTextBox);
                 if (saved)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.OK);
                 }
                 else
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, unable to save data since Team Id already exists or server returned HTTP status code 204");
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, unable to save data due to HTTP status code 204");
                 }
             }
             catch (Exception error)

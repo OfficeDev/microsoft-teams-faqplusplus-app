@@ -27,10 +27,9 @@
     </div>
 </div>
 
-
 <script type="text/javascript">
     $(function () {
-        //Display team Id if its saved if yes then perform edit action
+        //Display team Id if its saved if yes then perform edit UI changes
          $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetSavedTeamIdAsync")',
@@ -46,7 +45,20 @@
             });
     });
 
-    // Perform changes when Edit related UI has to be displayed for team
+    // Display a green tick when team Id save is success
+    function onTeamSaveSuccess() {
+        clearStatusIconAndMessage("team");
+        saveSuccessIcon("teamStorageStatusIcon");
+        performEditChanges("team");
+    }
+
+    // Display a red cross with error text message when team is not saved due to error
+    function onTeamSaveFailure(errorText) {
+        clearStatusIconAndMessage("team");
+        saveFailureIconAndText("teamStorageStatusIcon", "teamStorageStatusMessage", errorText.statusText);
+    }
+
+    // Perform changes when Edit related UI has to be displayed
     function performEditChanges(section) {
         if (section === "team") {
             $("#teamSubmitButton").val("Edit");
@@ -54,21 +66,18 @@
         }
     }
 
-    // Display a green tick when team id save is success
-    function onTeamSaveSuccess() {
-        clearStatusIconAndMessage("team");
-        $("#teamStorageStatusIcon").addClass("glyphicon glyphicon-ok");
-        $("#teamStorageStatusIcon").addClass("storageStatusIcon-success");
-        performEditChanges("team");
+    // Provide the div whose icon and color needs to be changed on successful save
+    function saveSuccessIcon(storageStatusIcon) {
+        $("#" + storageStatusIcon+"").addClass("glyphicon glyphicon-ok");
+        $("#" + storageStatusIcon + "").addClass("storageStatusIcon-success");
     }
 
-    // Display a red cross with error text message for team
-    function onTeamSaveFailure(errorText) {
-        clearStatusIconAndMessage("team");
-        $("#teamStorageStatusMessage").addClass("error-message alert alert-danger");
-        $("#teamStorageStatusIcon").addClass("glyphicon glyphicon-remove");
-        $("#teamStorageStatusIcon").addClass("storageStatusIcon-failure");
-        $("#teamStorageStatusMessage").text(errorText.statusText);
+    // Provide the div whose icon, color and text needs to be changed due to failure while save
+    function saveFailureIconAndText(storageStatusIconDiv, storageStatusMessageDiv, errorText) {
+        $("#" + storageStatusIconDiv + "").addClass("glyphicon glyphicon-remove");
+        $("#" + storageStatusIconDiv + "").addClass("storageStatusIcon-failure");
+        $("#" + storageStatusMessageDiv + "").addClass("error-message alert alert-danger");
+        $("#" + storageStatusMessageDiv + "").text(errorText);
     }
 
     // Clear icon and message
