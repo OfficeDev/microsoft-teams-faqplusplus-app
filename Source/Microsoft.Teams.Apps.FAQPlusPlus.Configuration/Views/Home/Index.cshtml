@@ -87,4 +87,16 @@
             $("#teamStorageStatusMessage").removeAttr("class");
         }
     }
+
+    // Check if the button text is Edit or Ok then proceed to either form submit or disable team textbox
+    $("#teamSubmitButton").click(function () {
+        var buttonText = $("#teamSubmitButton").val();
+        if (buttonText === "Edit") {
+            $("#TeamIdTextBox").removeAttr("disabled");
+            $("#teamSubmitButton").val("OK");
+        }
+        else {
+            $("#teamForm").submit();
+        }
+    });
 </script>
