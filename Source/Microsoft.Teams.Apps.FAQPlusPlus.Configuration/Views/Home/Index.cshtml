@@ -35,8 +35,8 @@
                 url: '@Url.Action("GetSavedTeamIdAsync")',
              success: function (result) {
                  if (result != "") {                //Display the default UI when no team Id results are available for display
-                     $("#TeamIdTextBox").val(result);
-                     performEditChanges("team");
+                     $(".teamIdTextBox").val(result);
+                     toggleToEdit("team");
                  }
                 },
                 error: function () {
@@ -49,7 +49,7 @@
     function onTeamSaveSuccess() {
         clearStatusIconAndMessage("team");
         saveSuccessIcon("teamStorageStatusIcon");
-        performEditChanges("team");
+        toggleToEdit("team");
     }
 
     // Display a red cross with error text message when team is not saved due to error
@@ -59,25 +59,22 @@
     }
 
     // Perform changes when Edit related UI has to be displayed
-    function performEditChanges(section) {
+    function toggleToEdit(section) {
         if (section === "team") {
             $("#teamSubmitButton").val("Edit");
-            $("#TeamIdTextBox").attr("disabled", "disabled");
+            $(".teamIdTextBox").attr("disabled", "disabled");
         }
     }
 
     // Provide the div whose icon and color needs to be changed on successful save
     function saveSuccessIcon(storageStatusIcon) {
-        $("#" + storageStatusIcon+"").addClass("glyphicon glyphicon-ok");
-        $("#" + storageStatusIcon + "").addClass("storageStatusIcon-success");
+        $("#" + storageStatusIcon + "").addClass("glyphicon glyphicon-ok").addClass("storageStatusIcon-success");
     }
 
     // Provide the div whose icon, color and text needs to be changed due to failure while save
     function saveFailureIconAndText(storageStatusIconDiv, storageStatusMessageDiv, errorText) {
-        $("#" + storageStatusIconDiv + "").addClass("glyphicon glyphicon-remove");
-        $("#" + storageStatusIconDiv + "").addClass("storageStatusIcon-failure");
-        $("#" + storageStatusMessageDiv + "").addClass("error-message alert alert-danger");
-        $("#" + storageStatusMessageDiv + "").text(errorText);
+        $("#" + storageStatusIconDiv + "").addClass("glyphicon glyphicon-remove").addClass("storageStatusIcon-failure");
+        $("#" + storageStatusMessageDiv + "").addClass("error-message alert alert-danger").text(errorText);
     }
 
     // Clear icon and message
