@@ -51,7 +51,7 @@
             success: function (result) {
                 if (result != "") {                //Display the default UI when no knowledge Id results are available for display
                     $(".knowledgeBaseIdTextBox").val(result);
-                    toggleToEdit("knowledgebase");
+                    toggleToEdit("knowledgeBase");
                 }
             },
             error: function () {                
@@ -60,44 +60,26 @@
         });
     });
 
-    // Display a green tick when team Id save is success
-    function onTeamSaveSuccess() {
-        clearStatusIconAndMessage("team");
-        saveSuccessIcon("teamStorageStatusIcon");
-        toggleToEdit("team");
+    // Display a green tick when save is success
+    function onSaveSuccess() {        
+        var currentFormName = $(this).closest(".formToSubmit").find(".form-group").attr("data-form-name");
+
+        clearStatusIconAndMessage(currentFormName);
+        saveSuccessIcon(currentFormName+"StorageStatusIcon");
+        toggleToEdit(currentFormName);
     }
 
-    // Display a red cross with error text message when team is not saved due to error
-    function onTeamSaveFailure(errorText) {
-        clearStatusIconAndMessage("team");
-        saveFailureIconAndText("teamStorageStatusIcon", "teamStorageStatusMessage", errorText.statusText);
+    // Display a red cross with error text message when save is not success due to error
+    function onSaveFailure(errorText) {
+        var currentFormName = $(this).closest(".formToSubmit").find(".form-group").attr("data-form-name");
+        clearStatusIconAndMessage(currentFormName);
+        saveFailureIconAndText(currentFormName + "StorageStatusIcon", currentFormName+"StorageStatusMessage", errorText.statusText);
     }
-
-
-    // Display a green tick when knowledge base Id save is success
-    function onKnowledgeBaseSaveSuccess() {
-        clearStatusIconAndMessage("knowledgebase");
-        saveSuccessIcon("knowledgeBaseStorageStatusIcon");
-        toggleToEdit("knowledgebase");
-    }
-
-    // Display a red cross with error text message when knowledge base is not saved due to error
-    function onKnowledgeBaseSaveFailure(errorText) {
-        clearStatusIconAndMessage("knowledgebase");
-        saveFailureIconAndText("knowledgeBaseStorageStatusIcon", "knowledgeBaseStorageStatusMessage", errorText.statusText);
-    }
-
 
     // Perform changes when Edit related UI has to be displayed
-    function toggleToEdit(section) {
-        if (section === "team") {
-            $("#teamSubmitButton").val("Edit");
-            $(".teamIdTextBox").attr("disabled", "disabled");
-        }
-        else {
-            $("#knowledgeBaseSubmitButton").val("Edit");
-            $(".knowledgeBaseIdTextBox").attr("disabled", "disabled");
-        }
+    function toggleToEdit(section) {        
+        $("#" + section + "SubmitButton").val("Edit");
+        $("." + section + "IdTextBox").attr("disabled", "disabled");
     }
 
     // Provide the div whose icon and color needs to be changed on successful save
@@ -112,15 +94,9 @@
     }
 
     // Clear icon and message
-    function clearStatusIconAndMessage(section) {
-        if (section === "team") {
-            $("#teamStorageStatusIcon").removeAttr("class");
-            $("#teamStorageStatusMessage").removeAttr("class").text("");
-        }
-        else {
-            $("#knowledgeBaseStorageStatusIcon").removeAttr("class");
-            $("#knowledgeBaseStorageStatusMessage").removeAttr("class").text("");
-        }
+    function clearStatusIconAndMessage(section) {        
+        $("#" + section + "StorageStatusIcon").removeAttr("class");
+        $("#" + section + "StorageStatusMessage").removeAttr("class").text("");
     }
 
     // Check if the button text is Edit or Ok then proceed to either form submit or disable textbox of respective section
