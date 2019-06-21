@@ -13,21 +13,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     /// </summary>
     public class QnAMakerService : IQnAMakerService
     {
-        /// <summary>
-        /// QnA Maker Request url
-        /// </summary>
         private const string QnAMakerRequestUrl = "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
-
         private const string MethodKB = "knowledgebases";
-
-        /// <summary>
-        /// Ocp-Apim-Subscription-Key for the QnA Maker service
-        /// </summary>
         private readonly string subscriptionKey;
-
-        /// <summary>
-        /// Http client for generating http requests.
-        /// </summary>
         private readonly HttpClient httpClient;
 
         /// <summary>
@@ -42,7 +30,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         }
 
         /// <inheritdoc/>
-        public async Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetails(string kbId)
+        public async Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetailsAsync(string kbId)
         {
             var uri = $"{QnAMakerRequestUrl}/{MethodKB}/{kbId}";
             using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, uri))

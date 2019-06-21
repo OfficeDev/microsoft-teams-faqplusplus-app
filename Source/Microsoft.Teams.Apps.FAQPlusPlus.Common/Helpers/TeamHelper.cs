@@ -68,9 +68,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
 
             var result = (TeamEntity)searchResult.Result;
-            string teamId = string.IsNullOrEmpty(result?.TeamId) ? string.Empty : result.TeamId;
 
-            return teamId;
+            return string.IsNullOrEmpty(result?.TeamId) ? string.Empty : result.TeamId;
         }
 
         /// <summary>

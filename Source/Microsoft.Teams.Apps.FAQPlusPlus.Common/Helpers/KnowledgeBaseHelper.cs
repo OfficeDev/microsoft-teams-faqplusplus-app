@@ -53,7 +53,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 KnowledgeBaseId = knowledgeBaseId
             };
 
-            var result = await this.StoreOrUpdateKnowledgeBaseEntity(knowledgeBaseEntity);
+            var result = await this.StoreOrUpdateKnowledgeBaseEntityAsync(knowledgeBaseEntity);
 
             if (result.HttpStatusCode != (int)HttpStatusCode.NoContent)
             {
@@ -76,9 +76,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
 
             var result = (KnowledgeBaseEntity)searchResult.Result;
-            string knowledgeBaseId = string.IsNullOrEmpty(result?.KnowledgeBaseId) ? string.Empty : result.KnowledgeBaseId;
 
-            return knowledgeBaseId;
+            return string.IsNullOrEmpty(result?.KnowledgeBaseId) ? string.Empty : result.KnowledgeBaseId;
         }
 
         /// <summary>
@@ -89,7 +88,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         public async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
         {
             QnAMakerService qnAMakerService = new QnAMakerService(this.httpClient, this.qnaMakerSubcriptionKey);
-            GetKnowledgeBaseDetailsResponse kbDetails = await qnAMakerService.GetKnowledgeBaseDetails(knowledgeBaseId);
+            GetKnowledgeBaseDetailsResponse kbDetails = await qnAMakerService.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
 
             if (kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId))
             {
@@ -106,13 +105,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// </summary>
         /// <param name="knowledgeBaseEntity">knowledgeBaseEntity.</param>
         /// <returns><see cref="Task"/> that represents knowledge base id is saved or updated.</returns>
-        private Task<TableResult> StoreOrUpdateKnowledgeBaseEntity(KnowledgeBaseEntity knowledgeBaseEntity)
+        private async Task<TableResult> StoreOrUpdateKnowledgeBaseEntityAsync(KnowledgeBaseEntity knowledgeBaseEntity)
         {
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
             cloudTable.CreateIfNotExists();
             TableOperation addOrUpdateOperation = TableOperation.InsertOrMerge(knowledgeBaseEntity);
 
-            return cloudTable.ExecuteAsync(addOrUpdateOperation);
+            return await cloudTable.ExecuteAsync(addOrUpdateOperation);
         }
     }
 }

@@ -16,8 +16,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private TeamHelper teamHelper;
-        private KnowledgeBaseHelper knowledgeBaseHelper;
+        private readonly TeamHelper teamHelper;
+        private readonly KnowledgeBaseHelper knowledgeBaseHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
@@ -79,13 +79,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <summary>
         /// Save or update knowledgeBaseId in table storage which is received from View
         /// </summary>
-        /// <param name="knowledgeBaseIdTextBox">knowledgeBaseIdTextBox is the unique string knowledge Id</param>
+        /// <param name="knowledgeBaseId">knowledgeBaseId is the unique string knowledge Id</param>
         /// <returns>View</returns>
-        public async Task<ActionResult> SaveOrUpdateKnowledgeBaseIdAsync(string knowledgeBaseIdTextBox)
+        public async Task<ActionResult> SaveOrUpdateKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
             try
             {
-                bool saved = await this.knowledgeBaseHelper.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseIdTextBox);
+                bool saved = await this.knowledgeBaseHelper.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
                 if (saved)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -104,17 +104,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <summary>
         /// Validate knowledge base Id from QnA Maker service first and then proceed to save it on success
         /// </summary>
-        /// <param name="knowledgeBaseIdTextBox">knowledgeBaseIdTextBox is the unique string knowledge Id</param>
+        /// <param name="knowledgeBaseId">knowledgeBaseId is the unique string knowledge Id</param>
         /// <returns>View</returns>
         [HttpPost]
-        public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseIdTextBox)
+        public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
             try
             {
-                bool isValidKnowledgeBaseId = await this.knowledgeBaseHelper.IsKnowledgeBaseIdValid(knowledgeBaseIdTextBox);
+                bool isValidKnowledgeBaseId = await this.knowledgeBaseHelper.IsKnowledgeBaseIdValid(knowledgeBaseId);
                 if (isValidKnowledgeBaseId)
                 {
-                    return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseIdTextBox);
+                    return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
                 }
                 else
                 {
@@ -145,7 +145,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public ActionResult SaveOrUpdateUpnEmailAddress(string upnEmailAddress)
         {
-            // Default placeholder for implementation. Will be changed once its related changes implemented            
+            // Default placeholder for implementation. Will be changed once its related changes implemented
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
     }

@@ -32,7 +32,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .SingleInstance();
 
             builder.Register(c => new HttpClient())
-                .As<HttpClient>()
                 .SingleInstance();
 
             builder.Register(c => new KnowledgeBaseHelper(

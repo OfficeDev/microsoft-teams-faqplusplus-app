@@ -30,19 +30,34 @@
 <script type="text/javascript">
     $(function () {
         //Display team Id if its saved if yes then perform edit UI changes
-         $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetSavedTeamIdAsync")',
-             success: function (result) {
-                 if (result != "") {                //Display the default UI when no team Id results are available for display
-                     $(".teamIdTextBox").val(result);
-                     toggleToEdit("team");
-                 }
-                },
-                error: function () {
-                    alert("Unable to display team Id");
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetSavedTeamIdAsync")',
+            success: function (result) {
+                if (result != "") {                //Display the default UI when no team Id results are available for display
+                    $(".teamIdTextBox").val(result);
+                    toggleToEdit("team");
                 }
-            });
+            },
+            error: function (error) {
+                saveFailureIconAndText("teamStorageStatusIcon", "teamStorageStatusMessage", "Unable to display team Id due to HTTP: " + error.status + ", " + error.statusText);
+            }
+        });
+
+        //Display knowledgeBase Id if its saved if yes then perform edit UI changes
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetSavedKnowledgeBaseIdAsync")',
+            success: function (result) {
+                if (result != "") {                //Display the default UI when no knowledge Id results are available for display
+                    $(".knowledgeBaseIdTextBox").val(result);
+                    toggleToEdit("knowledgebase");
+                }
+            },
+            error: function () {                
+                saveFailureIconAndText("knowledgeBaseStorageStatusIcon", "knowledgeBaseStorageStatusMessage", "Unable to display knowledge base Id due to HTTP: " + error.status + ", " + error.statusText);
+            }
+        });
     });
 
     // Display a green tick when team Id save is success
@@ -63,7 +78,7 @@
     function onKnowledgeBaseSaveSuccess() {
         clearStatusIconAndMessage("knowledgebase");
         saveSuccessIcon("knowledgeBaseStorageStatusIcon");
-        performEditChanges("knowledgebase");
+        toggleToEdit("knowledgebase");
     }
 
     // Display a red cross with error text message when knowledge base is not saved due to error
@@ -81,7 +96,7 @@
         }
         else {
             $("#knowledgeBaseSubmitButton").val("Edit");
-            $("#KnowledgeBaseIdTextBox").attr("disabled", "disabled");
+            $(".knowledgeBaseIdTextBox").attr("disabled", "disabled");
         }
     }
 
@@ -100,13 +115,11 @@
     function clearStatusIconAndMessage(section) {
         if (section === "team") {
             $("#teamStorageStatusIcon").removeAttr("class");
-            $("#teamStorageStatusMessage").removeAttr("class");
-            $("#teamStorageStatusMessage").text("");
+            $("#teamStorageStatusMessage").removeAttr("class").text("");
         }
         else {
             $("#knowledgeBaseStorageStatusIcon").removeAttr("class");
-            $("#knowledgeBaseStorageStatusMessage").removeAttr("class");
-            $("#knowledgeBaseStorageStatusMessage").text("");
+            $("#knowledgeBaseStorageStatusMessage").removeAttr("class").text("");
         }
     }
 
@@ -122,17 +135,5 @@
         else {
             currentForm.submit();
         }
-    });
-
-    // Check for button toggle based on edit or ok and then proceed
-    $("#knowledgeBaseSubmitButton").click(function () {
-        var buttonText = $("#knowledgeBaseSubmitButton").val();
-        if (buttonText === "Edit") {
-            $("#KnowledgeBaseIdTextBox").removeAttr("disabled");
-            $("#knowledgeBaseSubmitButton").val("OK");
-        }
-        else {
-            $("#knowledgeBaseForm").submit();
-        }
-    });
+    });    
 </script>

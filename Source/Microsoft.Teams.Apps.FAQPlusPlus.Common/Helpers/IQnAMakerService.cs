@@ -17,6 +17,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// </summary>
         /// <param name="kbId">knowledge base id</param>
         /// <returns>Task that resolves to <see cref="GetKnowledgeBaseDetailsResponse"/>.</returns>
-        Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetails(string kbId);
+        Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetailsAsync(string kbId);
     }
 }
