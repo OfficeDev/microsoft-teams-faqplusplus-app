@@ -30,41 +30,26 @@
 <script type="text/javascript">
     $(function () {
         //Display team Id if its saved if yes then perform edit UI changes
-        $.ajax({
-            type: "GET",
-            url: '@Url.Action("GetSavedTeamIdAsync")',
-            success: function (result) {
-                if (result != "") {                //Display the default UI when no team Id results are available for display
-                    $("#TeamIdTextBox").val(result);
-                    performEditChanges("team");
+         $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSavedTeamIdAsync")',
+             success: function (result) {
+                 if (result != "") {                //Display the default UI when no team Id results are available for display
+                     $(".teamIdTextBox").val(result);
+                     toggleToEdit("team");
+                 }
+                },
+                error: function () {
+                    alert("Unable to display team Id");
                 }
-            },
-            error: function () {
-                alert("Unable to display team Id");
-            }
-        });
-
-        //Display knowledgeBase Id if its saved if yes then perform edit UI changes
-        $.ajax({
-            type: "GET",
-            url: '@Url.Action("GetSavedKnowledgeBaseIdAsync")',
-            success: function (result) {
-                if (result != "") {                //Display the default UI when no knowledge Id results are available for display
-                    $("#KnowledgeBaseIdTextBox").val(result);
-                    performEditChanges("knowledgebase");
-                }
-            },
-            error: function () {
-                alert("Unable to display knowledge base Id");
-            }
-        });
+            });
     });
 
     // Display a green tick when team Id save is success
     function onTeamSaveSuccess() {
         clearStatusIconAndMessage("team");
         saveSuccessIcon("teamStorageStatusIcon");
-        performEditChanges("team");
+        toggleToEdit("team");
     }
 
     // Display a red cross with error text message when team is not saved due to error
@@ -89,10 +74,10 @@
 
 
     // Perform changes when Edit related UI has to be displayed
-    function performEditChanges(section) {
+    function toggleToEdit(section) {
         if (section === "team") {
             $("#teamSubmitButton").val("Edit");
-            $("#TeamIdTextBox").attr("disabled", "disabled");
+            $(".teamIdTextBox").attr("disabled", "disabled");
         }
         else {
             $("#knowledgeBaseSubmitButton").val("Edit");
@@ -102,16 +87,13 @@
 
     // Provide the div whose icon and color needs to be changed on successful save
     function saveSuccessIcon(storageStatusIcon) {
-        $("#" + storageStatusIcon+"").addClass("glyphicon glyphicon-ok");
-        $("#" + storageStatusIcon + "").addClass("storageStatusIcon-success");
+        $("#" + storageStatusIcon + "").addClass("glyphicon glyphicon-ok").addClass("storageStatusIcon-success");
     }
 
     // Provide the div whose icon, color and text needs to be changed due to failure while save
     function saveFailureIconAndText(storageStatusIconDiv, storageStatusMessageDiv, errorText) {
-        $("#" + storageStatusIconDiv + "").addClass("glyphicon glyphicon-remove");
-        $("#" + storageStatusIconDiv + "").addClass("storageStatusIcon-failure");
-        $("#" + storageStatusMessageDiv + "").addClass("error-message alert alert-danger");
-        $("#" + storageStatusMessageDiv + "").text(errorText);
+        $("#" + storageStatusIconDiv + "").addClass("glyphicon glyphicon-remove").addClass("storageStatusIcon-failure");
+        $("#" + storageStatusMessageDiv + "").addClass("error-message alert alert-danger").text(errorText);
     }
 
     // Clear icon and message
@@ -128,15 +110,17 @@
         }
     }
 
-    // Check if the button text is Edit or Ok then proceed to either form submit or disable team textbox
-    $("#teamSubmitButton").click(function () {
-        var buttonText = $("#teamSubmitButton").val();
-        if (buttonText === "Edit") {
-            $("#TeamIdTextBox").removeAttr("disabled");
-            $("#teamSubmitButton").val("OK");
+    // Check if the button text is Edit or Ok then proceed to either form submit or disable textbox of respective section
+    // such as teams or knowledgebase
+    $(".toggleToEditButton").click(function () {
+        var currentElement = $(this);
+        var currentForm = currentElement.closest(".formToSubmit");
+        if (currentElement.val() === "Edit") {
+            currentForm.find(".toggleTextBox").removeAttr("disabled");
+            currentElement.val("OK");
         }
         else {
-            $("#teamForm").submit();
+            currentForm.submit();
         }
     });
 
