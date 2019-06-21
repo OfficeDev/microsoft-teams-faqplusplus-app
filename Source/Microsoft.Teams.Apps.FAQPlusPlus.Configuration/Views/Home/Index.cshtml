@@ -85,15 +85,17 @@
         }
     }
 
-    // Check if the button text is Edit or Ok then proceed to either form submit or disable team textbox
-    $("#teamSubmitButton").click(function () {
-        var buttonText = $("#teamSubmitButton").val();
-        if (buttonText === "Edit") {
-            $("#TeamIdTextBox").removeAttr("disabled");
-            $("#teamSubmitButton").val("OK");
+    // Check if the button text is Edit or Ok then proceed to either form submit or disable textbox of respective section
+    // such as teams or knowledgebase
+    $(".toggleToEditButton").click(function () {
+        var currentElement = $(this);
+        var currentForm = currentElement.closest(".formToSubmit");
+        if (currentElement.val() === "Edit") {
+            currentForm.find(".toggleTextBox").removeAttr("disabled");
+            currentElement.val("OK");
         }
         else {
-            $("#teamForm").submit();
+            currentForm.submit();
         }
     });
 </script>
