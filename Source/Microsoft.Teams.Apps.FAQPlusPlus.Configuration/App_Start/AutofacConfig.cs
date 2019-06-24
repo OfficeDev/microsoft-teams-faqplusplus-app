@@ -24,8 +24,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
-            builder.RegisterType<HomeController>().InstancePerRequest();
-
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
