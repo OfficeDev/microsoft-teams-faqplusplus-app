@@ -41,8 +41,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .As<KnowledgeBaseHelper>()
                 .SingleInstance();
 
-            builder.RegisterType<HomeController>().InstancePerRequest();
-
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
