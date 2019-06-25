@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
+    using System;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private readonly CloudTableClient cloudTableClient;
         private readonly HttpClient httpClient;
         private readonly string qnaMakerSubcriptionKey;
+        private readonly Lazy<Task> initializeTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KnowledgeBaseHelper"/> class.
@@ -37,6 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             this.storageAccount = CloudStorageAccount.Parse(connectionString);
             this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
             this.qnaMakerSubcriptionKey = qnaMakerSubscriptionKey;
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync());
         }
 
         /// <summary>
@@ -55,14 +58,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 
             var result = await this.StoreOrUpdateKnowledgeBaseEntityAsync(knowledgeBaseEntity);
 
-            if (result.HttpStatusCode != (int)HttpStatusCode.NoContent)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
         }
 
         /// <summary>
@@ -71,6 +67,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns><see cref="Task"/> Already saved knowledge base Id.</returns>
         public async Task<string> GetSavedKnowledgeBaseIdAsync()
         {
+            await this.EnsureInitializedAsync();
+
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
             TableOperation searchOperation = TableOperation.Retrieve<KnowledgeBaseEntity>(PartitionKey, RowKey);
             TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
@@ -107,11 +105,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns><see cref="Task"/> that represents knowledge base id is saved or updated.</returns>
         private async Task<TableResult> StoreOrUpdateKnowledgeBaseEntityAsync(KnowledgeBaseEntity knowledgeBaseEntity)
         {
+            await this.EnsureInitializedAsync();
+
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
-            cloudTable.CreateIfNotExists();
             TableOperation addOrUpdateOperation = TableOperation.InsertOrMerge(knowledgeBaseEntity);
 
             return await cloudTable.ExecuteAsync(addOrUpdateOperation);
+        }
+
+        /// <summary>
+        /// Create knowledge base table if it doesnt exists
+        /// </summary>
+        /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
+        private async Task InitializeAsync()
+        {
+            CloudTable cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
+            await cloudTable.CreateIfNotExistsAsync();
+        }
+
+        /// <summary>
+        /// Initialization of InitializeAsync method which will help in creating table
+        /// </summary>
+        /// <returns>Task</returns>
+        private async Task EnsureInitializedAsync()
+        {
+            await this.initializeTask.Value;
         }
     }
 }

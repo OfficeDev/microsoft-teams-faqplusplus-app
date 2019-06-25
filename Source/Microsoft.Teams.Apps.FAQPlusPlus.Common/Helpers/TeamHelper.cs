@@ -3,6 +3,7 @@
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -20,6 +21,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private static readonly string TeamTableName = StorageInfo.TeamTableName;
         private readonly CloudStorageAccount storageAccount;
         private readonly CloudTableClient cloudTableClient;
+        private readonly Lazy<Task> initializeTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TeamHelper"/> class.
@@ -29,6 +31,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         {
             this.storageAccount = CloudStorageAccount.Parse(connectionString);
             this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync());
         }
 
         /// <summary>
@@ -56,6 +59,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns><see cref="Task"/> Already saved team Id.</returns>
         public async Task<string> GetSavedTeamIdAsync()
         {
+            await this.EnsureInitializedAsync();
+
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
             TableOperation searchOperation = TableOperation.Retrieve<TeamEntity>(PartitionKey, RowKey);
             TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
@@ -72,11 +77,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns><see cref="Task"/> that represents team id is saved or updated.</returns>
         private async Task<TableResult> StoreOrUpdateTeamEntityAsync(TeamEntity teamEntity)
         {
+            await this.EnsureInitializedAsync();
+
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
-            cloudTable.CreateIfNotExists();
             TableOperation addorUpdateOperation = TableOperation.InsertOrMerge(teamEntity);
 
             return await cloudTable.ExecuteAsync(addorUpdateOperation);
+        }
+
+        /// <summary>
+        /// Create teams table if it doesnt exists
+        /// </summary>
+        /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
+        private async Task InitializeAsync()
+        {
+            CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
+            await cloudTable.CreateIfNotExistsAsync();
+        }
+
+        /// <summary>
+        /// Initialization of InitializeAsync method which will help in creating table
+        /// </summary>
+        /// <returns>Task</returns>
+        private async Task EnsureInitializedAsync()
+        {
+            await this.initializeTask.Value;
         }
     }
 }
