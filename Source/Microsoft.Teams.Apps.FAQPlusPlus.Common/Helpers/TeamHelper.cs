@@ -19,9 +19,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string RowKey = "MSTeamId";
 
         private static readonly string TeamTableName = StorageInfo.TeamTableName;
-        private readonly CloudStorageAccount storageAccount;
-        private readonly CloudTableClient cloudTableClient;
         private readonly Lazy<Task> initializeTask;
+        private CloudStorageAccount storageAccount;
+        private CloudTableClient cloudTableClient;
+        private CloudTable cloudTable;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TeamHelper"/> class.
@@ -29,9 +30,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="connectionString">connection string of storage.</param>
         public TeamHelper(string connectionString)
         {
-            this.storageAccount = CloudStorageAccount.Parse(connectionString);
-            this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
-            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync());
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(connectionString));
         }
 
         /// <summary>
@@ -61,9 +60,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         {
             await this.EnsureInitializedAsync();
 
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
             TableOperation searchOperation = TableOperation.Retrieve<TeamEntity>(PartitionKey, RowKey);
-            TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
+            TableResult searchResult = await this.cloudTable.ExecuteAsync(searchOperation);
 
             var result = (TeamEntity)searchResult.Result;
 
@@ -79,20 +77,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         {
             await this.EnsureInitializedAsync();
 
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
             TableOperation addorUpdateOperation = TableOperation.InsertOrMerge(teamEntity);
 
-            return await cloudTable.ExecuteAsync(addorUpdateOperation);
+            return await this.cloudTable.ExecuteAsync(addorUpdateOperation);
         }
 
         /// <summary>
         /// Create teams table if it doesnt exists
         /// </summary>
+        /// <param name="connectionString">storage account connection string</param>
         /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
-        private async Task InitializeAsync()
+        private async Task InitializeAsync(string connectionString)
         {
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
-            await cloudTable.CreateIfNotExistsAsync();
+            this.storageAccount = CloudStorageAccount.Parse(connectionString);
+            this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
+            this.cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
+
+            await this.cloudTable.CreateIfNotExistsAsync();
         }
 
         /// <summary>

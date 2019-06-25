@@ -21,11 +21,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string RowKey = "KnowledgeBaseId";
 
         private static readonly string KnowledgeBaseTableName = StorageInfo.KnowledgeBaseTableName;
-        private readonly CloudStorageAccount storageAccount;
-        private readonly CloudTableClient cloudTableClient;
-        private readonly HttpClient httpClient;
-        private readonly string qnaMakerSubcriptionKey;
         private readonly Lazy<Task> initializeTask;
+        private CloudStorageAccount storageAccount;
+        private CloudTableClient cloudTableClient;
+        private CloudTable cloudTable;
+        private HttpClient httpClient;
+        private string qnaMakerSubcriptionKey;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KnowledgeBaseHelper"/> class.
@@ -35,11 +36,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="connectionString">connection string of storage.</param>
         public KnowledgeBaseHelper(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
         {
-            this.httpClient = httpClient ?? throw new System.ArgumentNullException(nameof(httpClient));
-            this.storageAccount = CloudStorageAccount.Parse(connectionString);
-            this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
-            this.qnaMakerSubcriptionKey = qnaMakerSubscriptionKey;
-            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync());
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(httpClient, qnaMakerSubscriptionKey, connectionString));
         }
 
         /// <summary>
@@ -69,9 +66,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         {
             await this.EnsureInitializedAsync();
 
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
             TableOperation searchOperation = TableOperation.Retrieve<KnowledgeBaseEntity>(PartitionKey, RowKey);
-            TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
+            TableResult searchResult = await this.cloudTable.ExecuteAsync(searchOperation);
 
             var result = (KnowledgeBaseEntity)searchResult.Result;
 
@@ -85,6 +81,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns><see cref="Task"/> boolean value indicating knowledgebase Id is valid or not.</returns>
         public async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
         {
+            await this.EnsureInitializedAsync();
+
             QnAMakerService qnAMakerService = new QnAMakerService(this.httpClient, this.qnaMakerSubcriptionKey);
             GetKnowledgeBaseDetailsResponse kbDetails = await qnAMakerService.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
 
@@ -107,20 +105,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         {
             await this.EnsureInitializedAsync();
 
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
             TableOperation addOrUpdateOperation = TableOperation.InsertOrMerge(knowledgeBaseEntity);
 
-            return await cloudTable.ExecuteAsync(addOrUpdateOperation);
+            return await this.cloudTable.ExecuteAsync(addOrUpdateOperation);
         }
 
         /// <summary>
         /// Create knowledge base table if it doesnt exists
         /// </summary>
+        /// <param name="httpClient">http client from the constrcutor</param>
+        /// <param name="qnaMakerSubscriptionKey">qna maker subscription key from the configuraton file</param>
+        /// <param name="connectionString">storage account connection string</param>
         /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
-        private async Task InitializeAsync()
+        private async Task InitializeAsync(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
         {
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
-            await cloudTable.CreateIfNotExistsAsync();
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.storageAccount = CloudStorageAccount.Parse(connectionString);
+            this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
+            this.qnaMakerSubcriptionKey = qnaMakerSubscriptionKey;
+
+            this.cloudTable = this.cloudTableClient.GetTableReference(KnowledgeBaseTableName);
+            await this.cloudTable.CreateIfNotExistsAsync();
         }
 
         /// <summary>
