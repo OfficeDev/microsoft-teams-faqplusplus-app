@@ -30,8 +30,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .As<TeamHelper>()
                 .SingleInstance();
 
-            builder.RegisterType<HomeController>().InstancePerRequest();
-
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

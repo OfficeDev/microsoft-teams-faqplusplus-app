@@ -45,16 +45,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 TeamId = teamId
             };
 
-            var result = await this.StoreOrUpdateTeamEntity(teamEntity);
+            var result = await this.StoreOrUpdateTeamEntityAsync(teamEntity);
 
-            if (result.HttpStatusCode != (int)HttpStatusCode.NoContent)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
         }
 
         /// <summary>
@@ -78,13 +71,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// </summary>
         /// <param name="teamEntity">Team entity.</param>
         /// <returns><see cref="Task"/> that represents team id is saved or updated.</returns>
-        private Task<TableResult> StoreOrUpdateTeamEntity(TeamEntity teamEntity)
+        private async Task<TableResult> StoreOrUpdateTeamEntityAsync(TeamEntity teamEntity)
         {
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
             cloudTable.CreateIfNotExists();
             TableOperation addorUpdateOperation = TableOperation.InsertOrMerge(teamEntity);
 
-            return cloudTable.ExecuteAsync(addorUpdateOperation);
+            return await cloudTable.ExecuteAsync(addorUpdateOperation);
         }
     }
 }
