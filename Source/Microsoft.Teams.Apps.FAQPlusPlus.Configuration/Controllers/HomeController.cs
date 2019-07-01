@@ -16,15 +16,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private TeamHelper teamHelper;
+        private ConfigurationProvider configurationPovider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
-        /// <param name="teamHelper">Team Helper.</param>
-        public HomeController(TeamHelper teamHelper)
+        /// <param name="configurationPovider">configurationPovider DI.</param>
+        public HomeController(ConfigurationProvider configurationPovider)
         {
-            this.teamHelper = teamHelper;
+            this.configurationPovider = configurationPovider;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         {
             try
             {
-                bool saved = await this.teamHelper.SaveOrUpdateTeamIdAsync(teamId);
+                bool saved = await this.configurationPovider.SaveOrUpdateTeamIdAsync(teamId);
                 if (saved)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -70,7 +70,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedTeamIdAsync()
         {
-            return await this.teamHelper.GetSavedTeamIdAsync();
+            return await this.configurationPovider.GetSavedTeamIdAsync();
         }
     }
 }

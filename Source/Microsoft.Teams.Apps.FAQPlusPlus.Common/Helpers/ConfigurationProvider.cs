@@ -1,4 +1,4 @@
-﻿// <copyright file="TeamHelper.cs" company="Microsoft">
+﻿// <copyright file="ConfigurationProvider.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
@@ -10,38 +10,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using Microsoft.WindowsAzure.Storage.Table;
 
     /// <summary>
-    /// Team Helper.
+    /// ConfigurationProvider which will help in fetching and storing information in storage table.
     /// </summary>
-    public class TeamHelper
+    public class ConfigurationProvider : IConfigurationProvider
     {
-        private const string PartitionKey = "TeamInfo";
-        private const string RowKey = "MSTeamId";
+        private const string TeamPartitionKey = "TeamInfo";
+        private const string TeamRowKey = "MSTeamId";
 
-        private static readonly string TeamTableName = StorageInfo.TeamTableName;
+        private static readonly string ConfigurationTableName = StorageInfo.ConfigurationTableName;
         private readonly CloudStorageAccount storageAccount;
         private readonly CloudTableClient cloudTableClient;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TeamHelper"/> class.
+        /// Initializes a new instance of the <see cref="ConfigurationProvider"/> class.
         /// </summary>
-        /// <param name="connectionString">connection string of storage.</param>
-        public TeamHelper(string connectionString)
+        /// <param name="connectionString">connection string of storage provided by DI</param>
+        public ConfigurationProvider(string connectionString)
         {
             this.storageAccount = CloudStorageAccount.Parse(connectionString);
             this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
         }
 
-        /// <summary>
-        /// Save or update team Id.
-        /// </summary>
-        /// <param name="teamId">Team Id received from view page</param>
-        /// <returns><see cref="Task"/> boolean value that represents if team Id is saved or updated.</returns>
+        /// <inheritdoc/>
         public async Task<bool> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            TeamEntity teamEntity = new TeamEntity()
+            ConfigurationEntity teamEntity = new ConfigurationEntity()
             {
-                PartitionKey = PartitionKey,
-                RowKey = RowKey,
+                PartitionKey = TeamPartitionKey,
+                RowKey = TeamRowKey,
                 TeamId = teamId
             };
 
@@ -50,17 +46,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
         }
 
-        /// <summary>
-        /// Get already saved team Id from storage table
-        /// </summary>
-        /// <returns><see cref="Task"/> Already saved team Id.</returns>
+        /// <inheritdoc/>
         public async Task<string> GetSavedTeamIdAsync()
         {
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
-            TableOperation searchOperation = TableOperation.Retrieve<TeamEntity>(PartitionKey, RowKey);
+            CloudTable cloudTable = this.cloudTableClient.GetTableReference(ConfigurationTableName);
+            TableOperation searchOperation = TableOperation.Retrieve<ConfigurationEntity>(TeamPartitionKey, TeamRowKey);
             TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
 
-            var result = (TeamEntity)searchResult.Result;
+            var result = (ConfigurationEntity)searchResult.Result;
             string teamId = string.IsNullOrEmpty(result?.TeamId) ? string.Empty : result.TeamId;
 
             return teamId;
@@ -71,9 +64,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// </summary>
         /// <param name="teamEntity">Team entity.</param>
         /// <returns><see cref="Task"/> that represents team id is saved or updated.</returns>
-        private async Task<TableResult> StoreOrUpdateTeamEntityAsync(TeamEntity teamEntity)
+        private async Task<TableResult> StoreOrUpdateTeamEntityAsync(ConfigurationEntity teamEntity)
         {
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(TeamTableName);
+            CloudTable cloudTable = this.cloudTableClient.GetTableReference(ConfigurationTableName);
             cloudTable.CreateIfNotExists();
             TableOperation addorUpdateOperation = TableOperation.InsertOrMerge(teamEntity);
 

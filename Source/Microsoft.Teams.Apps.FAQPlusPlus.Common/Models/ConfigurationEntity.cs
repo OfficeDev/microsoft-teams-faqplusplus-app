@@ -1,4 +1,4 @@
-﻿// <copyright file="TeamEntity.cs" company="Microsoft">
+﻿// <copyright file="ConfigurationEntity.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
@@ -8,9 +8,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Represents team entity used for storage and retrieval.
+    /// Represents configuration entity used for storage and retrieval.
     /// </summary>
-    public class TeamEntity : TableEntity
+    public class ConfigurationEntity : TableEntity
     {
         /// <summary>
         /// Gets or sets gets team Id
