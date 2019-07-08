@@ -58,8 +58,10 @@
     <Compile Include="Helpers\TeamHelper.cs" />
     <Compile Include="Models\GetKnowledgeBaseDetailsResponse.cs" />
     <Compile Include="Models\KnowledgeBaseEntity.cs" />
+    <Compile Include="Helpers\ConfigurationProvider.cs" />
+    <Compile Include="Helpers\IConfigurationProvider.cs" />
     <Compile Include="Models\StorageInfo.cs" />
-    <Compile Include="Models\TeamEntity.cs" />
+    <Compile Include="Models\ConfigurationEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

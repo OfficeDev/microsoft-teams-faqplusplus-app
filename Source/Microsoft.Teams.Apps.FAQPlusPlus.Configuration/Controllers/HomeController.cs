@@ -16,18 +16,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private readonly TeamHelper teamHelper;
-        private readonly KnowledgeBaseHelper knowledgeBaseHelper;
+        private ConfigurationProvider configurationPovider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
-        /// <param name="teamHelper">Team Helper.</param>
-        /// <param name="knowledgeBaseHelper">knowledge Base Helper.</param>
-        public HomeController(TeamHelper teamHelper, KnowledgeBaseHelper knowledgeBaseHelper)
+        /// <param name="configurationPovider">configurationPovider DI.</param>
+        public HomeController(ConfigurationProvider configurationPovider)
         {
-            this.teamHelper = teamHelper;
-            this.knowledgeBaseHelper = knowledgeBaseHelper;
+            this.configurationPovider = configurationPovider;
         }
 
         /// <summary>
@@ -48,21 +45,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            try
+            bool saved = await this.configurationPovider.SaveOrUpdateTeamIdAsync(teamId);
+            if (saved)
             {
-                bool saved = await this.teamHelper.SaveOrUpdateTeamIdAsync(teamId);
-                if (saved)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.OK);
-                }
-                else
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, unable to save data due to HTTP status code 204");
-                }
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
-            catch (Exception error)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save data due to: " + error.Message);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save team Id due to internal server error. Try again");
             }
         }
 

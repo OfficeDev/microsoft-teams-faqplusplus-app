@@ -27,8 +27,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
-            builder.Register(c => new TeamHelper(ConfigurationManager.AppSettings["StorageConnectionString"]))
-                .As<TeamHelper>()
+            builder.Register(c => new ConfigurationProvider(ConfigurationManager.AppSettings["StorageConnectionString"]))
+                .As<ConfigurationProvider>()
                 .SingleInstance();
 
             builder.Register(c => new HttpClient())
