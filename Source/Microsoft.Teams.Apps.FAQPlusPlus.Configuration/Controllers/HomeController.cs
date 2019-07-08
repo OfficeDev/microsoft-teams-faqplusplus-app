@@ -45,21 +45,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            try
+            bool saved = await this.configurationPovider.SaveOrUpdateTeamIdAsync(teamId);
+            if (saved)
             {
-                bool saved = await this.configurationPovider.SaveOrUpdateTeamIdAsync(teamId);
-                if (saved)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.OK);
-                }
-                else
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, unable to save data since Team Id already exists or server returned HTTP status code 204");
-                }
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
-            catch (Exception error)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save data due to: " + error.Message);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save team Id due to internal server error. Try again");
             }
         }
 

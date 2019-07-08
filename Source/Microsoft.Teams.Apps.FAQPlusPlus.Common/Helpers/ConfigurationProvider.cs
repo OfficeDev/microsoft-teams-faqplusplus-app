@@ -3,6 +3,7 @@
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -34,17 +35,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <inheritdoc/>
         public async Task<bool> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            ConfigurationEntity teamEntity = new ConfigurationEntity()
+            try
             {
-                PartitionKey = TeamPartitionKey,
-                RowKey = TeamRowKey,
-                TeamId = teamId
-            };
+                ConfigurationEntity teamEntity = new ConfigurationEntity()
+                {
+                    PartitionKey = TeamPartitionKey,
+                    RowKey = TeamRowKey,
+                    Data = teamId
+                };
 
-            var result = await this.StoreOrUpdateTeamEntityAsync(teamEntity);
+                var result = await this.StoreOrUpdateEntityAsync(teamEntity);
 
-            return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
-        }
+                return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
+            }
+            catch
+            {
+                return false;
+            }
+    }
 
         /// <inheritdoc/>
         public async Task<string> GetSavedTeamIdAsync()
@@ -54,23 +62,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
 
             var result = (ConfigurationEntity)searchResult.Result;
-            string teamId = string.IsNullOrEmpty(result?.TeamId) ? string.Empty : result.TeamId;
+            string teamId = string.IsNullOrEmpty(result?.Data) ? string.Empty : result.Data;
 
             return teamId;
         }
 
         /// <summary>
-        /// Store or update team entity in table storage
+        /// Store or update configuration entity in table storage
         /// </summary>
-        /// <param name="teamEntity">Team entity.</param>
-        /// <returns><see cref="Task"/> that represents team id is saved or updated.</returns>
-        private async Task<TableResult> StoreOrUpdateTeamEntityAsync(ConfigurationEntity teamEntity)
+        /// <param name="entity">entity.</param>
+        /// <returns><see cref="Task"/> that represents configuration entity is saved or updated.</returns>
+        private async Task<TableResult> StoreOrUpdateEntityAsync(ConfigurationEntity entity)
         {
             CloudTable cloudTable = this.cloudTableClient.GetTableReference(ConfigurationTableName);
             cloudTable.CreateIfNotExists();
-            TableOperation addorUpdateOperation = TableOperation.InsertOrMerge(teamEntity);
+            TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
 
-            return await cloudTable.ExecuteAsync(addorUpdateOperation);
+            return await cloudTable.ExecuteAsync(addOrUpdateOperation);
         }
     }
 }
