@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         [Required(ErrorMessage ="Enter team Id")]
         [MinLength(1)]
         [DataType(DataType.Text)]
-        [Display(Name ="Team Id")]
+        [Display(Name ="Team ID")]
         [RegularExpression(@"(\S)+", ErrorMessage = "Enter team Id which should not contain any whitespace")]
         public string TeamId { get; set; }
     }
