@@ -14,11 +14,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         /// <summary>
         /// Gets or sets team Id textbox to be used in View
         /// </summary>
-        [Required(ErrorMessage ="Team Id is required")]
+        [Required(ErrorMessage ="Enter team Id")]
         [MinLength(1)]
         [DataType(DataType.Text)]
-        [Display(Name ="Team Id")]
-        [RegularExpression(@"(\S)+", ErrorMessage = "White space is not allowed")]
+        [Display(Name ="Team ID")]
+        [RegularExpression(@"(\S)+", ErrorMessage = "Enter team Id which should not contain any whitespace")]
         public string TeamId { get; set; }
     }
 }
