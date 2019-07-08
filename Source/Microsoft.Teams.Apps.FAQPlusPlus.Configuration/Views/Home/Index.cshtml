@@ -60,28 +60,32 @@
 
     // Perform changes when Edit related UI has to be displayed
     function toggleToEdit(section) {
-        if (section === "team") {
-            $("#teamSubmitButton").val("Edit");
-            $(".teamIdTextBox").attr("disabled", "disabled");
+        switch (section) {
+            case "team":
+                $("#teamSubmitButton").val("Edit");
+                $(".teamIdTextBox").attr("disabled", "disabled");
+                break;
         }
     }
 
     // Provide the div whose icon and color needs to be changed on successful save
-    function saveSuccessIcon(storageStatusIcon) {
-        $("#" + storageStatusIcon + "").addClass("glyphicon glyphicon-ok").addClass("storageStatusIcon-success");
+    function saveSuccessIcon(statusIconId) {
+        $("#" + statusIconId + "").addClass("glyphicon glyphicon-ok").addClass("storageStatusIcon-success");
     }
 
     // Provide the div whose icon, color and text needs to be changed due to failure while save
-    function saveFailureIconAndText(storageStatusIconDiv, storageStatusMessageDiv, errorText) {
-        $("#" + storageStatusIconDiv + "").addClass("glyphicon glyphicon-remove").addClass("storageStatusIcon-failure");
-        $("#" + storageStatusMessageDiv + "").addClass("error-message alert alert-danger").text(errorText);
+    function saveFailureIconAndText(statusIconId, statusMessageId, errorText) {
+        $("#" + statusIconId + "").addClass("glyphicon glyphicon-remove").addClass("storageStatusIcon-failure");
+        $("#" + statusMessageId + "").addClass("error-message alert alert-danger").text(errorText);
     }
 
     // Clear icon and message
     function clearStatusIconAndMessage(section) {
-        if (section === "team") {
-            $("#teamStorageStatusIcon").removeAttr("class");
-            $("#teamStorageStatusMessage").removeAttr("class");
+        switch (section) {
+            case "team":
+                $("#teamStorageStatusIcon").removeAttr("class");
+                $("#teamStorageStatusMessage").removeAttr("class");
+                break;
         }
     }
 </script>

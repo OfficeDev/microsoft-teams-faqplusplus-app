@@ -65,29 +65,5 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         {
             return await this.configurationPovider.GetSavedTeamIdAsync();
         }
-
-        /// <summary>
-        /// Save or update knowledgeBaseId in table storage which is received from View
-        /// </summary>
-        /// <param name="knowledgeBaseId">KnowledgeBaseId</param>
-        /// <returns>View</returns>
-        [HttpPost]
-        public ActionResult SaveOrUpdateKnowledgeBaseId(string knowledgeBaseId)
-        {
-            // Default placeholder for implementation. Will be changed once its related changes implemented            
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        }
-
-        /// <summary>
-        /// Save or update upnEmailAddress in table storage which is received from View
-        /// </summary>
-        /// <param name="upnEmailAddress">upnEmailAddress</param>
-        /// <returns>View</returns>
-        [HttpPost]
-        public ActionResult SaveOrUpdateUpnEmailAddress(string upnEmailAddress)
-        {
-            // Default placeholder for implementation. Will be changed once its related changes implemented            
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        }
     }
 }
