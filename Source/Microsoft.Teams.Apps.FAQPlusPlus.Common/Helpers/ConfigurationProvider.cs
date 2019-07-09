@@ -27,6 +27,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string WelcomeMessagePartitionKey = "WelcomeInfo";
         private const string WelcomeMessageRowKey = "WelcomeMessage";
 
+        private const string TeamIdStartString = "19%3a";
+        private const string TeamIdEndString = "%40thread.skype";
+
         private readonly Lazy<Task> initializeTask;
         private CloudTable cloudTable;
         private HttpClient httpClient;
@@ -101,14 +104,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             try
             {
                 GetKnowledgeBaseDetailsResponse kbDetails = await this.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
-                if (kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId);
             }
             catch
             {
@@ -214,11 +210,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns>team Id as string</returns>
         private string ExtractTeamIdFromDeepLink(string teamIdDeepLink)
         {
-            string endString = "%40thread.skype";
-            int startIndex = teamIdDeepLink.IndexOf("19%3a");
-            int endIndex = teamIdDeepLink.IndexOf(endString);
+            int startIndex = teamIdDeepLink.IndexOf(TeamIdStartString);
+            int endIndex = teamIdDeepLink.IndexOf(TeamIdEndString);
 
-            return teamIdDeepLink.Substring(startIndex, endIndex - startIndex + endString.Length);
+            return teamIdDeepLink.Substring(startIndex, endIndex - startIndex + TeamIdEndString.Length);
         }
     }
 }
