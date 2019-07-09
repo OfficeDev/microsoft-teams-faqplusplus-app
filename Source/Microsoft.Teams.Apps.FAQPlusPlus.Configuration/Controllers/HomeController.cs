@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using System.Net;
     using System.Threading.Tasks;
     using System.Web.Mvc;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
 
     /// <summary>
@@ -45,7 +46,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateTeamIdAsync(teamId);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(teamId, Constants.Teams);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -63,7 +64,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedTeamIdAsync()
         {
-            return await this.teamHelper.GetSavedTeamIdAsync();
+            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.Teams);
         }
 
         /// <summary>
@@ -73,21 +74,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>View</returns>
         public async Task<ActionResult> SaveOrUpdateKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            try
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(knowledgeBaseId, Constants.KnowledgeBase);
+            if (saved)
             {
-                bool saved = await this.knowledgeBaseHelper.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
-                if (saved)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.OK);
-                }
-                else
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, unable to save data due to HTTP status code 204");
-                }
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
-            catch (Exception error)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save data due to: " + error.Message);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save knowledgebase Id due to internal server error. Try again");
             }
         }
 
@@ -99,21 +93,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            try
+            bool isValidKnowledgeBaseId = await this.configurationPovider.IsKnowledgeBaseIdValid(knowledgeBaseId);
+            if (isValidKnowledgeBaseId)
             {
-                bool isValidKnowledgeBaseId = await this.knowledgeBaseHelper.IsKnowledgeBaseIdValid(knowledgeBaseId);
-                if (isValidKnowledgeBaseId)
-                {
-                    return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
-                }
-                else
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sorry, provided knowledge base Id is not valid");
-                }
+                return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
             }
-            catch (Exception error)
+            else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to validate knowledge base Id due to: " + error.Message);
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided knowledge base Id is not valid");
             }
         }
 
@@ -124,19 +111,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedKnowledgeBaseIdAsync()
         {
-            return await this.knowledgeBaseHelper.GetSavedKnowledgeBaseIdAsync();
-        }
-
-        /// <summary>
-        /// Save or update upnEmailAddress in table storage which is received from View
-        /// </summary>
-        /// <param name="upnEmailAddress">upnEmailAddress</param>
-        /// <returns>View</returns>
-        [HttpPost]
-        public ActionResult SaveOrUpdateUpnEmailAddress(string upnEmailAddress)
-        {
-            // Default placeholder for implementation. Will be changed once its related changes implemented
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.KnowledgeBase);
         }
     }
 }

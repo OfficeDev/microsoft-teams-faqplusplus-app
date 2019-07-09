@@ -52,12 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="Helpers\IQnAMakerService.cs" />
-    <Compile Include="Helpers\KnowledgeBaseHelper.cs" />
-    <Compile Include="Helpers\QnAMakerService.cs" />
-    <Compile Include="Helpers\TeamHelper.cs" />
     <Compile Include="Models\GetKnowledgeBaseDetailsResponse.cs" />
-    <Compile Include="Models\KnowledgeBaseEntity.cs" />
     <Compile Include="Helpers\ConfigurationProvider.cs" />
     <Compile Include="Helpers\IConfigurationProvider.cs" />
     <Compile Include="Models\StorageInfo.cs" />

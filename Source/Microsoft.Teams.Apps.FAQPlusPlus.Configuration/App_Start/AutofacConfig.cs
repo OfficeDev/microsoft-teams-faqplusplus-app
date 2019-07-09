@@ -11,7 +11,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using Autofac;
     using Autofac.Integration.Mvc;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers;
 
     /// <summary>
     /// Autofac configuration
@@ -27,18 +26,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             var builder = new ContainerBuilder();
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
-            builder.Register(c => new ConfigurationProvider(ConfigurationManager.AppSettings["StorageConnectionString"]))
+            builder.Register(c => new ConfigurationProvider(
+                c.Resolve<HttpClient>(),
+                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"],
+                 ConfigurationManager.AppSettings["StorageConnectionString"]))
                 .As<ConfigurationProvider>()
                 .SingleInstance();
 
             builder.Register(c => new HttpClient())
-                .SingleInstance();
-
-            builder.Register(c => new KnowledgeBaseHelper(
-                 c.Resolve<HttpClient>(),
-                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"],
-                 ConfigurationManager.AppSettings["StorageConnectionString"]))
-                .As<KnowledgeBaseHelper>()
                 .SingleInstance();
 
             var container = builder.Build();
