@@ -9,13 +9,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     public class StorageInfo
     {
         /// <summary>
-        /// Team table name
+        /// Table name where configuration app details will be saved
         /// </summary>
-        public const string TeamTableName = "TeamInfo";
-
-        /// <summary>
-        /// Knowledge base table name
-        /// </summary>
-        public const string KnowledgeBaseTableName = "KnowledgeBaseInfo";
+        public const string ConfigurationTableName = "ConfigurationInfo";
     }
 }
