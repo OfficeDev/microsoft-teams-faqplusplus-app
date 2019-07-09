@@ -181,7 +181,7 @@
     </Compile>
     <Compile Include="Models\KnowledgeBaseViewModel.cs" />
     <Compile Include="Models\TeamViewModel.cs" />
-    <Compile Include="Models\UpnListViewModel.cs" />
+    <Compile Include="Models\WelcomeMessageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -209,7 +209,7 @@
     <Content Include="Views\Account\SignOutCallback.cshtml" />
     <Content Include="Views\Home\_KnowledgeBase.cshtml" />
     <Content Include="Views\Home\_Team.cshtml" />
-    <Content Include="Views\Home\_UpnList.cshtml" />
+    <Content Include="Views\Home\_WelcomeMessage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

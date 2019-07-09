@@ -24,13 +24,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string TeamRowKey = "MSTeamId";
         private const string KnowledgeBasePartitionKey = "KnowledgeBaseInfo";
         private const string KnowledgeBaseRowKey = "KnowledgeBaseId";
+        private const string WelcomeMessagePartitionKey = "WelcomeInfo";
+        private const string WelcomeMessageRowKey = "WelcomeMessage";
 
-        private static readonly string ConfigurationTableName = StorageInfo.ConfigurationTableName;
-
-        private readonly CloudStorageAccount storageAccount;
-        private readonly CloudTableClient cloudTableClient;
-        private readonly HttpClient httpClient;
-        private readonly string qnaMakerSubscriptionKey;
+        private readonly Lazy<Task> initializeTask;
+        private CloudTable cloudTable;
+        private HttpClient httpClient;
+        private string qnaMakerSubscriptionKey;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationProvider"/> class.
@@ -40,10 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="connectionString">connection string of storage provided by DI</param>
         public ConfigurationProvider(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
         {
-            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            this.storageAccount = CloudStorageAccount.Parse(connectionString);
-            this.cloudTableClient = this.storageAccount.CreateCloudTableClient();
-            this.qnaMakerSubscriptionKey = qnaMakerSubscriptionKey;
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(httpClient, qnaMakerSubscriptionKey, connectionString));
         }
 
         /// <inheritdoc/>
@@ -55,13 +52,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 switch (entityType)
                 {
                     case Constants.Teams:
+                        // Teams textbox in view will contain deeplink of one Teams from which
+                        // team id will be extracted and stored in table
+                        string teamIdTobeStored = this.ExtractTeamIdFromDeepLink(updatedData);
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = TeamPartitionKey,
                             RowKey = TeamRowKey,
-                            Data = updatedData
+                            Data = teamIdTobeStored
                         };
                         break;
+
                     case Constants.KnowledgeBase:
                         entity = new ConfigurationEntity()
                         {
@@ -69,6 +70,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                             RowKey = KnowledgeBaseRowKey,
                             Data = updatedData
                         };
+                        break;
+
+                    case Constants.WelcomeMessage:
+                        entity = new ConfigurationEntity()
+                        {
+                            PartitionKey = WelcomeMessagePartitionKey,
+                            RowKey = WelcomeMessageRowKey,
+                            Data = updatedData
+                        };
+                        break;
+
+                    default:
                         break;
                 }
 
@@ -88,7 +101,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             try
             {
                 GetKnowledgeBaseDetailsResponse kbDetails = await this.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
-
                 if (kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId))
                 {
                     return true;
@@ -107,28 +119,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <inheritdoc/>
         public async Task<string> GetSavedEntityDetailAsync(string entityType)
         {
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(ConfigurationTableName);
-
-            TableOperation searchOperation = null;
-
-            switch (entityType)
+            try
             {
-                case Constants.Teams:
-                    searchOperation = TableOperation.Retrieve<ConfigurationEntity>(TeamPartitionKey, TeamRowKey);
-                    break;
+                await this.EnsureInitializedAsync();
+                TableOperation searchOperation = null;
+                switch (entityType)
+                {
+                    case Constants.Teams:
+                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(TeamPartitionKey, TeamRowKey);
+                        break;
 
-                case Constants.KnowledgeBase:
-                    searchOperation = TableOperation.Retrieve<ConfigurationEntity>(KnowledgeBasePartitionKey, KnowledgeBaseRowKey);
-                    break;
-                default:
-                    break;
+                    case Constants.KnowledgeBase:
+                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(KnowledgeBasePartitionKey, KnowledgeBaseRowKey);
+                        break;
+
+                    case Constants.WelcomeMessage:
+                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(WelcomeMessagePartitionKey, WelcomeMessageRowKey);
+                        break;
+
+                    default:
+                        break;
+                }
+
+                TableResult searchResult = await this.cloudTable.ExecuteAsync(searchOperation);
+                var result = (ConfigurationEntity)searchResult.Result;
+
+                return string.IsNullOrEmpty(result?.Data) ? string.Empty : result.Data;
             }
-
-            TableResult searchResult = await cloudTable.ExecuteAsync(searchOperation);
-
-            var result = (ConfigurationEntity)searchResult.Result;
-
-            return string.IsNullOrEmpty(result?.Data) ? string.Empty : result.Data;
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         /// <inheritdoc/>
@@ -153,11 +174,51 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns><see cref="Task"/> that represents configuration entity is saved or updated.</returns>
         private async Task<TableResult> StoreOrUpdateEntityAsync(ConfigurationEntity entity)
         {
-            CloudTable cloudTable = this.cloudTableClient.GetTableReference(ConfigurationTableName);
-            cloudTable.CreateIfNotExists();
+            await this.EnsureInitializedAsync();
             TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
 
-            return await cloudTable.ExecuteAsync(addOrUpdateOperation);
+            return await this.cloudTable.ExecuteAsync(addOrUpdateOperation);
+        }
+
+        /// <summary>
+        /// Create teams table if it doesnt exists
+        /// </summary>
+        /// <param name="httpClient">http client from the constrcutor</param>
+        /// <param name="qnaMakerSubscriptionKey">qna maker subscription key from the configuraton file</param>
+        /// <param name="connectionString">storage account connection string</param>
+        /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
+        private async Task InitializeAsync(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
+        {
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.qnaMakerSubscriptionKey = qnaMakerSubscriptionKey;
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            CloudTableClient cloudTableClient = storageAccount.CreateCloudTableClient();
+            this.cloudTable = cloudTableClient.GetTableReference(StorageInfo.ConfigurationTableName);
+
+            await this.cloudTable.CreateIfNotExistsAsync();
+        }
+
+        /// <summary>
+        /// Initialization of InitializeAsync method which will help in creating table
+        /// </summary>
+        /// <returns>Task</returns>
+        private async Task EnsureInitializedAsync()
+        {
+            await this.initializeTask.Value;
+        }
+
+        /// <summary>
+        /// Based on deep link URL received find team id and return it to that it can be saved
+        /// </summary>
+        /// <param name="teamIdDeepLink">team Id deep link</param>
+        /// <returns>team Id as string</returns>
+        private string ExtractTeamIdFromDeepLink(string teamIdDeepLink)
+        {
+            string endString = "%40thread.skype";
+            int startIndex = teamIdDeepLink.IndexOf("19%3a");
+            int endIndex = teamIdDeepLink.IndexOf(endString);
+
+            return teamIdDeepLink.Substring(startIndex, endIndex - startIndex + endString.Length);
         }
     }
 }

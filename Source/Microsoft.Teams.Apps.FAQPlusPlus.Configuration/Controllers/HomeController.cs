@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private ConfigurationProvider configurationPovider;
+        private readonly ConfigurationProvider configurationPovider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
@@ -41,7 +41,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <summary>
         /// Save or update teamId in table storage which is received from View
         /// </summary>
-        /// <param name="teamId">teamId is the unique string associated with each team</param>
+        /// <param name="teamId">teamId is the unique deep link URL string associated with each team</param>
         /// <returns>View</returns>
         [HttpPost]
         public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
@@ -112,6 +112,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public async Task<string> GetSavedKnowledgeBaseIdAsync()
         {
             return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.KnowledgeBase);
+        }
+
+        /// <summary>
+        /// Save or update welcome message to be used by bot in table storage which is received from View
+        /// </summary>
+        /// <param name="welcomeMessage">welcomeMessage</param>
+        /// <returns>View</returns>
+        [HttpPost]
+        public async Task<ActionResult> SaveWelcomeMessageAsync(string welcomeMessage)
+        {
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(welcomeMessage, Constants.WelcomeMessage);
+            if (saved)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save welcome message due to internal server error. Try again");
+            }
+        }
+
+        /// <summary>
+        /// Get already saved Welcome message from table storage
+        /// </summary>
+        /// <returns>Welcome message</returns>
+        public async Task<string> GetSavedWelcomeMessageAsync()
+        {
+            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.WelcomeMessage);
         }
     }
 }

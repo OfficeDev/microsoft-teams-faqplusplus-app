@@ -22,7 +22,7 @@
     </div>
     <div class="col-lg-12">
         <div class="col-lg-8">
-            @Html.Partial("~/Views/Home/_UpnList.cshtml")
+            @Html.Partial("~/Views/Home/_WelcomeMessage.cshtml")
         </div>
     </div>
 </div>
@@ -54,14 +54,29 @@
                     toggleToEdit("knowledgeBase");
                 }
             },
-            error: function () {                
+            error: function (error) {
                 saveFailureIconAndText("knowledgeBaseStorageStatusIcon", "knowledgeBaseStorageStatusMessage", "Unable to display knowledge base Id due to HTTP: " + error.status + ", " + error.statusText);
+            }
+        });
+
+        //Display welcome message text if its saved if yes then perform edit UI changes
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetSavedWelcomeMessageAsync")',
+            success: function (result) {
+                if (result != "") {                //Display the default UI when no welcome message results are available for display
+                    $(".welcomeMessageIdTextBox").val(result);
+                    toggleToEdit("welcomeMessage");
+                }
+            },
+            error: function (error) {
+                saveFailureIconAndText("welcomeMessageStorageStatusIcon", "welcomeMessageStorageStatusMessage", "Unable to display welcome message due to HTTP: " + error.status + ", " + error.statusText);
             }
         });
     });
 
     // Display a green tick when save is success
-    function onSaveSuccess() {        
+    function onSaveSuccess() {
         var currentFormName = $(this).closest(".formToSubmit").find(".form-group").attr("data-form-name");
 
         clearStatusIconAndMessage(currentFormName);
@@ -77,7 +92,7 @@
     }
 
     // Perform changes when Edit related UI has to be displayed
-    function toggleToEdit(section) {        
+    function toggleToEdit(section) {
         $("#" + section + "SubmitButton").val("Edit");
         $("." + section + "IdTextBox").attr("disabled", "disabled");
     }
@@ -94,7 +109,7 @@
     }
 
     // Clear icon and message
-    function clearStatusIconAndMessage(section) {        
+    function clearStatusIconAndMessage(section) {
         $("#" + section + "StorageStatusIcon").removeAttr("class");
         $("#" + section + "StorageStatusMessage").removeAttr("class").text("");
     }
@@ -111,5 +126,5 @@
         else {
             currentForm.submit();
         }
-    });    
+    });
 </script>

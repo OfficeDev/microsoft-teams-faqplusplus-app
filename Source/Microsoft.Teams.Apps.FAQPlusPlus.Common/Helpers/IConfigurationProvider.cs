@@ -37,7 +37,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// Check if provided knowledgebase Id is valid or not.
         /// </summary>
         /// <param name="knowledgeBaseId">knowledge base id</param>
-        /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id valid or not</returns>
+        /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
         Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId);
     }
 }
