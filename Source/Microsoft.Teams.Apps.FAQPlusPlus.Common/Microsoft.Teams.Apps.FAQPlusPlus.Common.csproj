@@ -55,8 +55,11 @@
     <Compile Include="Models\GetKnowledgeBaseDetailsResponse.cs" />
     <Compile Include="Helpers\ConfigurationProvider.cs" />
     <Compile Include="Helpers\IConfigurationProvider.cs" />
+    <Compile Include="Models\SMEActivityEntity.cs" />
+    <Compile Include="Models\StatusEntity.cs" />
     <Compile Include="Models\StorageInfo.cs" />
     <Compile Include="Models\ConfigurationEntity.cs" />
+    <Compile Include="Models\UserActivityEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

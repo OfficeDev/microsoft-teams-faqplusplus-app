@@ -3,6 +3,7 @@
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
+    using System;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
@@ -39,5 +40,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="knowledgeBaseId">knowledge base id</param>
         /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
         Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId);
+
+        /// <summary>
+        /// Save or update table for data received from Bot.
+        /// </summary>
+        /// <param name="entityType">entityType</param>
+        /// <returns><see cref="Task"/>
+        Task<bool> SaveOrUpdateBotIncomingEntityAsync(
+            string entityType,
+            string createdBy = null,
+            string requestID = null,
+            int statusId = 0,
+            string updatedBy = null,
+            DateTime? updatedDate = null,
+            string question = null,
+            string useremail = null,
+            string firstname = null);
     }
 }
