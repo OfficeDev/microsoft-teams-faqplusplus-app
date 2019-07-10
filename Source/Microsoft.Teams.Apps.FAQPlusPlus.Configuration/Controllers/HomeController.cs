@@ -4,7 +4,6 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
-    using System;
     using System.Net;
     using System.Threading.Tasks;
     using System.Web.Mvc;
@@ -46,14 +45,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(teamId, Constants.Teams);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(teamId, Constants.TeamEntityType);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save team Id due to internal server error. Try again");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save team ID due to internal server error. Try again.");
             }
         }
 
@@ -64,7 +63,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedTeamIdAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.Teams);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.TeamEntityType);
         }
 
         /// <summary>
@@ -74,14 +73,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>View</returns>
         public async Task<ActionResult> SaveOrUpdateKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(knowledgeBaseId, Constants.KnowledgeBase);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(knowledgeBaseId, Constants.KnowledgeBaseEntityType);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save knowledgebase Id due to internal server error. Try again");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save knowledge base ID due to internal server error. Try again.");
             }
         }
 
@@ -100,7 +99,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided knowledge base Id is not valid");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided knowledge base ID is not valid.");
             }
         }
 
@@ -111,7 +110,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedKnowledgeBaseIdAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.KnowledgeBase);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityType);
         }
 
         /// <summary>
@@ -122,14 +121,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveWelcomeMessageAsync(string welcomeMessage)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(welcomeMessage, Constants.WelcomeMessage);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(welcomeMessage, Constants.WelcomeMessageEntityType);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save welcome message due to internal server error. Try again");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save welcome message due to internal server error. Try again.");
             }
         }
 
@@ -139,7 +138,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>Welcome message</returns>
         public async Task<string> GetSavedWelcomeMessageAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.WelcomeMessage);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.WelcomeMessageEntityType);
         }
     }
 }

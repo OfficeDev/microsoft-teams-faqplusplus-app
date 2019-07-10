@@ -16,12 +16,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         /// <summary>
         /// Teams string to be used in Configuration Provider for identitying the entity type
         /// </summary>
-        public const string Teams = "Teams";
+        public const string TeamEntityType = "Teams";
 
         /// <summary>
         /// KnowledgeBase string to be used in Configuration Provider for identitying the entity type
         /// </summary>
-        public const string KnowledgeBase = "KnowledgeBase";
+        public const string KnowledgeBaseEntityType = "KnowledgeBase";
 
         /// <summary>
         /// WelcomeMessage string to be used in Configuration Provider for identitying the entity type

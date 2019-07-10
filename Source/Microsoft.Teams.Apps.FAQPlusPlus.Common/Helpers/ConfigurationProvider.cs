@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
@@ -58,7 +59,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 ConfigurationEntity entity = null;
                 switch (entityType)
                 {
-                    case Constants.Teams:
+                    case Constants.TeamEntityType:
                         // Teams textbox in view will contain deeplink of one Teams from which
                         // team id will be extracted and stored in table
                         string teamIdTobeStored = this.ExtractTeamIdFromDeepLink(updatedData);
@@ -70,7 +71,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                         };
                         break;
 
-                    case Constants.KnowledgeBase:
+                    case Constants.KnowledgeBaseEntityType:
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = KnowledgeBasePartitionKey,
@@ -79,7 +80,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                         };
                         break;
 
-                    case Constants.WelcomeMessage:
+                    case Constants.WelcomeMessageEntityType:
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = WelcomeMessagePartitionKey,
@@ -192,15 +193,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 TableOperation searchOperation = null;
                 switch (entityType)
                 {
-                    case Constants.Teams:
+                    case Constants.TeamEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(TeamPartitionKey, TeamRowKey);
                         break;
 
-                    case Constants.KnowledgeBase:
+                    case Constants.KnowledgeBaseEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(KnowledgeBasePartitionKey, KnowledgeBaseRowKey);
                         break;
 
-                    case Constants.WelcomeMessage:
+                    case Constants.WelcomeMessageEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(WelcomeMessagePartitionKey, WelcomeMessageRowKey);
                         break;
 
@@ -323,7 +324,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             int startIndex = teamIdDeepLink.IndexOf(TeamIdStartString);
             int endIndex = teamIdDeepLink.IndexOf(TeamIdEndString);
 
-            return teamIdDeepLink.Substring(startIndex, endIndex - startIndex + TeamIdEndString.Length);
+            return HttpUtility.UrlDecode(teamIdDeepLink.Substring(startIndex, endIndex - startIndex + TeamIdEndString.Length));
         }
     }
 }
