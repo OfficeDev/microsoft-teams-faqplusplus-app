@@ -26,21 +26,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         /// <summary>
         /// WelcomeMessage string to be used in Configuration Provider for identitying the entity type
         /// </summary>
-        public const string WelcomeMessage = "WelcomeMessage";
+        public const string WelcomeMessageEntityType = "WelcomeMessage";
 
         /// <summary>
-        /// SMEActivity string to be used in Configuration Provider for identitying the entity type
+        /// StaticTab string to be used in Configuration Provider for identitying the entity type
         /// </summary>
-        public const string SMEActivity = "SMEActivity";
+        public const string StaticTabEntityType = "StaticTab";
 
         /// <summary>
-        /// UserActivity string to be used in Configuration Provider for identitying the entity type
+        /// Ticket string to be used in Configuration Provider for identitying the entity type
         /// </summary>
-        public const string UserActivity = "UserActivity";
+        public const string TicketEntityType = "Ticket";
 
         /// <summary>
-        /// Status string to be used in Configuration Provider for identitying the entity type
+        /// Ticket status enum to be used to identify status available for ticket
         /// </summary>
-        public const string Status = "Status";
+        public enum TicketStatus
+        {
+            /// <summary>
+            /// Close a ticket
+            /// </summary>
+            Closed = 0,
+
+            /// <summary>
+            /// Assign the ticket to SME
+            /// </summary>
+            Assign = 1,
+
+            /// <summary>
+            /// OnHold a ticket
+            /// </summary>
+            OnHold = 2
+        }
     }
 }

@@ -17,8 +17,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// </summary>
         /// <param name="updatedData">updatedData received from view page</param>
         /// <param name="entityType">entityType received from view based on which appropriate row will replaced or inserted in table storage</param>
+        /// <param name="ticketEntity">ticketEntity received from bot based on which appropriate row will replaced or inserted in table storage</param>
         /// <returns><see cref="Task"/> boolean value that represents if updated data is saved or updated successfully or not.</returns>
-        Task<bool> SaveOrUpdateEntityAsync(string updatedData, string entityType);
+        Task<bool> SaveOrUpdateEntityAsync(string updatedData, string entityType, TicketEntity ticketEntity = null);
 
         /// <summary>
         /// Get already saved entity detail from storage table
@@ -40,21 +41,5 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="knowledgeBaseId">knowledge base id</param>
         /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
         Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId);
-
-        /// <summary>
-        /// Save or update table for data received from Bot.
-        /// </summary>
-        /// <param name="entityType">entityType</param>
-        /// <returns><see cref="Task"/>
-        Task<bool> SaveOrUpdateBotIncomingEntityAsync(
-            string entityType,
-            string createdBy = null,
-            string requestID = null,
-            int statusId = 0,
-            string updatedBy = null,
-            DateTime? updatedDate = null,
-            string question = null,
-            string useremail = null,
-            string firstname = null);
     }
 }

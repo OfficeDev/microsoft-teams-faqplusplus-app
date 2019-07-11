@@ -16,16 +16,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Table name where SME activity details from bot will be saved
         /// </summary>
-        public const string SMEActivityTableName = "SMEActivity";
-
-        /// <summary>
-        /// Table name where user activity details from bot will be saved
-        /// </summary>
-        public const string UserActivityTableName = "UserActivity";
-
-        /// <summary>
-        /// Table name where SME activity status description to be used by bot will be saved
-        /// </summary>
-        public const string StatusTableName = "Status";
+        public const string TicketTableName = "Ticket";
     }
 }

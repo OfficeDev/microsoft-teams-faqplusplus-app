@@ -28,15 +28,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string KnowledgeBaseRowKey = "KnowledgeBaseId";
         private const string WelcomeMessagePartitionKey = "WelcomeInfo";
         private const string WelcomeMessageRowKey = "WelcomeMessage";
+        private const string StaticTabPartitionKey = "StaticTabInfo";
+        private const string StaticTabRowKey = "StaticTabText";
+        private const string TicketPartitionKey = "TicketInfo";
 
         private const string TeamIdStartString = "19%3a";
         private const string TeamIdEndString = "%40thread.skype";
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable configurationCloudTable;
-        private CloudTable smeCloudTable;
-        private CloudTable userCloudTable;
-        private CloudTable statusCloudTable;
+        private CloudTable ticketCloudTable;
         private HttpClient httpClient;
         private string qnaMakerSubscriptionKey;
 
@@ -52,11 +53,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         }
 
         /// <inheritdoc/>
-        public async Task<bool> SaveOrUpdateEntityAsync(string updatedData, string entityType)
+        public async Task<bool> SaveOrUpdateEntityAsync(string updatedData, string entityType, TicketEntity ticketEntity = null)
         {
             try
             {
-                ConfigurationEntity entity = null;
+                dynamic entity = null;
                 switch (entityType)
                 {
                     case Constants.TeamEntityType:
@@ -89,71 +90,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                         };
                         break;
 
-                    default:
-                        break;
-                }
-
-                var result = await this.StoreOrUpdateEntityAsync(entity);
-
-                return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> SaveOrUpdateBotIncomingEntityAsync(
-            string entityType,
-            string createdBy = null,
-            string requestID = null,
-            int statusId = 0,
-            string updatedBy = null,
-            DateTime? updatedDate = null,
-            string question = null,
-            string useremail = null,
-            string firstname = null)
-        {
-            try
-            {
-                dynamic entity = null;
-                switch (entityType)
-                {
-                    // This need to come from bot
-                    case Constants.SMEActivity:
-                        entity = new SMEActivityEntity()
+                    case Constants.StaticTabEntityType:
+                        entity = new ConfigurationEntity()
                         {
-                            PartitionKey = "SMEActivity",
-                            RowKey = requestID,
-                            CreatedBy = createdBy,
-                            CreatedDate = DateTime.UtcNow,
-                            StatusId = statusId,
-                            UpdatedBy = updatedBy,
-                            UpdatedDate = updatedDate.Value
+                            PartitionKey = StaticTabPartitionKey,
+                            RowKey = StaticTabRowKey,
+                            Data = updatedData
                         };
                         break;
 
-                    // This need to come from bot
-                    case Constants.UserActivity:
-                        entity = new UserActivityEntity()
-                        {
-                            PartitionKey = "UserActivity",
-                            RowKey = requestID,
-                            CreatedDate = DateTime.UtcNow,
-                            Question = question,
-                            UserEmail = useremail,
-                            UserFirstName = firstname
-                        };
-                        break;
-
-                    case Constants.Status:
-                        entity = new List<StatusEntity>()
-                        {
-                            new StatusEntity { PartitionKey = "Status", RowKey = "0", StatusValue = "Closed" },
-                            new StatusEntity { PartitionKey = "Status", RowKey = "1", StatusValue = "Assign" },
-                            new StatusEntity { PartitionKey = "Status", RowKey = "2", StatusValue = "On-Hold" }
-                        };
+                    case Constants.TicketEntityType:
+                        ticketEntity.PartitionKey = TicketPartitionKey;
+                        ticketEntity.RowKey = Guid.NewGuid().ToString();
+                        entity = ticketEntity;
                         break;
 
                     default:
@@ -205,6 +154,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(WelcomeMessagePartitionKey, WelcomeMessageRowKey);
                         break;
 
+                    case Constants.StaticTabEntityType:
+                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(StaticTabPartitionKey, StaticTabRowKey);
+                        break;
+
                     default:
                         break;
                 }
@@ -243,41 +196,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private async Task<TableResult> StoreOrUpdateEntityAsync(dynamic entity)
         {
             await this.EnsureInitializedAsync();
-
+            TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
             if (entity.GetType() == new ConfigurationEntity().GetType())
             {
-                TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
                 return await this.configurationCloudTable.ExecuteAsync(addOrUpdateOperation);
-            }
-            else if (entity.GetType() == new UserActivityEntity().GetType())
-            {
-                TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
-                return await this.userCloudTable.ExecuteAsync(addOrUpdateOperation);
-            }
-            else if (entity.GetType() == new SMEActivityEntity().GetType())
-            {
-                TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
-                return await this.smeCloudTable.ExecuteAsync(addOrUpdateOperation);
             }
             else
             {
-                TableOperation retrieveOperation = TableOperation.Retrieve<StatusEntity>("Status", "0");
-                TableResult retrievedResult = this.statusCloudTable.Execute(retrieveOperation);
-
-                if (retrievedResult.HttpStatusCode == (int)HttpStatusCode.NotFound)
-                {
-                    TableBatchOperation batchOperation = new TableBatchOperation();
-                    foreach (StatusEntity statusEntity in entity)
-                    {
-                        batchOperation.Insert(statusEntity);
-                    }
-
-                    var response = await this.statusCloudTable.ExecuteBatchAsync(batchOperation);
-
-                    return response[0];
-                }
-
-                return retrievedResult;
+                return await this.ticketCloudTable.ExecuteAsync(addOrUpdateOperation);
             }
         }
 
@@ -295,14 +221,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             CloudTableClient cloudTableClient = storageAccount.CreateCloudTableClient();
             this.configurationCloudTable = cloudTableClient.GetTableReference(StorageInfo.ConfigurationTableName);
-            this.smeCloudTable = cloudTableClient.GetTableReference(StorageInfo.SMEActivityTableName);
-            this.userCloudTable = cloudTableClient.GetTableReference(StorageInfo.UserActivityTableName);
-            this.statusCloudTable = cloudTableClient.GetTableReference(StorageInfo.StatusTableName);
+            this.ticketCloudTable = cloudTableClient.GetTableReference(StorageInfo.TicketTableName);
 
             await this.configurationCloudTable.CreateIfNotExistsAsync();
-            await this.smeCloudTable.CreateIfNotExistsAsync();
-            await this.userCloudTable.CreateIfNotExistsAsync();
-            await this.statusCloudTable.CreateIfNotExistsAsync();
+            await this.ticketCloudTable.CreateIfNotExistsAsync();
         }
 
         /// <summary>
