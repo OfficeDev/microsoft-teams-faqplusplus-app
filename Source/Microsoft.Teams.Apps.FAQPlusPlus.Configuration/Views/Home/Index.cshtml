@@ -22,7 +22,7 @@
     </div>
     <div class="col-lg-12">
         <div class="col-lg-8">
-            @Html.Partial("~/Views/Home/_UpnList.cshtml")
+            @Html.Partial("~/Views/Home/_WelcomeMessage.cshtml")
         </div>
     </div>
 </div>
@@ -30,42 +30,71 @@
 <script type="text/javascript">
     $(function () {
         //Display team Id if its saved if yes then perform edit UI changes
-         $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetSavedTeamIdAsync")',
-             success: function (result) {
-                 if (result != "") {                //Display the default UI when no team Id results are available for display
-                     $(".teamIdTextBox").val(result);
-                     toggleToEdit("team");
-                 }
-                },
-                error: function () {
-                    alert("Unable to display team Id");
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetSavedTeamIdAsync")',
+            success: function (result) {
+                if (result != "") {                //Display the default UI when no team Id results are available for display
+                    $(".teamIdTextBox").val(result);
+                    toggleToEdit("team");
                 }
-            });
+            },
+            error: function (error) {
+                saveFailureIconAndText("teamStorageStatusIcon", "teamStorageStatusMessage", "Unable to display team Id due to HTTP: " + error.status + ", " + error.statusText);
+            }
+        });
+
+        //Display knowledgeBase Id if its saved if yes then perform edit UI changes
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetSavedKnowledgeBaseIdAsync")',
+            success: function (result) {
+                if (result != "") {                //Display the default UI when no knowledge Id results are available for display
+                    $(".knowledgeBaseIdTextBox").val(result);
+                    toggleToEdit("knowledgeBase");
+                }
+            },
+            error: function (error) {
+                saveFailureIconAndText("knowledgeBaseStorageStatusIcon", "knowledgeBaseStorageStatusMessage", "Unable to display knowledge base Id due to HTTP: " + error.status + ", " + error.statusText);
+            }
+        });
+
+        //Display welcome message text if its saved if yes then perform edit UI changes
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetSavedWelcomeMessageAsync")',
+            success: function (result) {
+                if (result != "") {                //Display the default UI when no welcome message results are available for display
+                    $(".welcomeMessageIdTextBox").val(result);
+                    toggleToEdit("welcomeMessage");
+                }
+            },
+            error: function (error) {
+                saveFailureIconAndText("welcomeMessageStorageStatusIcon", "welcomeMessageStorageStatusMessage", "Unable to display welcome message due to HTTP: " + error.status + ", " + error.statusText);
+            }
+        });
     });
 
-    // Display a green tick when team Id save is success
-    function onTeamSaveSuccess() {
-        clearStatusIconAndMessage("team");
-        saveSuccessIcon("teamStorageStatusIcon");
-        toggleToEdit("team");
+    // Display a green tick when save is success
+    function onSaveSuccess() {
+        var currentFormName = $(this).closest(".formToSubmit").find(".form-group").attr("data-form-name");
+
+        clearStatusIconAndMessage(currentFormName);
+        saveSuccessIcon(currentFormName+"StorageStatusIcon");
+        toggleToEdit(currentFormName);
     }
 
-    // Display a red cross with error text message when team is not saved due to error
-    function onTeamSaveFailure(errorText) {
-        clearStatusIconAndMessage("team");
-        saveFailureIconAndText("teamStorageStatusIcon", "teamStorageStatusMessage", errorText.statusText);
+    // Display a red cross with error text message when save is not success due to error
+    function onSaveFailure(errorText) {
+        var currentFormName = $(this).closest(".formToSubmit").find(".form-group").attr("data-form-name");
+        clearStatusIconAndMessage(currentFormName);
+        saveFailureIconAndText(currentFormName + "StorageStatusIcon", currentFormName+"StorageStatusMessage", errorText.statusText);
     }
 
     // Perform changes when Edit related UI has to be displayed
     function toggleToEdit(section) {
-        switch (section) {
-            case "team":
-                $("#teamSubmitButton").val("Edit");
-                $(".teamIdTextBox").attr("disabled", "disabled");
-                break;
-        }
+        $("#" + section + "SubmitButton").val("Edit");
+        $("." + section + "IdTextBox").attr("disabled", "disabled");
     }
 
     // Provide the div whose icon and color needs to be changed on successful save
@@ -81,11 +110,21 @@
 
     // Clear icon and message
     function clearStatusIconAndMessage(section) {
-        switch (section) {
-            case "team":
-                $("#teamStorageStatusIcon").removeAttr("class");
-                $("#teamStorageStatusMessage").removeAttr("class");
-                break;
-        }
+        $("#" + section + "StorageStatusIcon").removeAttr("class");
+        $("#" + section + "StorageStatusMessage").removeAttr("class").text("");
     }
+
+    // Check if the button text is Edit or Ok then proceed to either form submit or disable textbox of respective section
+    // such as teams or knowledgebase
+    $(".toggleToEditButton").click(function () {
+        var currentElement = $(this);
+        var currentForm = currentElement.closest(".formToSubmit");
+        if (currentElement.val() === "Edit") {
+            currentForm.find(".toggleTextBox").removeAttr("disabled");
+            currentElement.val("OK");
+        }
+        else {
+            currentForm.submit();
+        }
+    });
 </script>
