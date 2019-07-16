@@ -32,8 +32,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string StaticTabRowKey = "StaticTabText";
         private const string TicketPartitionKey = "TicketInfo";
 
-        private const string TeamIdStartString = "19%3a";
-        private const string TeamIdEndString = "%40thread.skype";
+        private const string TeamIdEscapedStartString = "19%3a";
+        private const string TeamIdEscapedEndString = "%40thread.skype";
+        private const string TeamIdUnescapedStartString = "19:";
+        private const string TeamIdUnescapedEndString = "@thread.skype";
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable configurationCloudTable;
@@ -243,10 +245,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns>team Id as string</returns>
         private string ExtractTeamIdFromDeepLink(string teamIdDeepLink)
         {
-            int startIndex = teamIdDeepLink.IndexOf(TeamIdStartString);
-            int endIndex = teamIdDeepLink.IndexOf(TeamIdEndString);
+            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString);
+            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString);
 
-            return HttpUtility.UrlDecode(teamIdDeepLink.Substring(startIndex, endIndex - startIndex + TeamIdEndString.Length));
+            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString);
+            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString);
+
+            string teamID = string.Empty;
+
+            if (startEscapedIndex > -1 && endEscapedIndex > -1)
+            {
+                teamID = HttpUtility.UrlDecode(teamIdDeepLink.Substring(startEscapedIndex, endEscapedIndex - startEscapedIndex + TeamIdEscapedEndString.Length));
+            }
+            else if (startUnescapedIndex > -1 && endUnescapedIndex > -1)
+            {
+                teamID = teamIdDeepLink.Substring(startUnescapedIndex, endUnescapedIndex - startUnescapedIndex + TeamIdUnescapedEndString.Length);
+            }
+
+            return teamID;
         }
     }
 }
