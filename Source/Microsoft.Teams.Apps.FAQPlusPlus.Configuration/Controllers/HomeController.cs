@@ -9,7 +9,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using System.Web.Mvc;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
     /// <summary>
     /// Home Controller
