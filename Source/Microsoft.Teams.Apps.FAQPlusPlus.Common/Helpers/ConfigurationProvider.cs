@@ -104,7 +104,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         {
             try
             {
-                GetKnowledgeBaseDetailsResponse kbDetails = await this.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
+                QnAMakerService qnAMakerService = new QnAMakerService(this.httpClient, this.qnaMakerSubscriptionKey);
+                GetKnowledgeBaseDetailsResponse kbDetails = await qnAMakerService.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
                 return kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId);
             }
             catch
@@ -146,21 +147,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             catch
             {
                 return string.Empty;
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetailsAsync(string kbId)
-        {
-            var uri = $"{QnAMakerRequestUrl}/{MethodKB}/{kbId}";
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, uri))
-            {
-                httpRequest.Headers.Add(Constants.OcpApimSubscriptionKey, this.qnaMakerSubscriptionKey);
-
-                var response = await this.httpClient.SendAsync(httpRequest);
-                response.EnsureSuccessStatusCode();
-
-                return JsonConvert.DeserializeObject<GetKnowledgeBaseDetailsResponse>(await response.Content.ReadAsStringAsync());
             }
         }
 

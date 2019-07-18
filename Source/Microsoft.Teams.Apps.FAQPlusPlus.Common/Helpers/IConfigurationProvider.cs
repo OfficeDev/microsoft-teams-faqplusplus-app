@@ -27,13 +27,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         Task<string> GetSavedEntityDetailAsync(string entityType);
 
         /// <summary>
-        /// Gets Knowledge base details.
-        /// </summary>
-        /// <param name="kbId">knowledge base id</param>
-        /// <returns>Task that resolves to <see cref="GetKnowledgeBaseDetailsResponse"/>.</returns>
-        Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetailsAsync(string kbId);
-
-        /// <summary>
         /// Check if provided knowledgebase Id is valid or not.
         /// </summary>
         /// <param name="knowledgeBaseId">knowledge base id</param>

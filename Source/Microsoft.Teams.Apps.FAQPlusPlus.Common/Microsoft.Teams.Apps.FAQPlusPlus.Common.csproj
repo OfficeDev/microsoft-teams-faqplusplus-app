@@ -53,6 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="Helpers\IQnAMakerService.cs" />
+    <Compile Include="Helpers\QnAMakerService.cs" />
     <Compile Include="Models\GetKnowledgeBaseDetailsResponse.cs" />
     <Compile Include="Helpers\ConfigurationProvider.cs" />
     <Compile Include="Helpers\IConfigurationProvider.cs" />
