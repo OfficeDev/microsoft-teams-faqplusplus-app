@@ -4,6 +4,7 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System.Threading.Tasks;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
     /// <summary>
@@ -15,7 +16,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// Gets Knowledge base details.
         /// </summary>
         /// <param name="kbId">knowledge base id</param>
-        /// <returns>Task that resolves to <see cref="GetKnowledgeBaseDetailsResponse"/>.</returns>
-        Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetailsAsync(string kbId);
+        /// <returns>Task that resolves to <see cref="KnowledgebaseDTO"/>.</returns>
+        Task<KnowledgebaseDTO> GetKnowledgeBaseDetailsAsync(string kbId);
     }
 }

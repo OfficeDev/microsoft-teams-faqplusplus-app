@@ -5,6 +5,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Newtonsoft.Json;
 
@@ -13,7 +15,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     /// </summary>
     public class QnAMakerService : IQnAMakerService
     {
-        private const string QnAMakerRequestUrl = "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0";
+        private const string QnAMakerEndPoint = "https://westus.api.cognitive.microsoft.com";
         private const string MethodKB = "knowledgebases";
         private readonly string subscriptionKey;
         private readonly HttpClient httpClient;
@@ -30,18 +32,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         }
 
         /// <inheritdoc/>
-        public async Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetailsAsync(string kbId)
+        public async Task<KnowledgebaseDTO> GetKnowledgeBaseDetailsAsync(string kbId)
         {
-            var uri = $"{QnAMakerRequestUrl}/{MethodKB}/{kbId}";
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, uri))
-            {
-                httpRequest.Headers.Add(Constants.OcpApimSubscriptionKey, this.subscriptionKey);
-
-                var response = await this.httpClient.SendAsync(httpRequest);
-                response.EnsureSuccessStatusCode();
-
-                return JsonConvert.DeserializeObject<GetKnowledgeBaseDetailsResponse>(await response.Content.ReadAsStringAsync());
-            }
+            var client = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.subscriptionKey)) { Endpoint = QnAMakerEndPoint };
+            return await client.Knowledgebase.GetDetailsAsync(kbId);
         }
     }
 }

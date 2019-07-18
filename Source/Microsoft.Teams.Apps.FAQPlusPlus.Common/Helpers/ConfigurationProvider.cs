@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using System.Net.Http;
     using System.Threading.Tasks;
     using System.Web;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
@@ -105,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             try
             {
                 QnAMakerService qnAMakerService = new QnAMakerService(this.httpClient, this.qnaMakerSubscriptionKey);
-                GetKnowledgeBaseDetailsResponse kbDetails = await qnAMakerService.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
+                KnowledgebaseDTO kbDetails = await qnAMakerService.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
                 return kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId);
             }
             catch
