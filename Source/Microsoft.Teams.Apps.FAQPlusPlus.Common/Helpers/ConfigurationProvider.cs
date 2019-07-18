@@ -12,7 +12,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// ConfigurationProvider which will help in fetching and storing information in storage table.
@@ -34,18 +33,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable cloudTable;
-        private HttpClient httpClient;
         private string qnaMakerSubscriptionKey;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationProvider"/> class.
         /// </summary>
-        /// <param name="httpClient">Http client to be used.</param>
         /// <param name="qnaMakerSubscriptionKey">QnAMaker subscription key</param>
         /// <param name="connectionString">connection string of storage provided by DI</param>
-        public ConfigurationProvider(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
+        public ConfigurationProvider(string qnaMakerSubscriptionKey, string connectionString)
         {
-            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(httpClient, qnaMakerSubscriptionKey, connectionString));
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(qnaMakerSubscriptionKey, connectionString));
         }
 
         /// <inheritdoc/>
@@ -105,7 +102,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         {
             try
             {
-                QnAMakerService qnAMakerService = new QnAMakerService(this.httpClient, this.qnaMakerSubscriptionKey);
+                QnAMakerService qnAMakerService = new QnAMakerService(this.qnaMakerSubscriptionKey);
                 KnowledgebaseDTO kbDetails = await qnAMakerService.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
                 return kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId);
             }
@@ -167,13 +164,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <summary>
         /// Create teams table if it doesnt exists
         /// </summary>
-        /// <param name="httpClient">http client from the constrcutor</param>
         /// <param name="qnaMakerSubscriptionKey">qna maker subscription key from the configuraton file</param>
         /// <param name="connectionString">storage account connection string</param>
         /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
-        private async Task InitializeAsync(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
+        private async Task InitializeAsync(string qnaMakerSubscriptionKey, string connectionString)
         {
-            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.qnaMakerSubscriptionKey = qnaMakerSubscriptionKey;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             CloudTableClient cloudTableClient = storageAccount.CreateCloudTableClient();

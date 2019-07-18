@@ -27,13 +27,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
             builder.Register(c => new ConfigurationProvider(
-                c.Resolve<HttpClient>(),
                  ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"],
                  ConfigurationManager.AppSettings["StorageConnectionString"]))
                 .As<ConfigurationProvider>()
-                .SingleInstance();
-
-            builder.Register(c => new HttpClient())
                 .SingleInstance();
 
             var container = builder.Build();

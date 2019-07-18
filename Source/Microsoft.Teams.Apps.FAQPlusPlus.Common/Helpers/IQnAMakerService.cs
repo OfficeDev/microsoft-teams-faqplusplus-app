@@ -5,7 +5,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System.Threading.Tasks;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
     /// <summary>
     /// Interface of QnA Maker Service

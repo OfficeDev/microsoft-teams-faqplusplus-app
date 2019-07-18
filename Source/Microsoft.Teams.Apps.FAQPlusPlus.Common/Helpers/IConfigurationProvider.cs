@@ -4,7 +4,6 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System.Threading.Tasks;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
 
     /// <summary>
     /// Interface of Configuration App
