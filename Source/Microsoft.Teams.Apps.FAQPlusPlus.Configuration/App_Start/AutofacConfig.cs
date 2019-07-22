@@ -26,7 +26,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
             builder.Register(c => new ConfigurationProvider(
-                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"],
                  ConfigurationManager.AppSettings["StorageConnectionString"]))
                 .As<ConfigurationProvider>()
                 .SingleInstance();
