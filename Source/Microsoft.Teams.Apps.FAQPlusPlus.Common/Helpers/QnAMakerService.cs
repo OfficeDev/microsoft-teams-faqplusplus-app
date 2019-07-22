@@ -10,7 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     /// <summary>
     /// Helper for accessing QnA Maker APIs
     /// </summary>
-    public class QnAMakerService : IQnAMakerService
+    public class QnAMakerService
     {
         private const string QnAMakerEndPoint = "https://westus.api.cognitive.microsoft.com";
         private readonly string subscriptionKey;
@@ -24,7 +24,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             this.subscriptionKey = subscriptionKey;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Gets Knowledge base details.
+        /// </summary>
+        /// <param name="kbId">knowledge base id</param>
+        /// <returns>Task that resolves to <see cref="GetKnowledgeBaseDetailsAsync"/>.</returns>
         public async Task<KnowledgebaseDTO> GetKnowledgeBaseDetailsAsync(string kbId)
         {
             var client = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.subscriptionKey)) { Endpoint = QnAMakerEndPoint };
