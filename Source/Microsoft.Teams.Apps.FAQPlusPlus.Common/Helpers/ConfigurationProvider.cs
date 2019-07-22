@@ -27,16 +27,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable cloudTable;
-        private string qnaMakerSubscriptionKey;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationProvider"/> class.
         /// </summary>
-        /// <param name="qnaMakerSubscriptionKey">QnAMaker subscription key</param>
         /// <param name="connectionString">connection string of storage provided by DI</param>
-        public ConfigurationProvider(string qnaMakerSubscriptionKey, string connectionString)
+        public ConfigurationProvider(string connectionString)
         {
-            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(qnaMakerSubscriptionKey, connectionString));
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(connectionString));
         }
 
         /// <inheritdoc/>
@@ -140,12 +138,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <summary>
         /// Create teams table if it doesnt exists
         /// </summary>
-        /// <param name="qnaMakerSubscriptionKey">qna maker subscription key from the configuraton file</param>
         /// <param name="connectionString">storage account connection string</param>
         /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
-        private async Task InitializeAsync(string qnaMakerSubscriptionKey, string connectionString)
+        private async Task InitializeAsync(string connectionString)
         {
-            this.qnaMakerSubscriptionKey = qnaMakerSubscriptionKey;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             CloudTableClient cloudTableClient = storageAccount.CreateCloudTableClient();
             this.cloudTable = cloudTableClient.GetTableReference(StorageInfo.ConfigurationTableName);
