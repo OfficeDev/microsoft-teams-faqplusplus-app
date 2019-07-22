@@ -24,12 +24,5 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <param name="entityType">entityType received from view based on which appropriate row data will be fetched</param>
         /// <returns><see cref="Task"/> Already saved entity detail</returns>
         Task<string> GetSavedEntityDetailAsync(string entityType);
-
-        /// <summary>
-        /// Check if provided knowledgebase Id is valid or not.
-        /// </summary>
-        /// <param name="knowledgeBaseId">knowledge base id</param>
-        /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
-        Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId);
     }
 }

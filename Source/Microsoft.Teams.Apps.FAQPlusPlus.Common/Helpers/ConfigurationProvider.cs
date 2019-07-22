@@ -5,10 +5,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System;
     using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
-    using System.Web;
-    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
@@ -27,9 +24,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string KnowledgeBaseRowKey = "KnowledgeBaseId";
         private const string WelcomeMessagePartitionKey = "WelcomeInfo";
         private const string WelcomeMessageRowKey = "WelcomeMessage";
-
-        private const string TeamIdStartString = "19%3a";
-        private const string TeamIdEndString = "%40thread.skype";
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable cloudTable;
@@ -54,14 +48,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 switch (entityType)
                 {
                     case Constants.TeamEntityType:
-                        // Teams textbox in view will contain deeplink of one Teams from which
-                        // team id will be extracted and stored in table
-                        string teamIdTobeStored = this.ExtractTeamIdFromDeepLink(updatedData);
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = TeamPartitionKey,
                             RowKey = TeamRowKey,
-                            Data = teamIdTobeStored
+                            Data = updatedData
                         };
                         break;
 
@@ -90,21 +81,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 var result = await this.StoreOrUpdateEntityAsync(entity);
 
                 return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
-        {
-            try
-            {
-                QnAMakerService qnAMakerService = new QnAMakerService(this.qnaMakerSubscriptionKey);
-                KnowledgebaseDTO kbDetails = await qnAMakerService.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
-                return kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId);
             }
             catch
             {
@@ -184,19 +160,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private async Task EnsureInitializedAsync()
         {
             await this.initializeTask.Value;
-        }
-
-        /// <summary>
-        /// Based on deep link URL received find team id and return it to that it can be saved
-        /// </summary>
-        /// <param name="teamIdDeepLink">team Id deep link</param>
-        /// <returns>team Id as string</returns>
-        private string ExtractTeamIdFromDeepLink(string teamIdDeepLink)
-        {
-            int startIndex = teamIdDeepLink.IndexOf(TeamIdStartString);
-            int endIndex = teamIdDeepLink.IndexOf(TeamIdEndString);
-
-            return HttpUtility.UrlDecode(teamIdDeepLink.Substring(startIndex, endIndex - startIndex + TeamIdEndString.Length));
         }
     }
 }

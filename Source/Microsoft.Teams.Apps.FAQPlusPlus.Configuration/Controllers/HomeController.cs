@@ -6,6 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
     using System.Net;
     using System.Threading.Tasks;
+    using System.Web;
     using System.Web.Mvc;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
@@ -16,15 +17,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private const string TeamIdStartString = "19%3a";
+        private const string TeamIdEndString = "%40thread.skype";
+
         private readonly ConfigurationProvider configurationPovider;
+        private readonly QnAMakerService qnaMakerService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="configurationPovider">configurationPovider DI.</param>
-        public HomeController(ConfigurationProvider configurationPovider)
+        /// <param name="qnaMakerService">qnaMakerService DI.</param>
+        public HomeController(ConfigurationProvider configurationPovider, QnAMakerService qnaMakerService)
         {
             this.configurationPovider = configurationPovider;
+            this.qnaMakerService = qnaMakerService;
         }
 
         /// <summary>
@@ -35,6 +42,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public ActionResult Index()
         {
             return this.View();
+        }
+
+        /// <summary>
+        /// Parse team Id from first and then proceed to save it on success
+        /// </summary>
+        /// <param name="teamId">teamId is the unique string</param>
+        /// <returns>View</returns>
+        [HttpPost]
+        public async Task<ActionResult> ParseAndSaveTeamIdAsync(string teamId)
+        {
+            string teamIdAfterParse = this.ParseTeamIdFromDeepLink(teamId);
+            if (!string.IsNullOrEmpty(teamIdAfterParse))
+            {
+                return await this.SaveOrUpdateTeamIdAsync(teamIdAfterParse);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided team ID is not valid.");
+            }
         }
 
         /// <summary>
@@ -92,7 +118,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            bool isValidKnowledgeBaseId = await this.configurationPovider.IsKnowledgeBaseIdValid(knowledgeBaseId);
+            bool isValidKnowledgeBaseId = await this.IsKnowledgeBaseIdValid(knowledgeBaseId);
             if (isValidKnowledgeBaseId)
             {
                 return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
@@ -139,6 +165,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public async Task<string> GetSavedWelcomeMessageAsync()
         {
             return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.WelcomeMessageEntityType);
+        }
+
+        /// <summary>
+        /// Based on deep link URL received find team id and return it to that it can be saved
+        /// </summary>
+        /// <param name="teamIdDeepLink">team Id deep link</param>
+        /// <returns>team Id as string</returns>
+        private string ParseTeamIdFromDeepLink(string teamIdDeepLink)
+        {
+            int startIndex = teamIdDeepLink.IndexOf(TeamIdStartString);
+            int endIndex = teamIdDeepLink.IndexOf(TeamIdEndString);
+
+            return HttpUtility.UrlDecode(teamIdDeepLink.Substring(startIndex, endIndex - startIndex + TeamIdEndString.Length));
+        }
+
+        /// <summary>
+        /// Check if provided knowledgebase Id is valid or not.
+        /// </summary>
+        /// <param name="knowledgeBaseId">knowledge base id</param>
+        /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
+        private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
+        {
+            var kbIdDetail = await this.qnaMakerService.GetKnowledgeBaseIdAsync(knowledgeBaseId);
+            return kbIdDetail != string.Empty && kbIdDetail.Equals(knowledgeBaseId);
         }
     }
 }

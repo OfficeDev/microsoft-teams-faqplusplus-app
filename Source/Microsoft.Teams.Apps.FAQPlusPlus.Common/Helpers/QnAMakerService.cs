@@ -28,11 +28,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// Gets Knowledge base details.
         /// </summary>
         /// <param name="kbId">knowledge base id</param>
-        /// <returns>Task that resolves to <see cref="GetKnowledgeBaseDetailsAsync"/>.</returns>
-        public async Task<KnowledgebaseDTO> GetKnowledgeBaseDetailsAsync(string kbId)
+        /// <returns>Task that resolves to <see cref="GetKnowledgeBaseIdAsync"/>.</returns>
+        public async Task<string> GetKnowledgeBaseIdAsync(string kbId)
         {
-            var client = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.subscriptionKey)) { Endpoint = QnAMakerEndPoint };
-            return await client.Knowledgebase.GetDetailsAsync(kbId);
+            try
+            {
+                var client = new QnAMakerClient(new ApiKeyServiceClientCredentials(this.subscriptionKey)) { Endpoint = QnAMakerEndPoint };
+                KnowledgebaseDTO kbFromQnAMakerService = await client.Knowledgebase.GetDetailsAsync(kbId);
+
+                return kbFromQnAMakerService.Id;
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }
