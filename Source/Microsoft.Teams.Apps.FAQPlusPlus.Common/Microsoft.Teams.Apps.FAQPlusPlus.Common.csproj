@@ -66,11 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="Helpers\ITicketProvider.cs" />
+    <Compile Include="Helpers\ITicketsProvider.cs" />
     <Compile Include="Helpers\QnAMakerService.cs" />
     <Compile Include="Helpers\ConfigurationProvider.cs" />
     <Compile Include="Helpers\IConfigurationProvider.cs" />
-    <Compile Include="Helpers\TicketProvider.cs" />
+    <Compile Include="Helpers\TicketsProvider.cs" />
     <Compile Include="Models\TicketEntity.cs" />
     <Compile Include="Models\StorageInfo.cs" />
     <Compile Include="Models\ConfigurationEntity.cs" />

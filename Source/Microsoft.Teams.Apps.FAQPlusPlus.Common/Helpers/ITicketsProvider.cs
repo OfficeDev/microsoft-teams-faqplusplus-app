@@ -1,15 +1,16 @@
-﻿// <copyright file="ITicketProvider.cs" company="Microsoft">
+﻿// <copyright file="ITicketsProvider.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.WindowsAzure.Storage.Table;
 
     /// <summary>
-    /// Interface of Ticket provider
+    /// Interface of Tickets provider
     /// </summary>
-    public interface ITicketProvider
+    public interface ITicketsProvider
     {
         /// <summary>
         /// Save or update ticket entity.
@@ -23,6 +24,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// </summary>
         /// <param name="rowKey">rowKey received from bot based on which appropriate row data will be fetched</param>
         /// <returns><see cref="Task"/> Already saved entity detail</returns>
-        Task<WindowsAzure.Storage.Table.TableResult> GetSavedTicketEntityDetailAsync(string rowKey);
+        Task<TableResult> GetSavedTicketEntityDetailAsync(string rowKey);
     }
 }

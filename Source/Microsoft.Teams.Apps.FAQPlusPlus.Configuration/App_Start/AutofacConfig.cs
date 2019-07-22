@@ -35,9 +35,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .As<QnAMakerService>()
                 .SingleInstance();
 
-            builder.Register(c => new TicketProvider(
+            builder.Register(c => new TicketsProvider(
                  ConfigurationManager.AppSettings["StorageConnectionString"]))
-                .As<TicketProvider>()
+                .As<TicketsProvider>()
                 .SingleInstance();
 
             var container = builder.Build();

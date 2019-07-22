@@ -23,7 +23,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         private const string TeamIdUnescapedEndString = "@thread.skype";
 
         private readonly ConfigurationProvider configurationPovider;
-        private readonly TicketProvider ticketProvider;
         private readonly QnAMakerService qnaMakerService;
 
         /// <summary>
@@ -31,12 +30,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// </summary>
         /// <param name="configurationPovider">configurationPovider DI.</param>
         /// <param name="qnaMakerService">qnaMakerService DI.</param>
-        /// <param name="ticketProvider">ticketProvider DI.</param>
-        public HomeController(ConfigurationProvider configurationPovider, QnAMakerService qnaMakerService, TicketProvider ticketProvider)
+        public HomeController(ConfigurationProvider configurationPovider, QnAMakerService qnaMakerService)
         {
             this.configurationPovider = configurationPovider;
             this.qnaMakerService = qnaMakerService;
-            this.ticketProvider = ticketProvider;
         }
 
         /// <summary>

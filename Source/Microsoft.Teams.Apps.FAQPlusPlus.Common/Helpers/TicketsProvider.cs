@@ -1,4 +1,4 @@
-﻿// <copyright file="TicketProvider.cs" company="Microsoft">
+﻿// <copyright file="TicketsProvider.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
@@ -11,9 +11,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using Microsoft.WindowsAzure.Storage.Table;
 
     /// <summary>
-    /// TicketProvider which will help in fetching and storing information in storage table.
+    /// TicketProviders which will help in fetching and storing information in storage table.
     /// </summary>
-    public class TicketProvider : ITicketProvider
+    public class TicketsProvider : ITicketsProvider
     {
         private const string PartitionKey = "TicketInfo";
 
@@ -21,10 +21,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private CloudTable ticketCloudTable;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TicketProvider"/> class.
+        /// Initializes a new instance of the <see cref="TicketsProvider"/> class.
         /// </summary>
         /// <param name="connectionString">connection string of storage provided by DI</param>
-        public TicketProvider(string connectionString)
+        public TicketsProvider(string connectionString)
         {
             this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(connectionString));
         }
