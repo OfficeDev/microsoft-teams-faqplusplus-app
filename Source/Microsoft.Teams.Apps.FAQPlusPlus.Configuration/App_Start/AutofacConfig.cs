@@ -35,6 +35,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .As<QnAMakerService>()
                 .SingleInstance();
 
+            builder.Register(c => new TicketProvider(
+                 ConfigurationManager.AppSettings["StorageConnectionString"]))
+                .As<TicketProvider>()
+                .SingleInstance();
+
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

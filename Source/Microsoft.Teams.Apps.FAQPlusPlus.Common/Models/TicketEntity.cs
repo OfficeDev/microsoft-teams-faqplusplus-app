@@ -13,10 +13,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     public class TicketEntity : TableEntity
     {
         /// <summary>
-        /// Gets or sets unique ticket Id which is stored in table storage
+        /// Gets unique ticket Id which is stored in table storage
         /// </summary>
         [JsonProperty("TicketId")]
-        public string TicketId { get; set; }
+        public string TicketId
+        {
+            get
+            {
+                return this.RowKey;
+            }
+        }
 
         /// <summary>
         /// Gets or sets comments as text about the ticket which will be stored in table storage

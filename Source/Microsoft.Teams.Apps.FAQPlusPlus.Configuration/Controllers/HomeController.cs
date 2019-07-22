@@ -17,10 +17,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        private const string TeamIdStartString = "19%3a";
-        private const string TeamIdEndString = "%40thread.skype";
+        private const string TeamIdEscapedStartString = "19%3a";
+        private const string TeamIdEscapedEndString = "%40thread.skype";
+        private const string TeamIdUnescapedStartString = "19:";
+        private const string TeamIdUnescapedEndString = "@thread.skype";
 
         private readonly ConfigurationProvider configurationPovider;
+        private readonly TicketProvider ticketProvider;
         private readonly QnAMakerService qnaMakerService;
 
         /// <summary>
@@ -28,10 +31,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// </summary>
         /// <param name="configurationPovider">configurationPovider DI.</param>
         /// <param name="qnaMakerService">qnaMakerService DI.</param>
-        public HomeController(ConfigurationProvider configurationPovider, QnAMakerService qnaMakerService)
+        /// <param name="ticketProvider">ticketProvider DI.</param>
+        public HomeController(ConfigurationProvider configurationPovider, QnAMakerService qnaMakerService, TicketProvider ticketProvider)
         {
             this.configurationPovider = configurationPovider;
             this.qnaMakerService = qnaMakerService;
+            this.ticketProvider = ticketProvider;
         }
 
         /// <summary>
@@ -168,32 +173,41 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// Save or update static tab text to be used by bot in table storage which is received from View
+        /// Based on deep link URL received find team id and return it to that it can be saved
         /// </summary>
-        /// <param name="staticTabText">staticTabText</param>
-        /// <returns>View</returns>
-        [HttpPost]
-        public async Task<ActionResult> SaveStaticTabTextAsync(string staticTabText)
+        /// <param name="teamIdDeepLink">team Id deep link</param>
+        /// <returns>team Id as string</returns>
+        private string ParseTeamIdFromDeepLink(string teamIdDeepLink)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, Constants.StaticTabEntityType);
-            if (saved)
+            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString);
+            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString);
+
+            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString);
+            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString);
+
+            string teamID = string.Empty;
+
+            if (startEscapedIndex > -1 && endEscapedIndex > -1)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.OK);
+                teamID = HttpUtility.UrlDecode(teamIdDeepLink.Substring(startEscapedIndex, endEscapedIndex - startEscapedIndex + TeamIdEscapedEndString.Length));
             }
-            else
+            else if (startUnescapedIndex > -1 && endUnescapedIndex > -1)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save static tab text due to internal server error. Try again.");
+                teamID = teamIdDeepLink.Substring(startUnescapedIndex, endUnescapedIndex - startUnescapedIndex + TeamIdUnescapedEndString.Length);
             }
+
+            return teamID;
         }
 
         /// <summary>
-        /// Get already saved static tab message from table storage
+        /// Check if provided knowledgebase Id is valid or not.
         /// </summary>
-        /// <returns>Static tab text</returns>
-        [AllowAnonymous]
-        public async Task<string> GetSavedStaticTabTextAsync()
+        /// <param name="knowledgeBaseId">knowledge base id</param>
+        /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
+        private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.StaticTabEntityType);
+            var kbIdDetail = await this.qnaMakerService.GetKnowledgeBaseIdAsync(knowledgeBaseId);
+            return kbIdDetail != string.Empty && kbIdDetail.Equals(knowledgeBaseId);
         }
     }
 }

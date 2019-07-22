@@ -180,7 +180,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\KnowledgeBaseViewModel.cs" />
-    <Compile Include="Models\StaticTabViewModel.cs" />
     <Compile Include="Models\TeamViewModel.cs" />
     <Compile Include="Models\WelcomeMessageViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -219,7 +218,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Views\Home\_StaticTab.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
