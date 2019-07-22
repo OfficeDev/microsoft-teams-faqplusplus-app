@@ -170,6 +170,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
+        /// Save or update static tab text to be used by bot in table storage which is received from View
+        /// </summary>
+        /// <param name="staticTabText">staticTabText</param>
+        /// <returns>View</returns>
+        [HttpPost]
+        public async Task<ActionResult> SaveStaticTabTextAsync(string staticTabText)
+        {
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, Constants.StaticTabEntityType);
+            if (saved)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save static tab text due to internal server error. Try again.");
+            }
+        }
+
+        /// <summary>
+        /// Get already saved static tab message from table storage
+        /// </summary>
+        /// <returns>Static tab text</returns>
+        [AllowAnonymous]
+        public async Task<string> GetSavedStaticTabTextAsync()
+        {
+            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.StaticTabEntityType);
+        }
+
+        /// <summary>
         /// Based on deep link URL received find team id and return it to that it can be saved
         /// </summary>
         /// <param name="teamIdDeepLink">team Id deep link</param>
