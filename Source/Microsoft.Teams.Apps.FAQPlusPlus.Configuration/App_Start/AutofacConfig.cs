@@ -5,7 +5,6 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 {
     using System.Configuration;
-    using System.Net.Http;
     using System.Reflection;
     using System.Web.Mvc;
     using Autofac;
@@ -27,13 +26,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
 
             builder.Register(c => new ConfigurationProvider(
-                c.Resolve<HttpClient>(),
-                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"],
                  ConfigurationManager.AppSettings["StorageConnectionString"]))
                 .As<ConfigurationProvider>()
                 .SingleInstance();
 
-            builder.Register(c => new HttpClient())
+            builder.Register(c => new QnAMakerService(
+                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"]))
+                .As<QnAMakerService>()
                 .SingleInstance();
 
             var container = builder.Build();

@@ -6,13 +6,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
     using System;
     using System.Collections.Generic;
     using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
-    using System.Web;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// ConfigurationProvider which will help in fetching and storing information in storage table.
@@ -46,12 +43,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigurationProvider"/> class.
         /// </summary>
-        /// <param name="httpClient">Http client to be used.</param>
-        /// <param name="qnaMakerSubscriptionKey">QnAMaker subscription key</param>
         /// <param name="connectionString">connection string of storage provided by DI</param>
-        public ConfigurationProvider(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
+        public ConfigurationProvider(string connectionString)
         {
-            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(httpClient, qnaMakerSubscriptionKey, connectionString));
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(connectionString));
         }
 
         /// <inheritdoc/>
@@ -63,14 +58,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                 switch (entityType)
                 {
                     case Constants.TeamEntityType:
-                        // Teams textbox in view will contain deeplink of one Teams from which
-                        // team id will be extracted and stored in table
-                        string teamIdTobeStored = this.ExtractTeamIdFromDeepLink(updatedData);
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = TeamPartitionKey,
                             RowKey = TeamRowKey,
-                            Data = teamIdTobeStored
+                            Data = updatedData
                         };
                         break;
 
@@ -122,20 +114,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         }
 
         /// <inheritdoc/>
-        public async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
-        {
-            try
-            {
-                GetKnowledgeBaseDetailsResponse kbDetails = await this.GetKnowledgeBaseDetailsAsync(knowledgeBaseId);
-                return kbDetails != null && kbDetails.Id.Equals(knowledgeBaseId);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
         public async Task<string> GetSavedEntityDetailAsync(string entityType)
         {
             try
@@ -175,21 +153,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             }
         }
 
-        /// <inheritdoc/>
-        public async Task<GetKnowledgeBaseDetailsResponse> GetKnowledgeBaseDetailsAsync(string kbId)
-        {
-            var uri = $"{QnAMakerRequestUrl}/{MethodKB}/{kbId}";
-            using (var httpRequest = new HttpRequestMessage(HttpMethod.Get, uri))
-            {
-                httpRequest.Headers.Add(Constants.OcpApimSubscriptionKey, this.qnaMakerSubscriptionKey);
-
-                var response = await this.httpClient.SendAsync(httpRequest);
-                response.EnsureSuccessStatusCode();
-
-                return JsonConvert.DeserializeObject<GetKnowledgeBaseDetailsResponse>(await response.Content.ReadAsStringAsync());
-            }
-        }
-
         /// <summary>
         /// Store or update configuration entity in table storage
         /// </summary>
@@ -212,14 +175,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <summary>
         /// Create teams table if it doesnt exists
         /// </summary>
-        /// <param name="httpClient">http client from the constrcutor</param>
-        /// <param name="qnaMakerSubscriptionKey">qna maker subscription key from the configuraton file</param>
         /// <param name="connectionString">storage account connection string</param>
         /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
-        private async Task InitializeAsync(HttpClient httpClient, string qnaMakerSubscriptionKey, string connectionString)
+        private async Task InitializeAsync(string connectionString)
         {
-            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            this.qnaMakerSubscriptionKey = qnaMakerSubscriptionKey;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             CloudTableClient cloudTableClient = storageAccount.CreateCloudTableClient();
             this.configurationCloudTable = cloudTableClient.GetTableReference(StorageInfo.ConfigurationTableName);

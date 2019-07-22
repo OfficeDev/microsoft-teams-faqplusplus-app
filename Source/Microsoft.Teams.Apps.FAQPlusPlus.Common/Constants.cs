@@ -9,11 +9,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
     public class Constants
     {
         /// <summary>
-        /// Constant QnaMaker subscription key
-        /// </summary>
-        public const string OcpApimSubscriptionKey = "Ocp-Apim-Subscription-Key";
-
-        /// <summary>
         /// Teams string to be used in Configuration Provider for identitying the entity type
         /// </summary>
         public const string TeamEntityType = "Teams";
