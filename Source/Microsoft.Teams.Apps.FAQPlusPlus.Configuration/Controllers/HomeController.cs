@@ -192,7 +192,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Get already saved static tab message from table storage
         /// </summary>
         /// <returns>Static tab text</returns>
-        [AllowAnonymous]
         public async Task<string> GetSavedStaticTabTextAsync()
         {
             return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.StaticTabEntityType);
