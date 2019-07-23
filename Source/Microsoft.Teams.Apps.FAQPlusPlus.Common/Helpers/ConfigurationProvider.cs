@@ -4,7 +4,6 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System;
-    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -155,7 +154,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             CloudTableClient cloudTableClient = storageAccount.CreateCloudTableClient();
             this.configurationCloudTable = cloudTableClient.GetTableReference(StorageInfo.ConfigurationTableName);
-
             await this.configurationCloudTable.CreateIfNotExistsAsync();
         }
 

@@ -5,7 +5,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 {
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
-    using Microsoft.WindowsAzure.Storage.Table;
 
     /// <summary>
     /// Interface of Tickets provider
@@ -24,6 +23,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// </summary>
         /// <param name="rowKey">rowKey received from bot based on which appropriate row data will be fetched</param>
         /// <returns><see cref="Task"/> Already saved entity detail</returns>
-        Task<TableResult> GetSavedTicketEntityDetailAsync(string rowKey);
+        Task<TicketEntity> GetSavedTicketEntityDetailAsync(string rowKey);
     }
 }

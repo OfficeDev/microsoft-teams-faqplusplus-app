@@ -9,6 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using System.Web.Mvc;
     using Autofac;
     using Autofac.Integration.Mvc;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
 
     /// <summary>
@@ -30,14 +31,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                 .As<ConfigurationProvider>()
                 .SingleInstance();
 
-            builder.Register(c => new QnAMakerService(
-                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"]))
-                .As<QnAMakerService>()
-                .SingleInstance();
+            var qnaMakerClient = new QnAMakerClient(
+                new ApiKeyServiceClientCredentials(
+                ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"]))
+                { Endpoint = ConfigurationManager.AppSettings["QnAMakerEndPoint"] };
 
-            builder.Register(c => new TicketsProvider(
-                 ConfigurationManager.AppSettings["StorageConnectionString"]))
-                .As<TicketsProvider>()
+            builder.Register(c => qnaMakerClient)
+                .As<IQnAMakerClient>()
                 .SingleInstance();
 
             var container = builder.Build();
