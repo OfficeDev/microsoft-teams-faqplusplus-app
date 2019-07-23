@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
 
@@ -23,17 +24,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         private const string TeamIdUnescapedEndString = "@thread.skype";
 
         private readonly ConfigurationProvider configurationPovider;
-        private readonly QnAMakerService qnaMakerService;
+        private readonly IQnAMakerClient qnaMakerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="configurationPovider">configurationPovider DI.</param>
-        /// <param name="qnaMakerService">qnaMakerService DI.</param>
-        public HomeController(ConfigurationProvider configurationPovider, QnAMakerService qnaMakerService)
+        /// <param name="qnaMakerClient">qnaMakerClient DI.</param>
+        public HomeController(ConfigurationProvider configurationPovider, IQnAMakerClient qnaMakerClient)
         {
             this.configurationPovider = configurationPovider;
-            this.qnaMakerService = qnaMakerService;
+            this.qnaMakerClient = qnaMakerClient;
         }
 
         /// <summary>
@@ -203,8 +204,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
         private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
         {
-            var kbIdDetail = await this.qnaMakerService.GetKnowledgeBaseIdAsync(knowledgeBaseId);
-            return kbIdDetail != string.Empty && kbIdDetail.Equals(knowledgeBaseId);
+            try
+            {
+                var kbIdDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId);
+
+                return kbIdDetail.Id == knowledgeBaseId;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

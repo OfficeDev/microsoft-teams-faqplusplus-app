@@ -36,35 +36,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         /// <returns><see cref="Task"/> that represents configuration entity is saved or updated.</returns>
         public async Task<bool> SaveOrUpdateTicketEntityAsync(TicketEntity ticketEntity)
         {
-            try
-            {
                 ticketEntity.PartitionKey = PartitionKey;
                 var result = await this.StoreOrUpdateTicketEntityAsync(ticketEntity);
 
                 return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         /// <inheritdoc/>
-        public async Task<TableResult> GetSavedTicketEntityDetailAsync(string rowKey)
+        public async Task<TicketEntity> GetSavedTicketEntityDetailAsync(string rowKey)
         {
+            await this.EnsureInitializedAsync();
             TableResult searchResult = null;
-            try
-            {
-                await this.EnsureInitializedAsync();
-                TableOperation searchOperation = TableOperation.Retrieve<TicketEntity>(PartitionKey, rowKey);
-                searchResult = await this.ticketCloudTable.ExecuteAsync(searchOperation);
-                var result = (TicketEntity)searchResult.Result;
-            }
-            catch
-            {
-            }
+            TableOperation searchOperation = TableOperation.Retrieve<TicketEntity>(PartitionKey, rowKey);
+            searchResult = await this.ticketCloudTable.ExecuteAsync(searchOperation);
 
-            return searchResult;
+            return (TicketEntity)searchResult.Result;
         }
 
         /// <summary>
@@ -81,7 +67,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         }
 
         /// <summary>
-        /// Create teams table if it doesnt exists
+        /// Create tickets table if it doesnt exists
         /// </summary>
         /// <param name="connectionString">storage account connection string</param>
         /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>

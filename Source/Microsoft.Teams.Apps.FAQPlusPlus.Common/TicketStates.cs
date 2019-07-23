@@ -4,29 +4,18 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
 {
     /// <summary>
-    /// Class contains the ticket states
+    /// Represents the current status of a ticket
     /// </summary>
-    public class TicketStates
+    public enum TicketState
     {
         /// <summary>
-        /// Ticket state enum to be used to identify states available for ticket
+        /// Represents an active ticket
         /// </summary>
-        public enum TicketState
-        {
-            /// <summary>
-            /// Close a ticket
-            /// </summary>
-            Closed = 0,
+        Open = 0,
 
-            /// <summary>
-            /// Open a already closed ticket
-            /// </summary>
-            Open = 1,
-
-            /// <summary>
-            /// Assign the ticket to SME
-            /// </summary>
-            Assigned = 2,
-        }
+        /// <summary>
+        /// Represents a ticket that requires no further action
+        /// </summary>
+        Closed = 1,
     }
 }
