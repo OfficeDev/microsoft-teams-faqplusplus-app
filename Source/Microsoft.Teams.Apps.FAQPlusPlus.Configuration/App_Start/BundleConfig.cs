@@ -37,7 +37,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/lib/bootstrap/dist/css/bootstrap.min.css",
-                      "~/Content/customizableStyle.css"));
+                      "~/Content/customizableStyle.css",
+                      "~/Content/spinner.css"));
         }
     }
 }
