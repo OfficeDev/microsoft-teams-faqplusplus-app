@@ -19,6 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
         private const string TeamRowKey = "MSTeamId";
         private const string KnowledgeBaseRowKey = "KnowledgeBaseId";
         private const string WelcomeMessageRowKey = "WelcomeMessage";
+        private const string StaticTabRowKey = "StaticTabText";
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable configurationCloudTable;
@@ -67,6 +68,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
                         };
                         break;
 
+                    case Constants.StaticTabEntityType:
+                        entity = new ConfigurationEntity()
+                        {
+                            PartitionKey = PartitionKey,
+                            RowKey = StaticTabRowKey,
+                            Data = updatedData
+                        };
+                        break;
+
                     default:
                         break;
                 }
@@ -100,6 +110,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
 
                     case Constants.WelcomeMessageEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, WelcomeMessageRowKey);
+                        break;
+
+                    case Constants.StaticTabEntityType:
+                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, StaticTabRowKey);
                         break;
 
                     default:

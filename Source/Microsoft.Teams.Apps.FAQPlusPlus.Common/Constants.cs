@@ -22,5 +22,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
         /// WelcomeMessage string to be used in Configuration Provider for identitying the entity type
         /// </summary>
         public const string WelcomeMessageEntityType = "WelcomeMessage";
+
+        /// <summary>
+        /// StaticTab string to be used in Configuration Provider for identitying the entity type
+        /// </summary>
+        public const string StaticTabEntityType = "StaticTab";
     }
 }
