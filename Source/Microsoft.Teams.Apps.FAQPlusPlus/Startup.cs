@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus
 {
+    using Microsoft.ApplicationInsights;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
@@ -13,32 +14,48 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
 
+    /// <summary>
+    /// This a Startup class for this Bot.
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="configuration">Startup Configuration.</param>
         public Startup(IConfiguration configuration)
         {
             this.Configuration = configuration;
         }
 
+        /// <summary>
+        /// Gets Configurations Interfaces.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"> Service Collection Interface.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            // Create the credential provider to be used with the Bot Framework Adapter.
+            services.AddSingleton<Common.Helpers.IConfigurationProvider>(new Common.Helpers.ConfigurationProvider(this.Configuration["StorageConnectionString"]));
+            services.AddHttpClient();
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
-
-            // Create the Bot Framework Adapter.
+            services.AddSingleton<ITicketsProvider>(new Common.Helpers.TicketsProvider(this.Configuration["StorageConnectionString"]));
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
-
-            // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, FaqPlusPlusBot>();
+            services.AddSingleton<TelemetryClient>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">Application Builder.</param>
+        /// <param name="env">Hosting Environment.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())

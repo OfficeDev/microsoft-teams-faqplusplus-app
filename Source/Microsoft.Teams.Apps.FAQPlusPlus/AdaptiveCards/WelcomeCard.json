@@ -1,0 +1,95 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        
+        {
+          "type": "TextBlock",
+          "spacing": "None",
+          "weight": "bolder",
+          "text": "%welcomeText1%",
+          "isSubtle": true
+        },
+        {
+          "type": "ColumnSet",
+          "columns": [
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "Image",
+                  "spacing": "None",
+                  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Sophia_at_the_AI_for_Good_Global_Summit_2018_%2827254369347%29_%28cropped%29.jpg/220px-Sophia_at_the_AI_for_Good_Global_Summit_2018_%2827254369347%29_%28cropped%29.jpg",
+                  "size": "small"
+                }
+              ],
+              "width": "auto"
+            },
+            {
+              "type": "Column",
+              "items": [
+                {
+                  "type": "TextBlock",
+                  "horizontalAlignment": "left",
+                  "size": "small",
+                  "weight": "bolder",
+                  "text": "%welcomeText2%",
+                  "wrap": true
+                }
+              ],
+              "width": "auto"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "horizontalAlignment": "left",
+          "spacing": "None",
+          "weight": "bolder",
+          "color": "dark",
+          "text": "%messageText1%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "horizontalAlignment": "left",
+          "spacing": "None",
+          "color": "dark",
+          "text": "%bulletedList%",
+          "wrap": true
+        },
+
+        {
+          "type": "TextBlock",
+          "horizontalAlignment": "left",
+          "spacing": "None",
+          "color": "dark",
+          "text": "%messageText2%",
+          "wrap": true
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "%takeATourButtonText%",
+      "data": {
+        "msteams": {
+          "type": "messageBack",
+          "displayText": "%takeATourButtonText%",
+          "text": "take a tour"
+        }
+      }
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0"
+}

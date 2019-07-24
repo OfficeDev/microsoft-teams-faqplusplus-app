@@ -1,0 +1,95 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "id": "SMEQuestion",
+          "text": "%questionLineText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%answerLineText%",
+          "wrap": true
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.ShowCard",
+      "title": "%askAnExpertButtonText%",
+      "card": {
+        "type": "AdaptiveCard",
+        "style": "emphasis",
+        "body": [
+          {
+            "type": "Input.Text",
+            "id": "questionForExpert",
+            "isMultiline": true,
+            "value": "%resultQuestionText%"
+          }
+
+        ],
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "%submitButtonText%",
+            "data": {
+              "msteams": {
+                "type": "messageBack",
+                "displayText": "QuestionForExpert",
+                "text": "QuestionForExpert"
+              }
+            }
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    },
+    {
+      "type": "Action.ShowCard",
+      "title": "%shareResultsFeedbackButtonText%",
+      "card": {
+        "type": "AdaptiveCard",
+        "style": "emphasis",
+        "body": [
+          {
+            "type": "Input.Text",
+            "id": "SMEAnswer",
+            "isMultiline": true,
+            "value": "%resultAnswerText%"
+          },
+          {
+            "type": "Input.Text",
+            "id": "resultsFeedback",
+            "maxLenght": "300",
+            "isMultiline": true,
+            "placeholder": "%resultsFeedbackDetails%"
+          }
+
+        ],
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "%submitButtonText%",
+            "data": {
+              "msteams": {
+                "type": "messageBack",
+                "displayText": "Result Feedback",
+                "text": "ResultsFeedback"
+              }
+            }
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0"
+}

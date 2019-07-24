@@ -1,0 +1,29 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "weight": "bolder",
+          "text": "%cardTitleText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%cardContentText%",
+          "wrap": true
+        },
+        {
+          "type": "Image",
+          "horizontalAlignment": "Center",
+          "url": "%carouselImage%",
+          "size": "large"
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0"
+}
