@@ -78,7 +78,6 @@
     // Display a green tick when save is success
     function onSaveSuccess() {
         var currentFormName = $(this).closest(".formToSubmit").find(".form-group").attr("data-form-name");
-
         clearStatusIconAndMessage(currentFormName);
         saveSuccessIcon(currentFormName+"StorageStatusIcon");
         toggleToEdit(currentFormName);

@@ -6,7 +6,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
     using System.Net;
     using System.Threading.Tasks;
+    using System.Web;
     using System.Web.Mvc;
+    using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
 
@@ -16,15 +18,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private const string TeamIdEscapedStartString = "19%3a";
+        private const string TeamIdEscapedEndString = "%40thread.skype";
+        private const string TeamIdUnescapedStartString = "19:";
+        private const string TeamIdUnescapedEndString = "@thread.skype";
+
         private readonly ConfigurationProvider configurationPovider;
+        private readonly IQnAMakerClient qnaMakerClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeController"/> class.
         /// </summary>
         /// <param name="configurationPovider">configurationPovider DI.</param>
-        public HomeController(ConfigurationProvider configurationPovider)
+        /// <param name="qnaMakerClient">qnaMakerClient DI.</param>
+        public HomeController(ConfigurationProvider configurationPovider, IQnAMakerClient qnaMakerClient)
         {
             this.configurationPovider = configurationPovider;
+            this.qnaMakerClient = qnaMakerClient;
         }
 
         /// <summary>
@@ -35,6 +45,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public ActionResult Index()
         {
             return this.View();
+        }
+
+        /// <summary>
+        /// Parse team Id from first and then proceed to save it on success
+        /// </summary>
+        /// <param name="teamId">teamId is the unique string</param>
+        /// <returns>View</returns>
+        [HttpPost]
+        public async Task<ActionResult> ParseAndSaveTeamIdAsync(string teamId)
+        {
+            string teamIdAfterParse = this.ParseTeamIdFromDeepLink(teamId);
+            if (!string.IsNullOrEmpty(teamIdAfterParse))
+            {
+                return await this.SaveOrUpdateTeamIdAsync(teamIdAfterParse);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided team ID is not valid.");
+            }
         }
 
         /// <summary>
@@ -92,7 +121,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> ValidateAndSaveKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            bool isValidKnowledgeBaseId = await this.configurationPovider.IsKnowledgeBaseIdValid(knowledgeBaseId);
+            bool isValidKnowledgeBaseId = await this.IsKnowledgeBaseIdValid(knowledgeBaseId);
             if (isValidKnowledgeBaseId)
             {
                 return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
@@ -139,6 +168,52 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public async Task<string> GetSavedWelcomeMessageAsync()
         {
             return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.WelcomeMessageEntityType);
+        }
+
+        /// <summary>
+        /// Based on deep link URL received find team id and return it to that it can be saved
+        /// </summary>
+        /// <param name="teamIdDeepLink">team Id deep link</param>
+        /// <returns>team Id as string</returns>
+        private string ParseTeamIdFromDeepLink(string teamIdDeepLink)
+        {
+            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString);
+            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString);
+
+            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString);
+            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString);
+
+            string teamID = string.Empty;
+
+            if (startEscapedIndex > -1 && endEscapedIndex > -1)
+            {
+                teamID = HttpUtility.UrlDecode(teamIdDeepLink.Substring(startEscapedIndex, endEscapedIndex - startEscapedIndex + TeamIdEscapedEndString.Length));
+            }
+            else if (startUnescapedIndex > -1 && endUnescapedIndex > -1)
+            {
+                teamID = teamIdDeepLink.Substring(startUnescapedIndex, endUnescapedIndex - startUnescapedIndex + TeamIdUnescapedEndString.Length);
+            }
+
+            return teamID;
+        }
+
+        /// <summary>
+        /// Check if provided knowledgebase Id is valid or not.
+        /// </summary>
+        /// <param name="knowledgeBaseId">knowledge base id</param>
+        /// <returns><see cref="Task"/> boolean value indicating provided knowledgebase Id is valid or not</returns>
+        private async Task<bool> IsKnowledgeBaseIdValid(string knowledgeBaseId)
+        {
+            try
+            {
+                var kbIdDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId);
+
+                return kbIdDetail.Id == knowledgeBaseId;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

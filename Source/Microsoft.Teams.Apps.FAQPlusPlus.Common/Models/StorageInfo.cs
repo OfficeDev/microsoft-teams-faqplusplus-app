@@ -12,5 +12,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// Table name where configuration app details will be saved
         /// </summary>
         public const string ConfigurationTableName = "ConfigurationInfo";
+
+        /// <summary>
+        /// Table name where SME activity details from bot will be saved
+        /// </summary>
+        public const string TicketTableName = "Tickets";
     }
 }
