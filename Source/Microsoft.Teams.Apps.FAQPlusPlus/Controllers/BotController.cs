@@ -12,6 +12,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
     // This ASP Controller is created to handle a request. Dependency Injection will provide the Adapter and IBot
     // implementation at runtime. Multiple different IBot implementations running at different endpoints can be
     // achieved by specifying a more specific type for the bot constructor argument.
+
+    /// <summary>
+    /// This is a Bot controller class includes all API's related to this Bot.
+    /// </summary>
     [Route("api/messages")]
     [ApiController]
     public class BotController : ControllerBase
@@ -19,12 +23,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         private readonly IBotFrameworkHttpAdapter adapter;
         private readonly IBot bot;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BotController"/> class.
+        /// </summary>
+        /// <param name="adapter">Bot adapter.</param>
+        /// <param name="bot"> Bot Interface.</param>
         public BotController(IBotFrameworkHttpAdapter adapter, IBot bot)
         {
             this.adapter = adapter;
             this.bot = bot;
         }
 
+        /// <summary>
+        /// Executing the Post Async method.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         [HttpPost]
         public async Task PostAsync()
         {

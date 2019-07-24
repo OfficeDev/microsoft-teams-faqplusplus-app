@@ -1,0 +1,90 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "size": "medium",
+          "weight": "bolder",
+          "text": "%incomingTitleText%",
+          "color": "Attention"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "%incomingSubtitleText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%incomingQuestionText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%incomingAnswerText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%incomingFeedbackText%",
+          "wrap": true
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "%chatTextButton%",
+      "url": "https://teams.microsoft.com/l/chat/0/0?users=%personUpn%"
+    },
+    {
+      "type": "Action.ShowCard",
+      "title": "%statusShowCardHeader%",
+      "card": {
+        "type": "AdaptiveCard",
+        "style": "emphasis",
+        "body": [
+          {
+            "type": "Input.ChoiceSet",
+            "id": "statuscode",
+            "style": "compact",
+            "isMultiSelect": false,
+            "value": "1",
+            "choices": [
+              {
+                "title": "%openStatusText%",
+                "value": "1"
+              },
+              {
+                "title": "%assignStatusText%",
+                "value": "2"
+              },
+              {
+                "title": "%closeStatusText%",
+                "value": "3"
+              }
+            ]
+          }
+
+        ],
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "title": "%submitButtonText%"
+          }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
+      }
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0"
+}

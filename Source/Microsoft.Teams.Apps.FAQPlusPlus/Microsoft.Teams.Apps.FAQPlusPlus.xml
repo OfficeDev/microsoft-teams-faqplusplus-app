@@ -1,0 +1,883 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Teams.Apps.FAQPlusPlus</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.AskAnExpertCard">
+            <summary>
+             This class process an AskAnExpert Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.AskAnExpertCard.GetCard(System.Collections.Generic.List{Microsoft.Teams.Apps.FAQPlusPlus.Models.UserDetails})">
+            <summary>
+            This method will construct the adaptive card as an Attachment using JSON template.
+            </summary>
+            <returns>Ask an Expert as an Attachment.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.AskAnExpertCarousel">
+            <summary>
+             This class process an Welcome Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.AskAnExpertCarousel.GetCard">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ConfirmationCard">
+            <summary>
+            The class is responsible to generate Confirmation card upon user posting question to the SME team.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ConfirmationCard.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ConfirmationCard"/> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ConfirmationCard.GetCard">
+            <summary>
+            Method that would return the JSON string of the Confirmation adaptive card.
+            </summary>
+            <returns>The JSON string for the adaptive card.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.FunctionalCard">
+            <summary>
+             This class process an Functional Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.FunctionalCard.GetCard">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.IncomingSMEEnquiryCard">
+            <summary>
+            The class responsible generating the adaptive card representing asking an expert.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.IncomingSMEEnquiryCard.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.IncomingSMEEnquiryCard"/> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.IncomingSMEEnquiryCard.GetCard(System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Method that would return the JSON string.
+            </summary>
+            <param name="feedbackType">The feedback type - in this case, it's Ask an Expert.</param>
+            <param name="questionForExpert">The question being asked to the SME team.</param>
+            <param name="personName">The person asking the question.</param>
+            <param name="personEmail">The email of the person who asked the question.</param>
+            <returns>The card JSON string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.MyRequestsCard">
+            <summary>
+             This is class process My Requests Bot Command.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.MyRequestsCard.GetCard">
+            <summary>
+            This method will construct the adaptive card as an Attachment using JSON template.
+            </summary>
+            <returns>Ask an Expert as an Attachment.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ResponseAdaptiveCard">
+            <summary>
+             This class process an Welcome Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ResponseAdaptiveCard.GetCard(System.String,System.String)">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <param name="question">The question that the user asks the bot.</param>
+            <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ShareFeedbackCard">
+            <summary>
+             This class process an ShareFeedback Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ShareFeedbackCard.GetCard(System.Collections.Generic.List{Microsoft.Teams.Apps.FAQPlusPlus.Models.UserDetails})">
+            <summary>
+            This method will construct the "Feedback" adaptive card as an Attachment using JSON template.
+            </summary>
+            <returns>Feedback as an Attachment.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ShareFeedbackCarousel">
+            <summary>
+             This class process an ShareFeedbackCarousell Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ShareFeedbackCarousel.GetCard">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.TeamChatCarousel">
+            <summary>
+             This class process an Team Chat Carousel Card.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.TeamChatCarousel.GetCard">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.TeamFunctionCarousel">
+            <summary>
+             This class process an Team Function Card.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.TeamFunctionCarousel.GetCard">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.TeamQueryCarousel">
+            <summary>
+             This class process an Team Query Carousel Card.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.TeamQueryCarousel.GetCard">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ThankYouAdaptiveCard">
+            <summary>
+            The class responsible for having the Thank You adaptive card generated.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ThankYouAdaptiveCard.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ThankYouAdaptiveCard"/> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.ThankYouAdaptiveCard.GetCard">
+            <summary>
+            Method that would return the JSON string of the Thank You adaptive card.
+            </summary>
+            <returns>The JSON string for the adaptive card.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.UnrecognizedInput">
+            <summary>
+             This class process an Welcome Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.UnrecognizedInput.GetCard(System.String)">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <param name="question">The question that the user asks the bot.</param>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.WelcomeCard">
+            <summary>
+             This class process an Welcome Card function.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.WelcomeCard.GetCard(System.String)">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.WelcomeTeamCard">
+            <summary>
+             This class process an Welcome Card when installed in Team scope.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards.WelcomeTeamCard.GetCard(System.String,System.String)">
+            <summary>
+            This method performs a function that helps with localization using Resx file.
+            </summary>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.CardHelper">
+            <summary>
+             This is a common class that builds adaptive card attachment for adaptive cards.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.CardHelper.GenerateCardBody(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            This method constructs the Json replacing the values using Resx files.
+            </summary>
+            <param name="cardBody">Sends the Adaptive cardbody as Json String.</param>
+            <param name="variablesToValues">.</param>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.CardHelper.GenerateCardAttachment(System.String)">
+            <summary>
+            This method creates the card attachment using the Json.
+            </summary>
+            <param name="cardBody">Sends the Adaptive card body as Json String.</param>
+            <returns>Card attachment as Json string.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations.UserInputValidations">
+            <summary>
+             This Class Validates the User fields in Adaptive cards.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations.UserInputValidations.Validate(Microsoft.Bot.Builder.ITurnContext,System.Threading.CancellationToken)">
+            <summary>
+             Validates the User fields in Adaptive cards.
+            </summary>
+            <param name="turnContext">The current turn.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Return bool value.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot">
+            <summary>
+             This Class Invokes all Bot Conversation functionalities.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot.#ctor(Microsoft.ApplicationInsights.TelemetryClient,Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers.IconfigurationProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot"/> class.
+            </summary>
+            <param name="telemetryClient"> Telemetry Client.</param>
+            <param name="configurationProvider">configuration Provider </param>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot.OnMessageActivityAsync(Microsoft.Bot.Builder.ITurnContext{Microsoft.Bot.Schema.IMessageActivity},System.Threading.CancellationToken)">
+            <summary>
+            The method that gets invoked each time there is a message that is coming in.
+            </summary>
+            <param name="turnContext">The current turn.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A unit of execution.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot.OnMembersAddedAsync(System.Collections.Generic.IList{Microsoft.Bot.Schema.ChannelAccount},Microsoft.Bot.Builder.ITurnContext{Microsoft.Bot.Schema.IConversationUpdateActivity},System.Threading.CancellationToken)">
+            <summary>
+            The method that gets invoked when the bot is first opened after installation.
+            </summary>
+            <param name="membersAdded">The account that has been either added or interacting with the bot.</param>
+            <param name="turnContext">The current turn/execution flow.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A unit of Execution.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot.SendCardsAsync(Microsoft.Bot.Builder.ITurnContext{Microsoft.Bot.Schema.IMessageActivity},System.Threading.CancellationToken)">
+            <summary>
+            Sends the Appropriate Adaptive Card to the user for the respective command.
+            </summary>
+            <param name="context">The current turn/execution flow.</param>
+            <param name="cancellationToken">The cancellation Token.</param>
+            <returns>Returns appropriate adaptive card.<see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.configurationCredentialProvider">
+            <summary>
+             This class handles bot configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.configurationCredentialProvider.#ctor(Microsoft.Extensions.configuration.Iconfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.configurationCredentialProvider"/> class.
+            </summary>
+            <param name="configuration">configuration.</param>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Controllers.BotController">
+            <summary>
+            This is a Bot controller class includes all API's related to this Bot.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Controllers.BotController.#ctor(Microsoft.Bot.Builder.Integration.AspNet.Core.IBotFrameworkHttpAdapter,Microsoft.Bot.Builder.IBot)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.Controllers.BotController"/> class.
+            </summary>
+            <param name="adapter">Bot adapter.</param>
+            <param name="bot"> Bot Interface.</param>
+            <returns>A unit of Execution.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Controllers.BotController.PostAsync">
+            <summary>
+            Executing the Post Async method.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.Task"/> representing the result of the asynchronous operation.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider">
+            <summary>
+             This is a Class Provides logic for Card Attachments and QnA maker service.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider.UpdateFeedbackActivity(Microsoft.Bot.Builder.ITurnContext,Microsoft.Bot.Schema.Attachment,System.Threading.CancellationToken)">
+            <summary>
+            Sends the Thank you Adaptive Card to the user.
+            </summary>
+            <param name="turnContext">The current turn/execution flow.</param>
+            <param name="cancellationToken">The cancellation Token.</param>
+            <returns>Thank you Card.<see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider.CreateTeamTourCardCarouselAttachment">
+            <summary>
+            Displays Carousel of Tour Cards when bot is added to a team scope.
+            </summary>
+            <returns>The Tour Adaptive card.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider.CreateTourCardCarouselAttachment">
+            <summary>
+            Displays Carousel of Tour Cards- for personal scope.
+            </summary>
+            <returns>The Tour Adaptive card.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider.GetAnswerFromQnAResource(System.String,System.String,System.String,System.String,Microsoft.Bot.Builder.ITurnContext{Microsoft.Bot.Schema.IMessageActivity})">
+            <summary>
+            Method that will be able to get an answer from the QnAMaker resource.
+            </summary>
+            <param name="uri">The request uri.</param>
+            <param name="question">The question that is asked to the bot.</param>
+            <param name="endpointKey">The QnAMaker endpoint key.</param>
+            <param name="rankerType">The ranker type.</param>
+            <param name="turnContext">The turn context.</param>
+            <returns>A unit of execution.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider.BroadcastTeamMessage(Microsoft.Bot.Builder.ITurnContext,System.Threading.CancellationToken)">
+            <summary>
+            Sends the message to SME team upon collection feedback and question from the user.
+            </summary>
+            <param name="turnContext">The current turn/execution flow.</param>
+            <param name="cancellationToken">The cancellation Token.</param>
+            <returns>Notification to SME team channel.<see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider.NotifyTeam(Microsoft.Bot.Connector.ConnectorClient,Microsoft.Bot.Schema.Attachment,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Message to SME team through adaptive card, upon user sending feedback and question to SME team through bot.
+            </summary>
+            <param name="connectorClient">Connects to client .</param>
+            <param name="attachmentToSend">sends Adaptive card.</param>
+            <param name="cancellationToken">The cancellation Token.</param>
+            <returns>Message to the SME Team.<see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.FAQPlusPlusBotProvider.CreateMyRequestsAttachment">
+            <summary>
+            Returns a list of last 10 requests as Attachments.
+            </summary>
+            <returns>Last 10 SME requests.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Models.Answer">
+            <summary>
+             This is a model class for Answers.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Answer.questions">
+            <summary>
+            Gets or sets the Questions.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Answer.answer">
+            <summary>
+            Gets or sets the Answer.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Answer.score">
+            <summary>
+            Gets or sets the Score.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Answer.source">
+            <summary>
+            Gets or sets the Source.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Answer.context">
+            <summary>
+            Gets or sets the context.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Models.Context">
+            <summary>
+            Gets or Sets the context navigation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Context.isContextOnly">
+            <summary>
+            Gets or sets a value isContextOnly.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Models.Feedback">
+            <summary>
+            The feedback data model.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Feedback.AppFeedback">
+            <summary>
+            Gets or sets the application feedback.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Feedback.SMEQuestion">
+            <summary>
+            Gets or sets the results relevancy.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Feedback.QuestionForExpert">
+            <summary>
+            Gets or sets the question for the expert being asked by the user.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Feedback.SMEAnswer">
+            <summary>
+            Gets or sets the question for the expert being asked by the user.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Feedback.ResultsFeedback">
+            <summary>
+            Gets or sets the question for the expert being asked by the user.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME">
+            <summary>
+            Gets the Recent requests of the user.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.RequestId">
+            <summary>
+            Gets or sets Request Id.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.UserName">
+            <summary>
+            Gets or sets  End user name.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.UserEmailAddress">
+            <summary>
+            Gets or sets  End user email Id.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.QuestionDescription">
+            <summary>
+            Gets or sets End user Question.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.FeedbackDescription">
+            <summary>
+            Gets or sets End user Feedback description.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.CreatedDate">
+            <summary>
+            Gets or sets request created date.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.CompletedDate">
+            <summary>
+            Gets or sets request completed date.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.Status">
+            <summary>
+            Gets or sets status of the request.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.IncomingRequestToSME.AssignedTo">
+            <summary>
+            Gets or sets SME user name.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Models.Response">
+            <summary>
+            This class will be responsible to model the response that is returned after querying the QnAMaker KB.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Models.Response.answers">
+            <summary>
+            Gets or sets the answers that are returned from the KB.
+            </summary>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Program">
+            <summary>
+            This a Program  main class for this Bot.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Program.Main(System.String[])">
+            <summary>
+            This main class for this Bot.
+            </summary>
+            <param name="args">String of Arguments.</param>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Program.CreateWebHostBuilder(System.String[])">
+            <summary>
+            This method will hit the Startup Method to set up the complete bot services.
+            </summary>
+            <param name="args">String of Arguments.</param>
+            <returns>A unit of Execution.</returns>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AnswerLineText">
+            <summary>
+              Looks up a localized string similar to Here is what I found : {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AskAnExpertButtonText">
+            <summary>
+              Looks up a localized string similar to Ask An Expert.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AskAnExpertFunctionText">
+            <summary>
+              Looks up a localized string similar to You can always ask me to connect to an expert, an expert will connect with you:\n Ask an Expert..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AskAnExpertPlaceholderText">
+            <summary>
+              Looks up a localized string similar to Type your detailed question and supporting details here..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AskAnExpertText1">
+            <summary>
+              Looks up a localized string similar to Ask An Expert.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AskAnExpertText2">
+            <summary>
+              Looks up a localized string similar to We have our experts to assist you better  on any of your questions. You can always connect to our Experts..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.BotName">
+            <summary>
+              Looks up a localized string similar to FAQ Bot.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.BulletedList">
+            <summary>
+              Looks up a localized string similar to - 401k\r- Travel Benifits\r-  Leave Policy\r- Health Benifits.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.BulletedQuestionText">
+            <summary>
+              Looks up a localized string similar to - May I know my 401k policy?\n- May I know the Travel Policy of the org?\n-  What about the Leave Policy?\n- What are the Health benefits?.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ChatTextButton">
+            <summary>
+              Looks up a localized string similar to Chat with {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ChatWithRequestor">
+            <summary>
+              Looks up a localized string similar to Your Chat Requested User is {0} :.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.CollectFeedback">
+            <summary>
+              Looks up a localized string similar to Answer the questions suggesting how we can improve our services or just leave the comments..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.CompletedDate">
+            <summary>
+              Looks up a localized string similar to Your Completed Date is {0} :.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ConfirmationAdaptiveCardContent">
+            <summary>
+              Looks up a localized string similar to Your Question has been posted to our expert team.Someone from the team will get back to you in some time..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ConfirmationCardTitleText">
+            <summary>
+              Looks up a localized string similar to Confirmation!.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.CreatedDate">
+            <summary>
+              Looks up a localized string similar to Your Created Date is {0}:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.CustomMessage">
+            <summary>
+              Looks up a localized string similar to I didn&apos;t find anything. Do you want me to ask an expert..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.DateText">
+            <summary>
+              Looks up a localized string similar to Date: .
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.DescriptionText">
+            <summary>
+              Looks up a localized string similar to Description: .
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.EmailPlaceholderText">
+            <summary>
+              Looks up a localized string similar to {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FeedbackDescriptionPlaceholderText">
+            <summary>
+              Looks up a localized string similar to Type your detailed feedback and supporting details here..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FeedbackHeaderText">
+            <summary>
+              Looks up a localized string similar to Feedback.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FeedbackText1">
+            <summary>
+              Looks up a localized string similar to We would love to hear a feedback from you on how we have performed today..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FeedbackText2">
+            <summary>
+              Looks up a localized string similar to If your experience is unhappy give us the details you have for your question,like your assigned ticket #, one of our experts will connect with you..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FunctionCardText1">
+            <summary>
+              Looks up a localized string similar to Ask A Question!.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FunctionCardText2">
+            <summary>
+              Looks up a localized string similar to I am your QnA bot, you can ask me a question and I will answer you back if I know the answer..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FunctionTopicsText">
+            <summary>
+              Looks up a localized string similar to Ask me questions  like:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.IncomingAppFeedbackDetailsText">
+            <summary>
+              Looks up a localized string similar to Details: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.IncomingAppFeedbackSubjectLine">
+            <summary>
+              Looks up a localized string similar to Subject: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.IncomingAskAnExpertSMECardHeader">
+            <summary>
+              Looks up a localized string similar to Your Expert Cardheader is {0} :.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.IncomingFeedbackSMECardHeader">
+            <summary>
+              Looks up a localized string similar to Your Feedback Cardheader is {0} :.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.IncomingFeedbackSubHeaderText">
+            <summary>
+              Looks up a localized string similar to {0} shares {1}. The details are as follows:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.LastTenRequestsText">
+            <summary>
+              Looks up a localized string similar to Following are your last 10 requests:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.MessageText1">
+            <summary>
+              Looks up a localized string similar to Here is what I can help you with:.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.MessageText2">
+            <summary>
+              Looks up a localized string similar to If you are curious about what I can do, just type @FAQBot and I will present the list of commands that I can understand..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.NamePlaceholderText">
+            <summary>
+              Looks up a localized string similar to {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.NotAssigned">
+            <summary>
+              Looks up a localized string similar to assigned value is.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.QuestionForExpertSubHeaderText">
+            <summary>
+              Looks up a localized string similar to {0} has asked a question, it&apos;s important to take a look at their inquiry!.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.QuestionLineText">
+            <summary>
+              Looks up a localized string similar to Your Request : {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.RequestIdText">
+            <summary>
+              Looks up a localized string similar to Requested Id Text is {0} :.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.RequestText">
+            <summary>
+              Looks up a localized string similar to Request #.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ResultAnswerText">
+            <summary>
+              Looks up a localized string similar to {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ResultQuestionText">
+            <summary>
+              Looks up a localized string similar to Question: {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.Resultsfeedbackdetails">
+            <summary>
+              Looks up a localized string similar to Enter Feedback for above Result.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.SendButtonText">
+            <summary>
+              Looks up a localized string similar to App Feedback.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.SendDisplayText">
+            <summary>
+              Looks up a localized string similar to Send.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ShareAppFeedbackButtonText">
+            <summary>
+              Looks up a localized string similar to Share App Feedback.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ShareFeedbackTitleText">
+            <summary>
+              Looks up a localized string similar to Share Feedback.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.StatusText">
+            <summary>
+              Looks up a localized string similar to Status: .
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.String1">
+            <summary>
+              Looks up a localized string similar to .
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.SubmitButtonText">
+            <summary>
+              Looks up a localized string similar to Submit.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TakeATeamTourButtonText">
+            <summary>
+              Looks up a localized string similar to Take a Team Tour.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TakeATourButtonText">
+            <summary>
+              Looks up a localized string similar to Take a tour.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TeamChatText1">
+            <summary>
+              Looks up a localized string similar to Initiate Chat with Users.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TeamChatText2">
+            <summary>
+              Looks up a localized string similar to As an SME, you can initiate chat directly with the end user, by clicking on chat button..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TeamFunctionCardText1">
+            <summary>
+              Looks up a localized string similar to Notification from the Users.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TeamFunctionCardText2">
+            <summary>
+              Looks up a localized string similar to Users can ask you a question when they don&apos;t find the answer within the KB, also they can send you a feedback on the app performance..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TeamQueryText1">
+            <summary>
+              Looks up a localized string similar to Ticket System.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TeamQueryText2">
+            <summary>
+              Looks up a localized string similar to You can Keep track of the user requests using the status assigned or closed..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ThankYouAdaptiveCardContent">
+            <summary>
+              Looks up a localized string similar to Your feedback has been captured and forwarded over to the team. Someone will get back to you in some time..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ThankYouAdaptiveCardTitleText">
+            <summary>
+              Looks up a localized string similar to Thank you!.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.WelcomeTeamCardContent">
+            <summary>
+              Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!.I am a  friendly HR bot can be used by  any team or individual within the org. As an SME, you and your team memebers can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using staus fields like open assign and close.,.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.WelcomeTeamCardTitleText">
+            <summary>
+              Looks up a localized string similar to Hello {0} !.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.WelcomeText1">
+            <summary>
+              Looks up a localized string similar to Hi there!.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.WelcomeText2">
+            <summary>
+              Looks up a localized string similar to Hello!   \nI am Sophia I am your friendly HR BOT. I am here to help you with your HR realted topics..
+            </summary>
+        </member>
+        <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Startup">
+            <summary>
+            This a Startup class for this Bot.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Startup.#ctor(Microsoft.Extensions.configuration.Iconfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.Startup"/> class.
+            </summary>
+            <param name="configuration">Startup configuration.</param>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Startup.configuration">
+            <summary>
+            Gets configurations Interfaces.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Startup.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            This method gets called by the runtime. Use this method to add services to the container.
+            </summary>
+            <param name="services"> Service Collection Interface.</param>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Startup.Configure(Microsoft.AspNetCore.Builder.IApplicationBuilder,Microsoft.AspNetCore.Hosting.IHostingEnvironment)">
+            <summary>
+            This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            </summary>
+            <param name="app">Application Builder.</param>
+            <param name="env">Hosting Environment.</param>
+        </member>
+    </members>
+</doc>

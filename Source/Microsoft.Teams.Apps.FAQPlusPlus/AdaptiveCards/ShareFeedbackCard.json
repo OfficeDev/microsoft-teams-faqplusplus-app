@@ -1,0 +1,49 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "size": "medium",
+          "weight": "bolder",
+          "text": "%cardHeader%"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "%subHeader%",
+          "wrap": true,
+          "maxLines": 3,
+          "separator": true
+        },
+        {
+          "type": "Input.Text",
+          "id": "appFeedback",
+          "placeholder": "%descriptionPlaceholder%",
+          "isMultiline": true
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "%shareAppFeedbackButtonText%",
+      "data": {
+        "msteams": {
+          "type": "messageBack",
+          "displayText": "AppFeedback",
+          "text": "AppFeedback"
+        }
+      }
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0"
+}
