@@ -15,6 +15,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Services;
 
     /// <summary>
     /// This a Startup class for this Bot.
@@ -45,10 +46,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<Common.Helpers.IConfigurationProvider>(new Common.Helpers.ConfigurationProvider(this.Configuration["StorageConnectionString"]));
             services.AddHttpClient();
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
-            services.AddSingleton<ITicketsProvider>(new Common.Helpers.TicketsProvider(this.Configuration["StorageConnectionString"]));
+            services.AddSingleton<ITicketsProvider>(new TicketsProvider(this.Configuration["StorageConnectionString"]));
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
             services.AddTransient<IBot, FaqPlusPlusBot>();
             services.AddSingleton<TelemetryClient>();
+            services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
         }
 
         /// <summary>

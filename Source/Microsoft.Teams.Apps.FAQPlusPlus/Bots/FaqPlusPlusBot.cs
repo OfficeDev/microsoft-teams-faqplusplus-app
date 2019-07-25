@@ -19,6 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Services;
     using Newtonsoft.Json.Linq;
     using IConfigurationProvider = Common.Helpers.IConfigurationProvider;
 
@@ -29,7 +30,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     {
         public const string KnowledgeBase = "KnowledgeBase";
         public const string WelcomeMessage = "WelcomeMessage";
-        public const string MSTeams = "Teams";
         private const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
@@ -41,6 +41,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IConfiguration configuration;
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
+        private readonly IQnAMakerFactory qnaMakerFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -48,14 +49,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="telemetryClient"> Telemetry Client.</param>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="configuration">Configuration.</param>
+        /// <param name="client">Http Client.</param>
+        /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IQnAMakerFactory qnaMakerFactory)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
             this.configuration = configuration;
+            this.qnaMakerFactory = qnaMakerFactory;
         }
 
         /// <summary>
@@ -111,18 +116,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <returns>A unit of execution.</returns>
         public async Task GetAnswersAsync(string kbId, ITurnContext<IMessageActivity> turnContext)
         {
-            var qnaMaker = new QnAMaker(
-                new Bot.Configuration.QnAMakerService()
-                {
-                    KbId = kbId,
-                    EndpointKey = this.configuration["EndpointKey"],
-                    Hostname = this.configuration["KbHost"],
-                    SubscriptionKey = this.configuration["QnAMakerSubscriptionKey"],
-                },
-            new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) });
-
-            // The actual call to the QnA Maker service.
-            var response = await qnaMaker.GetAnswersAsync(turnContext);
+            var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId);
+            var options = new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) };
+            var response = await qnaMaker.GetAnswersAsync(turnContext, options);
             if (response != null && response.Length > 0)
             {
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer)));
@@ -137,6 +133,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Sends the message to SME team upon collecting feedback or question from the user.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
