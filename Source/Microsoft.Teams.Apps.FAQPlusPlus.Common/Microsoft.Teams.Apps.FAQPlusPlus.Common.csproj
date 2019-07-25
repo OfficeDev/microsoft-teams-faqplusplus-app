@@ -57,12 +57,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="Helpers\ITicketsProvider.cs" />
-    <Compile Include="Helpers\ConfigurationProvider.cs" />
-    <Compile Include="Helpers\IConfigurationProvider.cs" />
-    <Compile Include="Helpers\TicketsProvider.cs" />
+    <Compile Include="Providers\ITicketsProvider.cs" />
+    <Compile Include="Providers\ConfigurationProvider.cs" />
+    <Compile Include="Providers\IConfigurationProvider.cs" />
+    <Compile Include="Providers\TicketsProvider.cs" />
     <Compile Include="Models\TicketEntity.cs" />
-    <Compile Include="Helpers\StorageInfo.cs" />
+    <Compile Include="Providers\StorageInfo.cs" />
     <Compile Include="Models\ConfigurationEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\TicketState.cs" />

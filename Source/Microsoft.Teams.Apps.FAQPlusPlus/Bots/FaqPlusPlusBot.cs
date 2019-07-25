@@ -21,7 +21,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
     using Newtonsoft.Json.Linq;
-    using IConfigurationProvider = Common.Helpers.IConfigurationProvider;
+    using IConfigurationProvider = Common.Providers.IConfigurationProvider;
 
     /// <summary>
     ///  This Class Invokes all Bot Conversation functionalities.

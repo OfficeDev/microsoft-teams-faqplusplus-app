@@ -1,7 +1,7 @@
 ﻿// <copyright file="ConfigurationProvider.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
     using System.Net;
