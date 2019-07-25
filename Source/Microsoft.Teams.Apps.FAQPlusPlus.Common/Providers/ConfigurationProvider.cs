@@ -41,7 +41,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 ConfigurationEntity entity = null;
                 switch (entityType)
                 {
-                    case Constants.TeamEntityType:
+                    case ConfigurationEntityTypes.TeamEntityType:
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = PartitionKey,
@@ -50,7 +50,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                         };
                         break;
 
-                    case Constants.KnowledgeBaseEntityType:
+                    case ConfigurationEntityTypes.KnowledgeBaseEntityType:
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = PartitionKey,
@@ -59,7 +59,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                         };
                         break;
 
-                    case Constants.WelcomeMessageEntityType:
+                    case ConfigurationEntityTypes.WelcomeMessageEntityType:
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = PartitionKey,
@@ -68,7 +68,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                         };
                         break;
 
-                    case Constants.StaticTabEntityType:
+                    case ConfigurationEntityTypes.StaticTabEntityType:
                         entity = new ConfigurationEntity()
                         {
                             PartitionKey = PartitionKey,
@@ -100,19 +100,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
                 TableOperation searchOperation = null;
                 switch (entityType)
                 {
-                    case Constants.TeamEntityType:
+                    case ConfigurationEntityTypes.TeamEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, TeamRowKey);
                         break;
 
-                    case Constants.KnowledgeBaseEntityType:
+                    case ConfigurationEntityTypes.KnowledgeBaseEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, KnowledgeBaseRowKey);
                         break;
 
-                    case Constants.WelcomeMessageEntityType:
+                    case ConfigurationEntityTypes.WelcomeMessageEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, WelcomeMessageRowKey);
                         break;
 
-                    case Constants.StaticTabEntityType:
+                    case ConfigurationEntityTypes.StaticTabEntityType:
                         searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, StaticTabRowKey);
                         break;
 
