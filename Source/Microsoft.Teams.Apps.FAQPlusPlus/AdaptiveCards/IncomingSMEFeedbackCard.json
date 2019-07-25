@@ -1,0 +1,52 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "size": "medium",
+          "weight": "bolder",
+          "text": "%incomingTitleText%",
+          "color": "Attention"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "%incomingSubtitleText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%incomingQuestionText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%incomingAnswerText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%incomingFeedbackText%",
+          "wrap": true
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "%chatTextButton%",
+      "url": "https://teams.microsoft.com/l/chat/0/0?users=%personUpn%"
+    }
+
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0"
+}

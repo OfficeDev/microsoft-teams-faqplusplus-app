@@ -29,6 +29,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     {
         public const string KnowledgeBase = "KnowledgeBase";
         public const string WelcomeMessage = "WelcomeMessage";
+        public const string MSTeams = "Teams";
         private const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
@@ -144,21 +145,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
             var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
-            var fullName = turnContext.Activity.Recipient.Name;
+           // var fullName = turnContext.Activity.Recipient.Name;
             Attachment teamCardAttachment = null;
             string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
             switch (activityType)
             {
                 case AppFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback);
                     break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert);
                     break;
 
                 case ResultsFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer);
                     break;
 
                 default:
@@ -166,8 +167,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             await this.DisplayTypingIndicator(turnContext);
-            await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
-
+            var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(MSTeams);
+            await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
             if (payload.QuestionForExpert != null)
             {
                 await this.UpdateFeedbackActivity(turnContext, ConfirmationCard.GetCard(), cancellationToken);

@@ -4,13 +4,10 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-    using Newtonsoft.Json;
 
     /// <summary>
     ///  This class process sending a notification card to SME team-
@@ -33,7 +30,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// This method will construct the adaptive card as an Attachment using JSON template.
         /// </summary>
         /// <param name="feedbackType">The feedback type - in this case, it's Ask an Expert.</param>
-        /// <param name="fullName">The person asking the question.</param>
         /// <param name="personName">Name of the person asking the question.</param>
         /// <param name="personEmail">Email of the Person asking the question.</param>
         /// <param name="incomingFeedbackText">User request- question for expert or providing feedback.</param>
@@ -42,7 +38,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <returns>The card JSON string.</returns>
         public static Attachment GetCard(
             string feedbackType,
-            string fullName,
             string personName,
             string personEmail,
             string incomingFeedbackText,
@@ -57,9 +52,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             }
             else
             {
-               incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, personName, feedbackType);
+                incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, personName, feedbackType);
             }
 
+            return GetCardDetails(feedbackType, personName, personEmail, ref incomingFeedbackText, ref incomingQuestionText, ref incomingAnswerText, incomingTitleText, incomingSubtitleText);
+        }
+
+        private static Attachment GetCardDetails(string feedbackType, string personName, string personEmail, ref string incomingFeedbackText, ref string incomingQuestionText, ref string incomingAnswerText, string incomingTitleText, string incomingSubtitleText)
+        {
             incomingQuestionText = incomingQuestionText == string.Empty ? string.Empty : $"Question: {incomingQuestionText}";
             incomingAnswerText = incomingAnswerText == string.Empty ? string.Empty : $"Answer: {incomingAnswerText}";
             incomingFeedbackText = feedbackType == "Question For Expert" ? $"Question: {incomingFeedbackText}" : $"Feedback: {incomingFeedbackText}";
@@ -77,15 +77,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 { "incomingAnswerText", incomingAnswerText },
                 { "incomingFeedbackText", incomingFeedbackText },
                 { "personUpn", personEmail },
-                { "chatTextButton", chatTextButton },
-                { "statusShowCardHeader", statusShowCardHeader },
-                { "openStatusText", openStatusText },
-                { "assignStatusText", assignStatusText },
-                { "closeStatusText", closeStatusText },
-                { "submitButtonText", submitButtonText },
+                { "chatTextButton", chatTextButton }
             };
+            if (feedbackType == "Question For Expert")
+            {
+                variablesToValues.Add("statusShowCardHeader", statusShowCardHeader);
+                variablesToValues.Add("openStatusText", openStatusText);
+                variablesToValues.Add("assignStatusText", assignStatusText);
+                variablesToValues.Add("closeStatusText", closeStatusText);
+                variablesToValues.Add("submitButtonText", submitButtonText);
 
-            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+                return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+            }
+
+            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "IncomingSMEFeedbackCard.json");
+            var feedbackCardTemplate = File.ReadAllText(cardJsonFilePath);
+
+            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(feedbackCardTemplate, variablesToValues));
         }
     }
 }
