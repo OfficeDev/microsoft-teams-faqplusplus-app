@@ -32,7 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         {
             var variablesToValues = new Dictionary<string, string>()
             {
-               {"responseHeaderText", Resource.ResponseHeaderText },
+               { "responseHeaderText", Resource.ResponseHeaderText },
                { "questionLineText", question },
                { "answerLineText", answer },
                { "askAnExpertButtonText",  Resource.AskAnExpertButtonText },
