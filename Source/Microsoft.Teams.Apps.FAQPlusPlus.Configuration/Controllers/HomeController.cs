@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using System.Web;
@@ -205,11 +206,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>team Id as string</returns>
         private string ParseTeamIdFromDeepLink(string teamIdDeepLink)
         {
-            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString);
-            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString);
+            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString, StringComparison.OrdinalIgnoreCase);
+            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString, StringComparison.OrdinalIgnoreCase);
 
-            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString);
-            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString);
+            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString, StringComparison.OrdinalIgnoreCase);
+            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString, StringComparison.OrdinalIgnoreCase);
 
             string teamID = string.Empty;
 
