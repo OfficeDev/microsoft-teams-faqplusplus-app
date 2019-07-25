@@ -88,7 +88,9 @@
                 "type": "messageBack",
                 "displayText": "Result Feedback",
                 "text": "ResultsFeedback"
-              }
+              },
+                "SMEQuestion": "%questionLineText%",
+                "SMEAnswer": "%answerLineText%"
             }
           }
         ],

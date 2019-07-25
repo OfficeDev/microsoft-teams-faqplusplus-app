@@ -40,7 +40,8 @@
           "type": "messageBack",
           "displayText": "QuestionForExpert",
           "text": "QuestionForExpert"
-        }
+        },
+        "SMEQuestion": "%questionLineText%"
       }
     }
   ],

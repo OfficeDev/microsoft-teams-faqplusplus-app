@@ -168,7 +168,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
             if (payload.QuestionForExpert != null)
             {
-                await this.UpdateFeedbackActivity(turnContext, ConfirmationCard.GetCard(), cancellationToken);
+
+                await this.UpdateFeedbackActivity(turnContext, ConfirmationCard.GetCard(payload.QuestionForExpert), cancellationToken);
             }
             else
             {

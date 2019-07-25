@@ -22,7 +22,28 @@
           "text": "%confirmationAdaptiveCardContent%",
           "spacing": "medium",
           "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%date%",
+          "spacing": "medium",
+          "wrap": true
+        },
+
+        {
+          "type": "TextBlock",
+          "text": "%status%",
+          "spacing": "medium",
+          "wrap": true
+        },
+
+        {
+          "type": "TextBlock",
+          "text": "%smeQuestion%",
+          "spacing": "medium",
+          "wrap": true
         }
+
       ]
     }
   ],
