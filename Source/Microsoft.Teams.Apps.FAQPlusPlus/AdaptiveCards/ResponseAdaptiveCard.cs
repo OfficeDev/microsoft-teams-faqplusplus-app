@@ -30,19 +30,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <returns>Card attachment as Json string.</returns>
         public static Attachment GetCard(string question, string answer)
         {
-            var questionLineText = string.Format(Resource.QuestionLineText, question);
-            var answerLineText = string.Format(Resource.AnswerLineText, answer);
-
             var variablesToValues = new Dictionary<string, string>()
             {
-               { "questionLineText", questionLineText },
-               { "answerLineText", answerLineText },
+               {"responseHeaderText", Resource.ResponseHeaderText },
+               { "questionLineText", question },
+               { "answerLineText", answer },
+               { "askAnExpertButtonText",  Resource.AskAnExpertButtonText },
                { "resultQuestionText", question },
                { "resultAnswerText", answer },
-               { "askAnExpertButtonText",  Resource.AskAnExpertButtonText },
                { "submitButtonText",  Resource.SubmitButtonText },
                { "shareResultsFeedbackButtonText", Resource.ShareFeedbackTitleText },
                { "resultsFeedbackDetails", Resource.Resultsfeedbackdetails },
+                { "askAnExpertShowCardLabel", Resource.AskAnExpertShowCardLabel }
             };
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
         }

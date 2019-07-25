@@ -6,12 +6,19 @@
       "items": [
         {
           "type": "TextBlock",
+          "text": "%responseHeaderText%",
+          "weight": "bolder",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
           "id": "SMEQuestion",
           "text": "%questionLineText%",
           "wrap": true
         },
         {
           "type": "TextBlock",
+          "id": "SMEAnswer",
           "text": "%answerLineText%",
           "wrap": true
         }
@@ -26,6 +33,12 @@
         "type": "AdaptiveCard",
         "style": "emphasis",
         "body": [
+          {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%askAnExpertShowCardLabel%",
+            "wrap": true
+          },
           {
             "type": "Input.Text",
             "id": "questionForExpert",
@@ -57,12 +70,6 @@
         "type": "AdaptiveCard",
         "style": "emphasis",
         "body": [
-          {
-            "type": "Input.Text",
-            "id": "SMEAnswer",
-            "isMultiline": true,
-            "value": "%resultAnswerText%"
-          },
           {
             "type": "Input.Text",
             "id": "resultsFeedback",

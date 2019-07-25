@@ -48,7 +48,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="telemetryClient"> Telemetry Client.</param>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="configuration">Configuration.</param>
-        /// <param name="client">Http Client.</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
@@ -138,14 +137,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Sends the message to SME team upon collecting feedback or question from the user.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, IConfigurationProvider configurationProvider, CancellationToken cancellationToken)
+        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
             var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
-           // var fullName = turnContext.Activity.Recipient.Name;
             Attachment teamCardAttachment = null;
             string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
             switch (activityType)
@@ -363,7 +360,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 await this.BroadcastTeamMessage(
                        turnContext,
-                       this.configurationProvider,
                        cancellationToken);
             }
         }

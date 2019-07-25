@@ -223,7 +223,7 @@
     <comment>Answer from the Bot</comment>
   </data>
   <data name="QuestionLineText" xml:space="preserve">
-    <value>Your Request : {0}</value>
+    <value>Here is what i have found for your Request</value>
     <comment>Shows user Requested Question</comment>
   </data>
   <data name="RequestText" xml:space="preserve">
@@ -371,5 +371,12 @@
   <data name="StatusShowCardHeader" xml:space="preserve">
     <value>Status</value>
     <comment>Title of the show card drop down menu: Status</comment>
+  </data>
+  <data name="AskAnExpertShowCardLabel" xml:space="preserve">
+    <value>We can take your question on this response please enter below.</value>
+    <comment>Ask an expert show card label text where user can enter his question for Qna response.</comment>
+  </data>
+  <data name="ResponseHeaderText" xml:space="preserve">
+    <value>Here is what I have found for your Request</value>
   </data>
 </root>

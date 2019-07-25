@@ -4,10 +4,13 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///  This class process sending a notification card to SME team-
@@ -22,7 +25,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// </summary>
         static IncomingSMEEnquiryCard()
         {
-            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "IncomingSMEEnquiryCard.json");
+            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "IncomingSMEEnquiryCard.json");
             CardTemplate = File.ReadAllText(cardJsonFilePath);
         }
 
@@ -90,7 +93,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
             }
 
-            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "IncomingSMEFeedbackCard.json");
+            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "IncomingSMEFeedbackCard.json");
             var feedbackCardTemplate = File.ReadAllText(cardJsonFilePath);
 
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(feedbackCardTemplate, variablesToValues));

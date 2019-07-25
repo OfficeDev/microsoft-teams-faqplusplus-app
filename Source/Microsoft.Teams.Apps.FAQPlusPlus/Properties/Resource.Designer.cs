@@ -97,6 +97,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to We can take your question on this response please enter below..
+        /// </summary>
+        public static string AskAnExpertShowCardLabel {
+            get {
+                return ResourceManager.GetString("AskAnExpertShowCardLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask An Expert.
         /// </summary>
         public static string AskAnExpertText1 {
@@ -430,7 +439,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your Request : {0}.
+        ///   Looks up a localized string similar to Here is what i have found for your Request.
         /// </summary>
         public static string QuestionLineText {
             get {
@@ -453,6 +462,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string RequestText {
             get {
                 return ResourceManager.GetString("RequestText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Here is what I have found for your Request.
+        /// </summary>
+        public static string ResponseHeaderText {
+            get {
+                return ResourceManager.GetString("ResponseHeaderText", resourceCulture);
             }
         }
         
@@ -646,7 +664,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!.I am a  friendly HR bot can be used by  any team or individual within the org. As an SME, you and your team memebers can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using staus fields like open assign and close.,.
+        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!.I am a  friendly HR bot can be used by  any team or individual within the org. As an SME, you and your team memebers can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using staus fields like open assign and close..
         /// </summary>
         public static string WelcomeTeamCardContent {
             get {
