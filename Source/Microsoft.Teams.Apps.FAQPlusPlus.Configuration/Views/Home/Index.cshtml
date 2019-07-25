@@ -4,6 +4,9 @@
 }
 
 <div class="row contentMargin">
+    <div id="spinner" style="display: none">
+        @Html.Partial("~/Views/Shared/_Spinner.cshtml")
+    </div>
     <div class="col-lg-12">
         <div class="col-lg-8">
             @Html.Partial("~/Views/Home/_Team.cshtml")
@@ -148,5 +151,15 @@
         else {
             currentForm.submit();
         }
+    });
+
+    // Show spinner indicator on all AJAX calls
+    $(document).ajaxSend(function () {
+        $("#spinner").show();
+    });
+
+    // Hide spinner indicator when all AJAX calls stops
+    $(document).ajaxStop(function () {
+        $("#spinner").hide();
     });
 </script>

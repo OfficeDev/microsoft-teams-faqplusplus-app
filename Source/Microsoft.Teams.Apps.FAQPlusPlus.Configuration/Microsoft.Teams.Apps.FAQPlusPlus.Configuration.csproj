@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\customizableStyle.css" />
+    <Content Include="Content\spinner.css" />
     <Content Include="Global.asax" />
     <Content Include="libman.json" />
     <Content Include="Web.config">
@@ -231,6 +232,7 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Views\Home\_StaticTab.cshtml" />
+    <Content Include="Views\Shared\_Spinner.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
