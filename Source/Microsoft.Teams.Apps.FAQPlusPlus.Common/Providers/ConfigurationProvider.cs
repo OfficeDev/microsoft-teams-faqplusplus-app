@@ -16,10 +16,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     public class ConfigurationProvider : IConfigurationProvider
     {
         private const string PartitionKey = "ConfigurationInfo";
-        private const string TeamRowKey = "MSTeamId";
-        private const string KnowledgeBaseRowKey = "KnowledgeBaseId";
-        private const string WelcomeMessageRowKey = "WelcomeMessage";
-        private const string StaticTabRowKey = "StaticTabText";
 
         private readonly Lazy<Task> initializeTask;
         private CloudTable configurationCloudTable;
@@ -38,51 +34,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             try
             {
-                ConfigurationEntity entity = null;
-                switch (entityType)
+                var entity = new ConfigurationEntity()
                 {
-                    case ConfigurationEntityTypes.TeamEntityType:
-                        entity = new ConfigurationEntity()
-                        {
-                            PartitionKey = PartitionKey,
-                            RowKey = TeamRowKey,
-                            Data = updatedData
-                        };
-                        break;
-
-                    case ConfigurationEntityTypes.KnowledgeBaseEntityType:
-                        entity = new ConfigurationEntity()
-                        {
-                            PartitionKey = PartitionKey,
-                            RowKey = KnowledgeBaseRowKey,
-                            Data = updatedData
-                        };
-                        break;
-
-                    case ConfigurationEntityTypes.WelcomeMessageEntityType:
-                        entity = new ConfigurationEntity()
-                        {
-                            PartitionKey = PartitionKey,
-                            RowKey = WelcomeMessageRowKey,
-                            Data = updatedData
-                        };
-                        break;
-
-                    case ConfigurationEntityTypes.StaticTabEntityType:
-                        entity = new ConfigurationEntity()
-                        {
-                            PartitionKey = PartitionKey,
-                            RowKey = StaticTabRowKey,
-                            Data = updatedData
-                        };
-                        break;
-
-                    default:
-                        break;
-                }
-
+                    PartitionKey = PartitionKey,
+                    RowKey = entityType,
+                    Data = updatedData,
+                };
                 var result = await this.StoreOrUpdateEntityAsync(entity);
-
                 return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
             }
             catch
@@ -97,33 +55,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             try
             {
                 await this.EnsureInitializedAsync();
-                TableOperation searchOperation = null;
-                switch (entityType)
-                {
-                    case ConfigurationEntityTypes.TeamEntityType:
-                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, TeamRowKey);
-                        break;
 
-                    case ConfigurationEntityTypes.KnowledgeBaseEntityType:
-                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, KnowledgeBaseRowKey);
-                        break;
-
-                    case ConfigurationEntityTypes.WelcomeMessageEntityType:
-                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, WelcomeMessageRowKey);
-                        break;
-
-                    case ConfigurationEntityTypes.StaticTabEntityType:
-                        searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, StaticTabRowKey);
-                        break;
-
-                    default:
-                        break;
-                }
-
+                var searchOperation = TableOperation.Retrieve<ConfigurationEntity>(PartitionKey, entityType);
                 TableResult searchResult = await this.configurationCloudTable.ExecuteAsync(searchOperation);
                 var result = (ConfigurationEntity)searchResult.Result;
 
-                return string.IsNullOrEmpty(result?.Data) ? string.Empty : result.Data;
+                return result?.Data ?? string.Empty;
             }
             catch
             {
@@ -139,6 +76,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         private async Task<TableResult> StoreOrUpdateEntityAsync(ConfigurationEntity entity)
         {
             await this.EnsureInitializedAsync();
+
             TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
 
             return await this.configurationCloudTable.ExecuteAsync(addOrUpdateOperation);

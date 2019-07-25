@@ -75,7 +75,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(teamId, ConfigurationEntityTypes.TeamEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(teamId, ConfigurationEntityTypes.TeamId);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -93,7 +93,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedTeamIdAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>View</returns>
         public async Task<ActionResult> SaveOrUpdateKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(knowledgeBaseId, ConfigurationEntityTypes.KnowledgeBaseEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(knowledgeBaseId, ConfigurationEntityTypes.KnowledgeBaseId);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -140,7 +140,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedKnowledgeBaseIdAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveWelcomeMessageAsync(string welcomeMessage)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(welcomeMessage, ConfigurationEntityTypes.WelcomeMessageEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(welcomeMessage, ConfigurationEntityTypes.WelcomeMessageText);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -168,7 +168,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>Welcome message</returns>
         public async Task<string> GetSavedWelcomeMessageAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveStaticTabTextAsync(string staticTabText)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, ConfigurationEntityTypes.StaticTabEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, ConfigurationEntityTypes.StaticTabText);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -196,7 +196,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>Static tab text</returns>
         public async Task<string> GetSavedStaticTabTextAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
         }
 
         /// <summary>

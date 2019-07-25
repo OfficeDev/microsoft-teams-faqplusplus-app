@@ -11,21 +11,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Team entity
         /// </summary>
-        public const string TeamEntityType = "Teams";
+        public const string TeamId = "TeamId";
 
         /// <summary>
         /// Knowledge base entity
         /// </summary>
-        public const string KnowledgeBaseEntityType = "KnowledgeBase";
+        public const string KnowledgeBaseId = "KnowledgeBaseId";
 
         /// <summary>
         /// Welcome message entity
         /// </summary>
-        public const string WelcomeMessageEntityType = "WelcomeMessage";
+        public const string WelcomeMessageText = "WelcomeMessageText";
 
         /// <summary>
         /// Static tab entity
         /// </summary>
-        public const string StaticTabEntityType = "StaticTab";
+        public const string StaticTabText = "StaticTabText";
     }
 }
