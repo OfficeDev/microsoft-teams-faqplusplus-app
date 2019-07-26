@@ -16,23 +16,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
     using Microsoft.Teams.Apps.FAQPlusPlus.Validations;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using IConfigurationProvider = Common.Helpers.IConfigurationProvider;
+    using IConfigurationProvider = Common.Providers.IConfigurationProvider;
 
     /// <summary>
     ///  This Class Invokes all Bot Conversation functionalities.
     /// </summary>
     public class FaqPlusPlusBot : ActivityHandler
     {
-        public const string KnowledgeBase = "KnowledgeBase";
-        public const string WelcomeMessage = "WelcomeMessage";
         private const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
@@ -310,10 +308,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     // When bot is added to a user in personal scope, for the first time.
                     if (member.Id != turnContext.Activity.Recipient.Id)
                     {
-                        var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(WelcomeMessage);
-                        var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
+                        var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
+                        var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
                         this.telemetryClient.TrackTrace($"Member Id of User = {member.Id}");
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
                     }
 
                     // When bot is added to a team, for the first time.
@@ -417,7 +415,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.telemetryClient.TrackTrace($"User entered text = {activityText}");
                 if (string.IsNullOrEmpty(activityText))
                 {
-                    var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(WelcomeMessage);
+                    var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
                     var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
                     await context.SendActivityAsync(MessageFactory.Text("Hey, I don't understand what you're saying, would you like to take a tour"), cancellationToken);
                     await context.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
@@ -444,7 +442,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                         default:
                             this.telemetryClient.TrackTrace("Calling QnA Maker Service");
-                            var kbID = await this.configurationProvider.GetSavedEntityDetailAsync(KnowledgeBase);
+                            var kbID = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
 
                             // ToDo: Validate Null condition when KB is not available.
                             if (!string.IsNullOrEmpty(kbID))
