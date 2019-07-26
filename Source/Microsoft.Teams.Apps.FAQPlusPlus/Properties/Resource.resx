@@ -384,4 +384,7 @@
     <value>The request is now open. Opened by {0}. </value>
     <comment>The {0} placeholder is for the SME responsible for opening the request.</comment>
   </data>
+  <data name="NonApplicableString" xml:space="preserve">
+    <value>N/A</value>
+  </data>
 </root>

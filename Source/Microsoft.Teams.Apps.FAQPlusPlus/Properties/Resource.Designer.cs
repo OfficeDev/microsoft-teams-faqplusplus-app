@@ -403,6 +403,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        public static string NonApplicableString {
+            get {
+                return ResourceManager.GetString("NonApplicableString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to assigned value is.
         /// </summary>
         public static string NotAssigned {
