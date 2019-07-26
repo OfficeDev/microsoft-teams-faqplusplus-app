@@ -115,6 +115,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
+        /// Save or update Endpoint key in table storage which is received from View
+        /// </summary>
+        /// <param name="endpointKey">Endpoint key </param>
+        /// <returns>View</returns>
+        public async Task<ActionResult> SaveOrUpdateEndpointKeyAsync(string endpointKey)
+        {
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(endpointKey, ConfigurationEntityTypes.EndpointKey);
+            if (saved)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.OK);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save endpoint key due to internal server error. Try again.");
+            }
+        }
+
+        /// <summary>
         /// Validate knowledge base Id from QnA Maker service first and then proceed to save it on success
         /// </summary>
         /// <param name="knowledgeBaseId">knowledgeBaseId is the unique string knowledge Id</param>
@@ -134,6 +152,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
+        /// Validate Endpoint key from QnA Maker service first and then proceed to save it on success
+        /// </summary>
+        /// <param name="endpointKey">Endpoint key </param>
+        /// <returns>View</returns>
+        [HttpPost]
+        public async Task<ActionResult> ValidateAndSaveEndpointKeyAsync(string endpointKey)
+        {
+            bool isValidKnowledgeBaseId = await this.IsEndpointKeyValid(endpointKey);
+            if (isValidKnowledgeBaseId)
+            {
+                return await this.SaveOrUpdateEndpointKeyAsync(endpointKey);
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided endpoint key is not valid.");
+            }
+        }
+
+        /// <summary>
         /// Get already saved knowledge base Id from table storage
         /// </summary>
         /// <returns>knowledge base Id</returns>
@@ -141,6 +178,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         public async Task<string> GetSavedKnowledgeBaseIdAsync()
         {
             return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
+        }
+
+        /// <summary>
+        /// Get already saved endpoint key from table storage
+        /// </summary>
+        /// <returns>endpoint key</returns>
+        [HttpGet]
+        public async Task<string> GetSavedEndpointKeyAsync()
+        {
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.EndpointKey);
         }
 
         /// <summary>
@@ -238,6 +285,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
                 var kbIdDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId);
 
                 return kbIdDetail.Id == knowledgeBaseId;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Check if provided Endpoint key is valid or not.
+        /// </summary>
+        /// <param name="endpointKey">Endpoint key</param>
+        /// <returns><see cref="Task"/> boolean value indicating provided endpoint key is valid or not</returns>
+        private async Task<bool> IsEndpointKeyValid(string endpointKey)
+        {
+            try
+            {
+                var endpointKeys = await this.qnaMakerClient.EndpointKeys.GetKeysWithHttpMessagesAsync();
+
+                return endpointKeys.Body.PrimaryEndpointKey == endpointKey;
             }
             catch
             {

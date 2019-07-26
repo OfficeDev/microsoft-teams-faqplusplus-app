@@ -61,6 +61,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Provide a valid endpoint key which will be used by bot and then click on Ok to add or Edit to modify.
+        /// </summary>
+        public static string EndpointKeyToolTipHoverMessage {
+            get {
+                return ResourceManager.GetString("EndpointKeyToolTipHoverMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provide a valid knowledgebase Id which will be used by bot and then click on Ok to add or Edit to modify.
         /// </summary>
         public static string KnowledgeBaseToolTipHoverMessage {

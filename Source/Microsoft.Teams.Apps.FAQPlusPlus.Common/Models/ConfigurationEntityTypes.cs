@@ -27,5 +27,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// Static tab entity
         /// </summary>
         public const string StaticTabText = "StaticTabText";
+
+        /// <summary>
+        /// End point key entity
+        /// </summary>
+        public const string EndpointKey = "EndpointKey";
     }
 }

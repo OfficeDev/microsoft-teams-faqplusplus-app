@@ -190,6 +190,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\EndpointKeyViewModel.cs" />
     <Compile Include="Models\KnowledgeBaseViewModel.cs" />
     <Compile Include="Models\StaticTabViewModel.cs" />
     <Compile Include="Models\TeamViewModel.cs" />
@@ -238,6 +239,7 @@
     </None>
     <Content Include="Views\Home\_StaticTab.cshtml" />
     <Content Include="Views\Shared\_Spinner.cshtml" />
+    <Content Include="Views\Home\_EndpointKey.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
