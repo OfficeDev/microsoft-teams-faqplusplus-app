@@ -18,7 +18,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         /// </summary>
         /// <param name="searchScope">Scope of the search</param>
         /// <param name="searchQuery">searchQuery to be provided by message extension</param>
+        /// <param name="count">Number of search results to return</param>
+        /// <param name="skip">Number of search results to skip</param>
         /// <returns>List of search results</returns>
-        Task<IList<TicketEntity>> SearchTicketsAsync(TicketSearchScope searchScope, string searchQuery);
+        Task<IList<TicketEntity>> SearchTicketsAsync(TicketSearchScope searchScope, string searchQuery, int? count = null, int? skip = null);
     }
 }

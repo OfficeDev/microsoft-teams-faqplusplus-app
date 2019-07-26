@@ -24,9 +24,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         private const string TicketsIndexerName = "tickets-indexer";
         private const string TicketsDataSourceName = "tickets-storage";
 
-        private const int TicketSearchPaginationTop = 10;
-        private const int TicketSearchPaginationSkip = 0;
-        private const bool IsTotalCountIncluded = false;
+        // Default to 25 results, same as page size of a messaging extension query
+        private const int DefaultSearchResultCount = 25;
 
         private readonly Lazy<Task<bool>> initializeTask;
         private readonly IConfiguration configuration;
@@ -47,7 +46,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IList<TicketEntity>> SearchTicketsAsync(TicketSearchScope searchScope, string searchQuery)
+        public async Task<IList<TicketEntity>> SearchTicketsAsync(TicketSearchScope searchScope, string searchQuery, int? count = null, int? skip = null)
         {
             bool isTicketIndexingServiceCreated = await this.EnsureInitializedAsync();
             IList<TicketEntity> ticketList = null;
@@ -74,9 +73,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
                         break;
                 }
 
-                searchParam.Top = TicketSearchPaginationTop;
-                searchParam.Skip = TicketSearchPaginationSkip;
-                searchParam.IncludeTotalResultCount = IsTotalCountIncluded;
+                searchParam.Top = count ?? DefaultSearchResultCount;
+                searchParam.Skip = skip ?? 0;
+                searchParam.IncludeTotalResultCount = false;
                 searchParam.Select = new[] { "TicketId", "Text", "Status", "AssignedTo", "DateCreated" };
 
                 var docs = await this.searchIndexClient.Documents.SearchAsync<TicketEntity>(searchQuery, searchParam);
@@ -109,8 +108,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
             try
             {
                 this.searchServiceClient = new SearchServiceClient(
-                this.configuration["SearchServiceName"],
-                new SearchCredentials(this.configuration["SearchServiceAdminApiKey"]));
+                    this.configuration["SearchServiceName"],
+                    new SearchCredentials(this.configuration["SearchServiceAdminApiKey"]));
 
                 this.searchIndexClient = new SearchIndexClient(this.configuration["SearchServiceName"], TicketsIndexName, new SearchCredentials(this.configuration["SearchServiceQueryApiKey"]));
 
@@ -120,10 +119,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
 
                 return true;
             }
-            catch (Exception error)
+            catch (Exception ex)
             {
-                this.telemetryClient.TrackException(error);
-                return false;
+                this.telemetryClient.TrackException(ex);
+                throw;
             }
         }
 
