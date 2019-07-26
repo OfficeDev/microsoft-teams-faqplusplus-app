@@ -35,8 +35,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
                     {
                         KbId = kbId,
                         EndpointKey = this.configuration["EndpointKey"],
-                        Hostname = this.configuration["KbHost"],
-                        SubscriptionKey = this.configuration["QnAMakerSubscriptionKey"],
+                        Hostname = this.configuration["KbHost"]
                     },
                     null,
                     this.httpClient));
