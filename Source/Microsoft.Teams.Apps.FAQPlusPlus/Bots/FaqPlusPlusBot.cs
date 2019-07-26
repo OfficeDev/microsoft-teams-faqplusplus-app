@@ -74,7 +74,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="updateActivityAttachment">Activity update adaptive card attachment.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Thank you Card.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task UpdateFeedbackActivity(ITurnContext turnContext, Attachment updateActivityAttachment, CancellationToken cancellationToken)
+        public async Task SendInfoReceievedConfirmation(ITurnContext turnContext, Attachment updateActivityAttachment, CancellationToken cancellationToken)
         {
             var reply = turnContext.Activity.CreateReply();
             reply.Attachments = new List<Attachment>()
@@ -177,11 +177,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 var confirmationAttachment = ThankYouAdaptiveCard.GetCard();
                 await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
-                await this.UpdateFeedbackActivity(turnContext, confirmationAttachment, cancellationToken);
+                await this.SendInfoReceievedConfirmation(turnContext, confirmationAttachment, cancellationToken);
             }
             else
             {
-                await this.UpdateFeedbackActivity(turnContext, ThankYouAdaptiveCard.GetCard(), cancellationToken);
+                await this.SendInfoReceievedConfirmation(turnContext, ThankYouAdaptiveCard.GetCard(), cancellationToken);
             }
         }
 
