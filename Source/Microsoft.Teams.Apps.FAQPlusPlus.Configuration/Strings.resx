@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EndpointKeyToolTipHoverMessage" xml:space="preserve">
-    <value>Provide a valid endpoint key which will be used by bot and then click on Ok to add or Edit to modify</value>
-    <comment>Message for endpoint key when information icon is hovered</comment>
-  </data>
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
     <value>Provide a valid knowledgebase Id which will be used by bot and then click on Ok to add or Edit to modify</value>
     <comment>Message for knowledgebase Id when information icon is hovered</comment>
