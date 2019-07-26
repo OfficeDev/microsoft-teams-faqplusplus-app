@@ -30,7 +30,7 @@
           "facts": [
             {
               "title": "Created:",
-              "value": "DATE(%todaysDate%, SHORT)"
+              "value": "{{DATE(%todaysDate%, SHORT)}}"
             },
             {
               "title": "Closed:",

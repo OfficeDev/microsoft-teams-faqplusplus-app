@@ -204,6 +204,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticketEntity.Status = Convert.ToInt16(ticketDetails.Status);
             ticketEntity.AssignedTo = turnContext.Activity.From.Name;
             ticketEntity.DateAssigned = DateTime.UtcNow;
+            ticketEntity.AssignedToObjectId = turnContext.Activity.From.AadObjectId;
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
         }
 
@@ -354,13 +355,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <returns>A unit of execution that returns a string.</returns>
         private static async Task<string> CreateUserTicketEntity(ITurnContext<IMessageActivity> turnContext, ITicketsProvider ticketsProvider, UserActivity payload, TeamsChannelAccount member)
         {
+            var ticketGuid = Guid.NewGuid().ToString();
             TicketEntity ticketEntity = new TicketEntity();
             ticketEntity.OpenedBy = turnContext.Activity.From.Name;
-            ticketEntity.Status = 1;
+            ticketEntity.Status = (int)TicketState.Open;
             ticketEntity.Text = payload.QuestionForExpert;
             ticketEntity.Timestamp = DateTime.UtcNow;
             ticketEntity.CardActivityId = turnContext.Activity.Id.ToString();
-            ticketEntity.RowKey = Guid.NewGuid().ToString();
+            ticketEntity.RowKey = ticketGuid;
+            ticketEntity.TicketId = ticketGuid;
             ticketEntity.DateAssigned = DateTime.UtcNow;
             ticketEntity.DateCreated = DateTime.UtcNow;
             ticketEntity.OpenedByConversationId = turnContext.Activity.Conversation.Id;

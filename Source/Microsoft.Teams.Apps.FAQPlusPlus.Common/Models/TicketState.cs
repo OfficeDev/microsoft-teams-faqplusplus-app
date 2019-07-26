@@ -11,11 +11,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Represents an active ticket
         /// </summary>
-        Open = 0,
+        Open = 1,
 
         /// <summary>
         /// Represents a ticket that requires no further action
         /// </summary>
-        Closed = 1,
+        Closed = 0,
     }
 }

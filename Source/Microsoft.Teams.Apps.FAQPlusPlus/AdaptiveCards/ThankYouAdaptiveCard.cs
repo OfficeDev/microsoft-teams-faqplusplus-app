@@ -36,7 +36,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             var cardImageUrl = ImageUri + "/content/ShareFeedback.png";
             var thankYouAdaptiveCardTitleText = Resource.ThankYouAdaptiveCardTitleText;
             var thankYouAdaptiveCardContent = Resource.ThankYouAdaptiveCardContent;
-            var todaysDate = DateTime.Now.ToString();
+            var todaysDate = DateTime.Now.ToString("s")+"Z";
             var closedDate = Resource.NonApplicableString;
 
             var variablesToValues = new Dictionary<string, string>()

@@ -13,16 +13,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     public class TicketEntity : TableEntity
     {
         /// <summary>
-        /// Gets unique ticket Id which is stored in table storage
+        /// Gets or sets the unique ticket Id which is stored in table storage
         /// </summary>
         [JsonProperty("TicketId")]
-        public string TicketId
-        {
-            get
-            {
-                return this.RowKey;
-            }
-        }
+        public string TicketId { get; set; }
 
         /// <summary>
         /// Gets or sets comments as text about the ticket which will be stored in table storage
@@ -77,5 +71,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("CardActivityId")]
         public string CardActivityId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AadObjectId of the SME that self-assigns a ticket
+        /// </summary>
+        [JsonProperty("AssignedToObjectId")]
+        public string AssignedToObjectId { get; set; }
     }
 }
