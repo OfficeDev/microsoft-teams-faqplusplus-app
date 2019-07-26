@@ -5,12 +5,9 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 {
     using System.Collections.Generic;
-    using System.Configuration;
     using System.IO;
-    using System.Net.Http;
     using System.Threading.Tasks;
     using Microsoft.Bot.Schema;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
