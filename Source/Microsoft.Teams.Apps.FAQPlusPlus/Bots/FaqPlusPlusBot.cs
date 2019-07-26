@@ -138,13 +138,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Sends the message to SME team upon collecting feedback or question from the user.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="ticketsProvider">The tickets Provider.</param>
+        /// <param name="payload">The user activity object.</param>
+        /// <param name="channelAccountDetails">The channel details.</param>
+        /// <param name="ticketId">The newly created ticketId.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, ITicketsProvider ticketsProvider, CancellationToken cancellationToken)
+        public async Task ForwardInformationToTeam(
+            ITurnContext<IMessageActivity> turnContext,
+            UserActivity payload,
+            TeamsChannelAccount channelAccountDetails,
+            string ticketId,
+            CancellationToken cancellationToken)
         {
-            var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
-            var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
             var fullName = turnContext.Activity.Recipient.Name;
             Attachment teamCardAttachment = null;
             string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
@@ -155,7 +160,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case QuestionForExpert:
-                    var ticketId = await CreateUserTicketEntity(turnContext, ticketsProvider, payload, channelAccountDetails);
                     teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert, string.Empty, string.Empty, ticketId);
                     break;
 
@@ -513,9 +517,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var validation = UserInputValidations.Validate(turnContext, cancellationToken);
             if (validation == true)
             {
-                await this.BroadcastTeamMessage(
+                var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
+                var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
+                var ticketId = await CreateUserTicketEntity(turnContext, this.ticketsProvider, payload, channelAccountDetails);
+                await this.ForwardInformationToTeam(
                        turnContext,
-                       this.ticketsProvider,
+                       payload,
+                       channelAccountDetails,
+                       ticketId,
                        cancellationToken);
             }
         }
