@@ -19,7 +19,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [Key]
         [JsonProperty("TicketId")]
-        public string TicketId { get; set; }
+        public string TicketId
+        {
+            get
+            {
+                return this.RowKey;
+            }
+
+            set
+            {
+                this.RowKey = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets comments as text about the ticket which will be stored in table storage
@@ -76,15 +87,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string ThreadConversationId { get; set; }
 
         /// <summary>
-        /// Gets card activity Id which will be stored in table storage
+        /// Gets or sets card activity Id which will be stored in table storage
         /// </summary>
         [JsonProperty("CardActivityId")]
-        public string CardActivityId
-        {
-            get
-            {
-                return this.RowKey;
-            }
-        }
+        public string CardActivityId { get; set; }
     }
 }
