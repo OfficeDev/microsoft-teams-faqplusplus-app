@@ -173,7 +173,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             await this.DisplayTypingIndicator(turnContext);
 
-            // await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
             if (payload.QuestionForExpert != null)
             {
                 var confirmationAttachment = ThankYouAdaptiveCard.GetCard();
