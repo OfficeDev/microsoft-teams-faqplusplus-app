@@ -27,11 +27,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         // Default to 25 results, same as page size of a messaging extension query
         private const int DefaultSearchResultCount = 25;
 
-        private readonly Lazy<Task<bool>> initializeTask;
-        private readonly IConfiguration configuration;
+        private readonly Lazy<Task> initializeTask;
         private readonly TelemetryClient telemetryClient;
-        private SearchServiceClient searchServiceClient;
-        private SearchIndexClient searchIndexClient;
+        private readonly SearchServiceClient searchServiceClient;
+        private readonly SearchIndexClient searchIndexClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchService"/> class.
@@ -40,87 +39,87 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         /// <param name="telemetryClient">TelemetryClient provided by DI</param>
         public SearchService(IConfiguration configuration, TelemetryClient telemetryClient)
         {
-            this.configuration = configuration;
             this.telemetryClient = telemetryClient;
-            this.initializeTask = new Lazy<Task<bool>>(() => this.InitializeAsync());
+
+            this.searchServiceClient = new SearchServiceClient(
+                configuration["SearchServiceName"],
+                new SearchCredentials(configuration["SearchServiceAdminApiKey"]));
+            this.searchIndexClient = new SearchIndexClient(
+                configuration["SearchServiceName"],
+                TicketsIndexName,
+                new SearchCredentials(configuration["SearchServiceQueryApiKey"]));
+
+            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(configuration["StorageConnectionString"]));
         }
 
         /// <inheritdoc/>
         public async Task<IList<TicketEntity>> SearchTicketsAsync(TicketSearchScope searchScope, string searchQuery, int? count = null, int? skip = null)
         {
-            bool isTicketIndexingServiceCreated = await this.EnsureInitializedAsync();
-            IList<TicketEntity> ticketList = null;
-            if (isTicketIndexingServiceCreated)
+            await this.EnsureInitializedAsync();
+
+            IList<TicketEntity> tickets = new List<TicketEntity>();
+
+            SearchParameters searchParam = new SearchParameters();
+            switch (searchScope)
             {
-                SearchParameters searchParam = new SearchParameters();
-                switch (searchScope)
+                case TicketSearchScope.RecentTickets:
+                    searchParam.OrderBy = new[] { "DateAssigned asc" };
+                    break;
+
+                case TicketSearchScope.OpenTickets:
+                    searchParam.Filter = "Status eq 0";
+                    searchParam.OrderBy = new[] { "DateCreated asc" };
+                    break;
+
+                case TicketSearchScope.AssignedTickets:
+                    searchParam.Filter = "AssignedTo ne ' '";
+                    searchParam.OrderBy = new[] { "DateAssigned asc" };
+                    break;
+
+                default:
+                    break;
+            }
+
+            searchParam.Top = count ?? DefaultSearchResultCount;
+            searchParam.Skip = skip ?? 0;
+            searchParam.IncludeTotalResultCount = false;
+            searchParam.Select = new[] { "TicketId", "Text", "Status", "AssignedTo", "DateCreated" };
+
+            var docs = await this.searchIndexClient.Documents.SearchAsync<TicketEntity>(searchQuery, searchParam);
+            if (docs != null)
+            {
+                foreach (SearchResult<TicketEntity> doc in docs.Results)
                 {
-                    case TicketSearchScope.RecentTickets:
-                        searchParam.OrderBy = new[] { "DateAssigned asc" };
-                        break;
-
-                    case TicketSearchScope.OpenTickets:
-                        searchParam.Filter = "Status eq 0";
-                        searchParam.OrderBy = new[] { "DateCreated asc" };
-                        break;
-
-                    case TicketSearchScope.AssignedTickets:
-                        searchParam.Filter = "AssignedTo ne ' '";
-                        searchParam.OrderBy = new[] { "DateAssigned asc" };
-                        break;
-
-                    default:
-                        break;
-                }
-
-                searchParam.Top = count ?? DefaultSearchResultCount;
-                searchParam.Skip = skip ?? 0;
-                searchParam.IncludeTotalResultCount = false;
-                searchParam.Select = new[] { "TicketId", "Text", "Status", "AssignedTo", "DateCreated" };
-
-                var docs = await this.searchIndexClient.Documents.SearchAsync<TicketEntity>(searchQuery, searchParam);
-
-                if (docs != null)
-                {
-                    foreach (SearchResult<TicketEntity> doc in docs.Results)
+                    tickets.Add(new TicketEntity
                     {
-                        ticketList.Add(new TicketEntity
-                        {
-                            RowKey = doc.Document.TicketId,
-                            Text = doc.Document.Text,
-                            Status = doc.Document.Status,
-                            AssignedTo = doc.Document.AssignedTo,
-                            DateCreated = doc.Document.DateCreated
-                        });
-                    }
+                        RowKey = doc.Document.TicketId,
+                        Text = doc.Document.Text,
+                        Status = doc.Document.Status,
+                        AssignedTo = doc.Document.AssignedTo,
+                        DateCreated = doc.Document.DateCreated
+                    });
                 }
             }
 
-            return ticketList;
+            return tickets;
         }
 
         /// <summary>
         /// Create index, indexer and data source it doesnt exists
         /// </summary>
-        /// <returns><see cref="bool"/> representing the boolean task which represents index, indxer and datasource is created if its not existing.</returns>
-        private async Task<bool> InitializeAsync()
+        /// <param name="storageConnectionString">Connection string to the data store</param>
+        /// <returns>Tracking task</returns>
+        private async Task InitializeAsync(string storageConnectionString)
         {
             try
             {
-                this.searchServiceClient = new SearchServiceClient(
-                    this.configuration["SearchServiceName"],
-                    new SearchCredentials(this.configuration["SearchServiceAdminApiKey"]));
-
-                this.searchIndexClient = new SearchIndexClient(this.configuration["SearchServiceName"], TicketsIndexName, new SearchCredentials(this.configuration["SearchServiceQueryApiKey"]));
-
                 await this.CreateIndexAsync();
-                await this.CreateDataSourceAsync(this.configuration["StorageConnectionString"]);
+                await this.CreateDataSourceAsync(storageConnectionString);
                 await this.CreateIndexerAsync();
-
-                return true;
             }
             catch (Exception ex)
             {
+                this.telemetryClient.TrackTrace($"Failed to initialize Azure Search Service: {ex.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
                 this.telemetryClient.TrackException(ex);
                 throw;
             }
@@ -186,9 +185,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         /// Initialization of InitializeAsync method which will help in indexing
         /// </summary>
         /// <returns>Task</returns>
-        private async Task<bool> EnsureInitializedAsync()
+        private Task EnsureInitializedAsync()
         {
-            return await this.initializeTask.Value;
+            return this.initializeTask.Value;
         }
     }
 }
