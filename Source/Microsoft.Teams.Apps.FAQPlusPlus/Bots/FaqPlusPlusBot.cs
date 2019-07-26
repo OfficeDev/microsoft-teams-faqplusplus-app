@@ -16,6 +16,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Exceptions;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
@@ -285,6 +286,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 {
                     await this.SendCardsAsync(turnContext, cancellationToken);
                 }
+            }
+            catch (StatusUpdateException ex)
+            {
+                this.telemetryClient.TrackException(ex);
+                await turnContext.SendActivityAsync(MessageFactory.Text(ex.Message), cancellationToken);
             }
             catch (Exception ex)
             {

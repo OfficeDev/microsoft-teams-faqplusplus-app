@@ -7,6 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Exceptions;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
 
@@ -36,10 +37,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns><see cref="Task"/> that represents configuration entity is saved or updated.</returns>
         public async Task<bool> SaveOrUpdateTicketEntityAsync(TicketEntity ticketEntity)
         {
-                ticketEntity.PartitionKey = PartitionKey;
+            ticketEntity.PartitionKey = PartitionKey;
+            if (ticketEntity.Status == (int)TicketState.Closed ||
+                ticketEntity.Status == (int)TicketState.Open ||
+                ticketEntity.Status == 2)
+            {
                 var result = await this.StoreOrUpdateTicketEntityAsync(ticketEntity);
-
                 return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
+            }
+            else
+            {
+                throw new StatusUpdateException("The ticket is being updated to an invalid status - tickets can only be updated to either: Open, Assigned, or Closed.");
+            }
         }
 
         /// <inheritdoc/>
