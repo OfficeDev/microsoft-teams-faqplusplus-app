@@ -1,7 +1,7 @@
-﻿// <copyright file="TicketStates.cs" company="Microsoft">
+﻿// <copyright file="TicketState.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-namespace Microsoft.Teams.Apps.FAQPlusPlus.Common
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     /// <summary>
     /// Represents the current status of a ticket

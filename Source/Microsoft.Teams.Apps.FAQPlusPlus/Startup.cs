@@ -14,7 +14,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
 
     /// <summary>
@@ -43,7 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddSingleton<Common.Helpers.IConfigurationProvider>(new Common.Helpers.ConfigurationProvider(this.Configuration["StorageConnectionString"]));
+            services.AddSingleton<Common.Providers.IConfigurationProvider>(new Common.Providers.ConfigurationProvider(this.Configuration["StorageConnectionString"]));
             services.AddHttpClient();
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
             services.AddSingleton<ITicketsProvider>(new TicketsProvider(this.Configuration["StorageConnectionString"]));
