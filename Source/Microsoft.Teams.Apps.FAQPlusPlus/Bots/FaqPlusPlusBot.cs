@@ -17,18 +17,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Services;
     using Newtonsoft.Json.Linq;
-    using IConfigurationProvider = Common.Helpers.IConfigurationProvider;
+    using IConfigurationProvider = Common.Providers.IConfigurationProvider;
 
     /// <summary>
     ///  This Class Invokes all Bot Conversation functionalities.
     /// </summary>
     public class FaqPlusPlusBot : ActivityHandler
     {
-        public const string KnowledgeBase = "KnowledgeBase";
-        public const string WelcomeMessage = "WelcomeMessage";
         private const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
@@ -40,6 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IConfiguration configuration;
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
+        private readonly IQnAMakerFactory qnaMakerFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -48,14 +49,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="configuration">Configuration.</param>
         /// <param name="client">Http Client.</param>
+        /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IQnAMakerFactory qnaMakerFactory)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
             this.configuration = configuration;
+            this.qnaMakerFactory = qnaMakerFactory;
         }
 
         /// <summary>
@@ -111,18 +115,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <returns>A unit of execution.</returns>
         public async Task GetAnswersAsync(string kbId, ITurnContext<IMessageActivity> turnContext)
         {
-            var qnaMaker = new QnAMaker(
-                new Bot.Configuration.QnAMakerService()
-                {
-                    KbId = kbId,
-                    EndpointKey = this.configuration["EndpointKey"],
-                    Hostname = this.configuration["KbHost"],
-                    SubscriptionKey = this.configuration["QnAMakerSubscriptionKey"],
-                },
-            new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) });
-
-            // The actual call to the QnA Maker service.
-            var response = await qnaMaker.GetAnswersAsync(turnContext);
+            var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId);
+            var options = new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) };
+            var response = await qnaMaker.GetAnswersAsync(turnContext, options);
             if (response != null && response.Length > 0)
             {
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer)));
@@ -263,10 +258,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     // When bot is added to a user in personal scope, for the first time.
                     if (member.Id != turnContext.Activity.Recipient.Id)
                     {
-                        var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(WelcomeMessage);
-                        var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
+                        var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
+                        var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
                         this.telemetryClient.TrackTrace($"Member Id of User = {member.Id}");
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
                     }
 
                     // When bot is added to a team, for the first time.
@@ -382,7 +377,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.telemetryClient.TrackTrace($"User entered text = {activityText}");
                 if (string.IsNullOrEmpty(activityText))
                 {
-                    var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(WelcomeMessage);
+                    var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
                     var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
                     await context.SendActivityAsync(MessageFactory.Text("Hey, I don't understand what you're saying, would you like to take a tour"), cancellationToken);
                     await context.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
@@ -409,7 +404,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                         default:
                             this.telemetryClient.TrackTrace("Calling QnA Maker Service");
-                            var kbID = await this.configurationProvider.GetSavedEntityDetailAsync(KnowledgeBase);
+                            var kbID = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
 
                             // ToDo: Validate Null condition when KB is not available.
                             if (!string.IsNullOrEmpty(kbID))

@@ -4,13 +4,14 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
 {
+    using System;
     using System.Net;
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Mvc;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
     /// Home Controller
@@ -74,7 +75,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveOrUpdateTeamIdAsync(string teamId)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(teamId, Constants.TeamEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(teamId, ConfigurationEntityTypes.TeamId);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -92,7 +93,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedTeamIdAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.TeamEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
         }
 
         /// <summary>
@@ -102,7 +103,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>View</returns>
         public async Task<ActionResult> SaveOrUpdateKnowledgeBaseIdAsync(string knowledgeBaseId)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(knowledgeBaseId, Constants.KnowledgeBaseEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(knowledgeBaseId, ConfigurationEntityTypes.KnowledgeBaseId);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -139,7 +140,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpGet]
         public async Task<string> GetSavedKnowledgeBaseIdAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.KnowledgeBaseEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveWelcomeMessageAsync(string welcomeMessage)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(welcomeMessage, Constants.WelcomeMessageEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(welcomeMessage, ConfigurationEntityTypes.WelcomeMessageText);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -167,7 +168,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>Welcome message</returns>
         public async Task<string> GetSavedWelcomeMessageAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.WelcomeMessageEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
         }
 
         /// <summary>
@@ -178,7 +179,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         [HttpPost]
         public async Task<ActionResult> SaveStaticTabTextAsync(string staticTabText)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, Constants.StaticTabEntityType);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, ConfigurationEntityTypes.StaticTabText);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
@@ -195,7 +196,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>Static tab text</returns>
         public async Task<string> GetSavedStaticTabTextAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(Constants.StaticTabEntityType);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
         }
 
         /// <summary>
@@ -205,11 +206,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>team Id as string</returns>
         private string ParseTeamIdFromDeepLink(string teamIdDeepLink)
         {
-            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString);
-            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString);
+            int startEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedStartString, StringComparison.OrdinalIgnoreCase);
+            int endEscapedIndex = teamIdDeepLink.IndexOf(TeamIdEscapedEndString, StringComparison.OrdinalIgnoreCase);
 
-            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString);
-            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString);
+            int startUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedStartString, StringComparison.OrdinalIgnoreCase);
+            int endUnescapedIndex = teamIdDeepLink.IndexOf(TeamIdUnescapedEndString, StringComparison.OrdinalIgnoreCase);
 
             string teamID = string.Empty;
 
