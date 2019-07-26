@@ -31,6 +31,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             {
                 { "cardHeader", Resource.AskAnExpertText1 },
                 { "subHeader", Resource.AskAnExpertPlaceholderText },
+                { "titleText",  Resource.TitleText },
+                { "showcardTitleText",  Resource.ShowCardTitleText },
+                { "descriptionText", Resource.DescriptionText },
                 { "descriptionPlaceholder", Resource.AskAnExpertPlaceholderText },
                 { "askanExpertButtonText", Resource.AskAnExpertButtonText },
             };

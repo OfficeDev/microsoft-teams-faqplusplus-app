@@ -9,22 +9,35 @@
           "size": "medium",
           "weight": "bolder",
           "text": "%cardHeader%"
-        }
-      ]
-    },
-    {
-      "type": "Container",
-      "items": [
+        },
         {
           "type": "TextBlock",
           "text": "%subHeader%",
           "wrap": true,
-          "maxLines": 3,
-          "separator": true
+          "maxLines": 3
+
+        },
+        {
+          "type": "TextBlock",
+          "weight": "bolder",
+          "text": "%titleText%",
+          "wrap": true
         },
         {
           "type": "Input.Text",
-          "id": "appFeedback",
+          "placeholder": "%showcardTitleText%",
+          "id": "UserTitleText",
+          "isMultiline": true
+        },
+        {
+          "type": "TextBlock",
+          "weight": "bolder",
+          "text": "%descriptionText%",
+          "wrap": true
+        },
+        {
+          "type": "Input.Text",
+          "id": "QuestionForExpert",
           "placeholder": "%descriptionPlaceholder%",
           "isMultiline": true
         }

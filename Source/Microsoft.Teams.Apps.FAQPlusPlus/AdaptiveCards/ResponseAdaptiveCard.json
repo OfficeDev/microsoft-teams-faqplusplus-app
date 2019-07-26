@@ -12,13 +12,11 @@
         },
         {
           "type": "TextBlock",
-          "id": "SMEQuestion",
           "text": "%questionLineText%",
           "wrap": true
         },
         {
           "type": "TextBlock",
-          "id": "SMEAnswer",
           "text": "%answerLineText%",
           "wrap": true
         }
@@ -36,7 +34,19 @@
           {
             "type": "TextBlock",
             "weight": "bolder",
-            "text": "%askAnExpertShowCardLabel%",
+            "text": "%titleText%",
+            "wrap": true
+          },
+          {
+            "type": "Input.Text",
+            "placeholder": "%showCardTitleText%",
+            "id": "UserTitleText",
+            "isMultiline": true
+          },
+          {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%descriptionText%",
             "wrap": true
           },
           {
@@ -56,7 +66,9 @@
                 "type": "messageBack",
                 "displayText": "QuestionForExpert",
                 "text": "QuestionForExpert"
-              }
+              },
+              "SMEQuestion": "%questionLineText%",
+              "SMEAnswer": "%answerLineText%"
             }
           }
         ],
@@ -71,8 +83,26 @@
         "style": "emphasis",
         "body": [
           {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%titleText%",
+            "wrap": true
+          },
+          {
             "type": "Input.Text",
-            "id": "resultsFeedback",
+            "placeholder": "%showCardTitleText%",
+            "id": "UserTitleText",
+            "isMultiline": true
+          },
+          {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%descriptionText%",
+            "wrap": true
+          },
+          {
+            "type": "Input.Text",
+            "id": "QuestionForExpert",
             "maxLenght": "300",
             "isMultiline": true,
             "placeholder": "%resultsFeedbackDetails%"
@@ -89,8 +119,8 @@
                 "displayText": "Result Feedback",
                 "text": "ResultsFeedback"
               },
-                "SMEQuestion": "%questionLineText%",
-                "SMEAnswer": "%answerLineText%"
+              "SMEQuestion": "%questionLineText%",
+              "SMEAnswer": "%answerLineText%"
             }
           }
         ],

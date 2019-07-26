@@ -29,6 +29,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     public class FaqPlusPlusBot : ActivityHandler
     {
         public const string KnowledgeBase = "KnowledgeBase";
+        public const string MSTeams = "Teams";
         public const string WelcomeMessage = "WelcomeMessage";
         private const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
@@ -133,7 +134,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Sends the message to SME team upon collecting feedback or question from the user.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
@@ -145,15 +145,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (activityType)
             {
                 case AppFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback, string.Empty, string.Empty, payload.UserTitleText);
                     break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert, payload.SMEQuestion, payload.SMEAnswer, payload.UserTitleText);
                     break;
 
                 case ResultsFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer, payload.UserTitleText);
                     break;
 
                 default:
@@ -165,7 +165,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
             if (payload.QuestionForExpert != null)
             {
-                await this.UpdateFeedbackActivity(turnContext, ConfirmationCard.GetCard(payload.QuestionForExpert), cancellationToken);
+                await this.UpdateFeedbackActivity(turnContext, NotificationCard.GetCard(payload.QuestionForExpert, payload.UserTitleText), cancellationToken);
             }
             else
             {

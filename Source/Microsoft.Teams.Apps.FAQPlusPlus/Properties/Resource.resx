@@ -150,7 +150,7 @@
     <comment>Providing the user with set of questions or comment box  to collect feedback.</comment>
   </data>
   <data name="FeedbackText1" xml:space="preserve">
-    <value>We would love to hear a feedback from you on how we have performed today.</value>
+    <value>We would love to hear a feedback from you on how we are performing.</value>
     <comment>Text suggests that user is invited to share his feedback on his expereince using bot.</comment>
   </data>
   <data name="FeedbackText2" xml:space="preserve">
@@ -210,7 +210,7 @@
     <value>Type your detailed feedback and supporting details here.</value>
   </data>
   <data name="FeedbackHeaderText" xml:space="preserve">
-    <value>Feedback</value>
+    <value>Share App Feedback</value>
   </data>
   <data name="LastTenRequestsText" xml:space="preserve">
     <value>Following are your last 10 requests:</value>
@@ -273,7 +273,7 @@
     <value>App Feedback</value>
   </data>
   <data name="ThankYouAdaptiveCardContent" xml:space="preserve">
-    <value>Your feedback has been captured and forwarded over to the team. Someone will get back to you in some time.</value>
+    <value>Thank you for your feedback.You are helping me become more helpful.I will share it with experts.</value>
     <comment>The content for the thank you adaptive card which is shown whenever there is feedback captured about the app or about a response.</comment>
   </data>
   <data name="ThankYouAdaptiveCardTitleText" xml:space="preserve">
@@ -288,12 +288,12 @@
     <value>Share App Feedback</value>
     <comment>App Feedback Submit Button Title</comment>
   </data>
-  <data name="ConfirmationAdaptiveCardContent" xml:space="preserve">
-    <value>Your Question has been posted to our expert team.Someone from the team will get back to you in some time.</value>
+  <data name="NotificationAdaptiveCardContent" xml:space="preserve">
+    <value>Your Question has been shared with the SME team.They will directly send you a chat message</value>
     <comment>Confirmation Message to the user upon asking question to the expert.</comment>
   </data>
-  <data name="ConfirmationCardTitleText" xml:space="preserve">
-    <value>Confirmation!</value>
+  <data name="NotificationCardTitleText" xml:space="preserve">
+    <value>Notification</value>
     <comment>Confirmation Card Header Text.</comment>
   </data>
   <data name="TeamChatHeaderText" xml:space="preserve">
@@ -333,14 +333,14 @@
     <comment>Welcome Message when bot is added to a new team.</comment>
   </data>
   <data name="CustomMessage" xml:space="preserve">
-    <value>I didn't find anything. Do you want me to ask an expert.</value>
+    <value>I didn't find anything apt for your request. Do you want me to ask an expert.</value>
   </data>
   <data name="ResultAnswerText" xml:space="preserve">
     <value>{0}</value>
     <comment>Pre-filled Answer Text</comment>
   </data>
-  <data name="ResultQuestionText" xml:space="preserve">
-    <value>Question: {0}</value>
+  <data name="QuestionText" xml:space="preserve">
+    <value>Question Asked:</value>
     <comment>Pre-filled Question Text</comment>
   </data>
   <data name="SubmitButtonText" xml:space="preserve">
@@ -368,7 +368,7 @@
     <value>Open</value>
     <comment>Staus of the user Ticket- Open</comment>
   </data>
-  <data name="StatusShowCardHeader" xml:space="preserve">
+  <data name="StatusShowCardButtonText" xml:space="preserve">
     <value>Status</value>
     <comment>Title of the show card drop down menu: Status</comment>
   </data>
@@ -378,5 +378,20 @@
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
     <value>Here is what I have found for your Request</value>
+  </data>
+  <data name="ClosedDispalyText" xml:space="preserve">
+    <value>Closed: </value>
+  </data>
+  <data name="DateCreatedDisplayText" xml:space="preserve">
+    <value>Created: </value>
+  </data>
+  <data name="ShowCardTitleText" xml:space="preserve">
+    <value>Enter short title here</value>
+  </data>
+  <data name="TitleText" xml:space="preserve">
+    <value>Title: </value>
+  </data>
+  <data name="KBEntryText" xml:space="preserve">
+    <value>Knowledge base entry:</value>
   </data>
 </root>

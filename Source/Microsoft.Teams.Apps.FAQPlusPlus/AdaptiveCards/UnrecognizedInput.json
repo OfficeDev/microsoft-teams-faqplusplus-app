@@ -6,16 +6,10 @@
       "items": [
         {
           "type": "TextBlock",
-          "text": "%questionLineText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
           "text": "%customMessage%",
           "wrap": true
         }
 
-        
       ]
     }
   ],
@@ -28,6 +22,24 @@
         "style": "emphasis",
         "body": [
           {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%titleText%",
+            "wrap": true
+          },
+          {
+            "type": "Input.Text",
+            "placeholder": "%showcardTitleText%",
+            "id": "UserTitleText",
+            "isMultiline": true
+          },
+          {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%descriptionText%",
+            "wrap": true
+          },
+          {
             "type": "Input.Text",
             "id": "questionForExpert",
             "isMultiline": true,
@@ -37,8 +49,18 @@
         ],
         "actions": [
           {
+
             "type": "Action.Submit",
-            "title": "%submitButtonText%"
+            "title": "%askanExpertButtonText%",
+            "data": {
+              "msteams": {
+                "type": "messageBack",
+                "displayText": "QuestionForExpert",
+                "text": "QuestionForExpert"
+              },
+              "SMEQuestion": "%resultQuestionText%"
+            }
+
           }
         ],
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"

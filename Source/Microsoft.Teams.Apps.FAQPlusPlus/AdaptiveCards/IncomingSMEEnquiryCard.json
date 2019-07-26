@@ -22,19 +22,37 @@
           "wrap": true
         },
         {
-          "type": "TextBlock",
-          "text": "%incomingQuestionText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
-          "text": "%incomingAnswerText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
-          "text": "%incomingFeedbackText%",
-          "wrap": true
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "%statusText%",
+              "value": "%statusValue%"
+            },
+            {
+              "title": "%titleText%",
+              "value": "%userTitleValue%"
+            },
+            {
+              "title": "%descriptionText%",
+              "value": "%incomingFeedbackText%"
+            },
+            {
+              "title": "%kbEntryText%",
+              "value": "%smeAnswer%"
+            },
+            {
+              "title": "%questionText%",
+              "value": "%smeQuestion%"
+            },
+            {
+              "title": "%dateCreatedDisplayText%",
+              "value": "%dateCreatedValue%"
+            },
+            {
+              "title": "%closedDispalyText%",
+              "value": "%dateClosedValue%"
+            }
+          ]
         }
       ]
     }
@@ -47,7 +65,7 @@
     },
     {
       "type": "Action.ShowCard",
-      "title": "%statusShowCardHeader%",
+      "title": "%statusShowCardButtonText%",
       "card": {
         "type": "AdaptiveCard",
         "style": "emphasis",

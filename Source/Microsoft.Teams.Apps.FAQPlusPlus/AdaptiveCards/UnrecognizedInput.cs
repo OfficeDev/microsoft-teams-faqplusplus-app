@@ -37,6 +37,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             {
                 { "questionLineText", questionLineText },
                 { "customMessage", customMessage },
+                { "titleText",  Resource.TitleText },
+                { "showcardTitleText",  Resource.ShowCardTitleText },
+                { "descriptionText", Resource.DescriptionText },
                 { "askAnExpertButtonText", askAnExpertButtonText },
                 { "resultQuestionText", question },
                 { "submitButtonText",  Resource.SubmitButtonText },

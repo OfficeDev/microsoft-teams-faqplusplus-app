@@ -36,5 +36,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
         /// Gets or sets the results feedback.
         /// </summary>
         public string ResultsFeedback { get; set; }
+
+        /// <summary>
+        /// Gets or sets the User Title Text.
+        /// </summary>
+        public string UserTitleText { get; set; }
     }
 }

@@ -21,7 +21,7 @@
                 {
                   "type": "Image",
                   "spacing": "None",
-                  "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Sophia_at_the_AI_for_Good_Global_Summit_2018_%2827254369347%29_%28cropped%29.jpg/220px-Sophia_at_the_AI_for_Good_Global_Summit_2018_%2827254369347%29_%28cropped%29.jpg",
+                  "url": "%cardImageUrl%",
                   "size": "small"
                 }
               ],

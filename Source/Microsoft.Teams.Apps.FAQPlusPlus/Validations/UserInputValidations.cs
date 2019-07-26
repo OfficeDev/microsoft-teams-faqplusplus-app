@@ -23,14 +23,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
         public static bool Validate(ITurnContext turnContext, CancellationToken cancellationToken)
         {
             var obj = JsonConvert.DeserializeObject<UserActivity>(turnContext.Activity.Value.ToString());
-            obj.AppFeedback = obj.AppFeedback == null ? string.Empty : obj.AppFeedback;
-            obj.QuestionForExpert = obj.QuestionForExpert == null ? string.Empty : obj.QuestionForExpert;
-            obj.ResultsFeedback = obj.ResultsFeedback == null ? string.Empty : obj.ResultsFeedback;
+            obj.AppFeedback = obj.AppFeedback ?? string.Empty;
+            obj.QuestionForExpert = obj.QuestionForExpert ?? string.Empty;
+            obj.UserTitleText = obj.UserTitleText ?? string.Empty;
+            obj.ResultsFeedback = obj.ResultsFeedback ?? string.Empty;
 
-            if (obj.AppFeedback == string.Empty && obj.QuestionForExpert == string.Empty && obj.ResultsFeedback == string.Empty)
+            if (obj.UserTitleText == string.Empty || obj.QuestionForExpert == string.Empty)
             {
-                turnContext.SendActivityAsync(MessageFactory.Text("All Fields are Mandatory"), cancellationToken);
-                return false;
+                    turnContext.SendActivityAsync(MessageFactory.Text("All Fields are Mandatory"), cancellationToken);
+                    return false;
             }
 
             return true;

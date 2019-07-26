@@ -18,7 +18,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 
         static ResponseAdaptiveCard()
         {
-            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "ResponseAdaptiveCard.json");
+            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "ResponseAdaptiveCard.json");
             CardTemplate = File.ReadAllText(cardJsonFilePath);
         }
 
@@ -36,12 +36,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                { "questionLineText", question },
                { "answerLineText", answer },
                { "askAnExpertButtonText",  Resource.AskAnExpertButtonText },
+               { "titleText", Resource.TitleText },
+               { "showCardTitleText", Resource.ShowCardTitleText },
+               { "descriptionText", Resource.DescriptionText },
                { "resultQuestionText", question },
-               { "resultAnswerText", answer },
                { "submitButtonText",  Resource.SubmitButtonText },
                { "shareResultsFeedbackButtonText", Resource.ShareFeedbackTitleText },
                { "resultsFeedbackDetails", Resource.Resultsfeedbackdetails },
-                { "askAnExpertShowCardLabel", Resource.AskAnExpertShowCardLabel }
             };
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
         }

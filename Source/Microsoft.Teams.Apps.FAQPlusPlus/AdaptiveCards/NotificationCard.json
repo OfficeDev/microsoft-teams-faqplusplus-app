@@ -1,0 +1,49 @@
+{
+  "type": "AdaptiveCard",
+  "body": [
+    {
+      "type": "Container",
+      "items": [
+        {
+          "type": "TextBlock",
+          "weight": "Bolder",
+          "text": "%notificationCardTitleText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "%notificationAdaptiveCardContent%",
+          "spacing": "Small",
+          "wrap": true
+        },
+        {
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "%dateCreatedDisplayText%",
+              "value": "%dateCreatedValue%"
+            },
+            {
+              "title": "%closedDispalyText%",
+              "value": "NA"
+            },
+            {
+              "title": "%statusText%",
+              "value": "%statusValue%"
+            },
+            {
+              "title": "%titleText%",
+              "value": "%userTitleValue%"
+            },
+            {
+              "title": "%descriptionText%",
+              "value": "%smeQuestion%"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "version": "1.0"
+}

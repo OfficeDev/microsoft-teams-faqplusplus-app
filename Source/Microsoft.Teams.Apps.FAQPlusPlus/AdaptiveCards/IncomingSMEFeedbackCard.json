@@ -22,19 +22,30 @@
           "wrap": true
         },
         {
-          "type": "TextBlock",
-          "text": "%incomingQuestionText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
-          "text": "%incomingAnswerText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
-          "text": "%incomingFeedbackText%",
-          "wrap": true
+          "type": "FactSet",
+          "facts": [
+            
+            {
+              "title": "%titleText%",
+              "value": "%userTitleValue%"
+            },
+            {
+              "title": "%descriptionText%",
+              "value": "%incomingFeedbackText%"
+            },
+            {
+              "title": "%kbEntryText%",
+              "value": "%smeAnswer%"
+            },
+            {
+              "title": "%questionText%",
+              "value": "%smeQuestion%"
+            },
+            {
+              "title": "%dateCreatedDisplayText%",
+              "value": "%dateCreatedValue%"
+            }
+          ]
         }
       ]
     }

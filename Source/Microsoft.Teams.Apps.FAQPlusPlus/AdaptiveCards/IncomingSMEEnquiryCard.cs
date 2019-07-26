@@ -38,6 +38,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <param name="incomingFeedbackText">User request- question for expert or providing feedback.</param>
         /// <param name="incomingQuestionText">User requested  question for expert.</param>
         /// <param name="incomingAnswerText">Pre filled response from the QnA maker for  question by the user.</param>
+        /// <param name="userTitleValue">Title description text.</param>
         /// <returns>The card JSON string.</returns>
         public static Attachment GetCard(
             string feedbackType,
@@ -45,7 +46,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             string personEmail,
             string incomingFeedbackText,
             string incomingQuestionText = "",
-            string incomingAnswerText = "")
+            string incomingAnswerText = "",
+            string userTitleValue = "")
         {
             var incomingTitleText = feedbackType;
             var incomingSubtitleText = string.Empty;
@@ -58,38 +60,53 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, personName, feedbackType);
             }
 
-            return GetCardDetails(feedbackType, personName, personEmail, ref incomingFeedbackText, ref incomingQuestionText, ref incomingAnswerText, incomingTitleText, incomingSubtitleText);
+            return GetCardDetails(feedbackType, personName, personEmail, ref incomingFeedbackText, ref incomingQuestionText, ref incomingAnswerText, incomingSubtitleText, userTitleValue);
         }
 
-        private static Attachment GetCardDetails(string feedbackType, string personName, string personEmail, ref string incomingFeedbackText, ref string incomingQuestionText, ref string incomingAnswerText, string incomingTitleText, string incomingSubtitleText)
+        private static Attachment GetCardDetails(
+                                                  string feedbackType,
+                                                  string personName,
+                                                  string personEmail,
+                                                  ref string incomingFeedbackText,
+                                                  ref string incomingQuestionText,
+                                                  ref string incomingAnswerText,
+                                                  string incomingSubtitleText,
+                                                  string userTitleValue)
         {
-            incomingQuestionText = incomingQuestionText == string.Empty ? string.Empty : $"Question: {incomingQuestionText}";
-            incomingAnswerText = incomingAnswerText == string.Empty ? string.Empty : $"Answer: {incomingAnswerText}";
-            incomingFeedbackText = feedbackType == "Question For Expert" ? $"Question: {incomingFeedbackText}" : $"Feedback: {incomingFeedbackText}";
+            incomingQuestionText = string.IsNullOrEmpty(incomingQuestionText) ? "NA" : incomingQuestionText;
+            incomingAnswerText = string.IsNullOrEmpty(incomingAnswerText) ? "NA" : incomingAnswerText;
             var chatTextButton = string.Format(Resource.ChatTextButton, personName);
-            var statusShowCardHeader = Resource.StatusShowCardHeader;
-            var openStatusText = Resource.OpenStatusText;
-            var assignStatusText = Resource.AssignStatusText;
-            var closeStatusText = Resource.CloseStatusText;
-            var submitButtonText = Resource.SubmitButtonText;
+
             var variablesToValues = new Dictionary<string, string>()
             {
-                { "incomingTitleText", incomingTitleText },
-                { "incomingSubtitleText", incomingSubtitleText },
-                { "incomingQuestionText", incomingQuestionText },
-                { "incomingAnswerText", incomingAnswerText },
+                { "titleText",  Resource.TitleText },
+                { "userTitleValue", userTitleValue },
+                { "descriptionText", Resource.DescriptionText },
                 { "incomingFeedbackText", incomingFeedbackText },
+                { "kbEntryText", Resource.KBEntryText },
+                { "smeAnswer", incomingAnswerText },
+                { "questionText", Resource.QuestionText },
+                { "smeQuestion", incomingQuestionText },
+                { "dateCreatedDisplayText", Resource.DateCreatedDisplayText },
+
+                // TO-DO: need to pass date created value from the previous entity creation method
+                { "dateCreatedValue",  DateTime.UtcNow.ToString() },
+                { "incomingTitleText", feedbackType },
+                { "incomingSubtitleText", incomingSubtitleText },
                 { "personUpn", personEmail },
                 { "chatTextButton", chatTextButton }
             };
             if (feedbackType == "Question For Expert")
             {
-                variablesToValues.Add("statusShowCardHeader", statusShowCardHeader);
-                variablesToValues.Add("openStatusText", openStatusText);
-                variablesToValues.Add("assignStatusText", assignStatusText);
-                variablesToValues.Add("closeStatusText", closeStatusText);
-                variablesToValues.Add("submitButtonText", submitButtonText);
-
+                variablesToValues.Add("statusShowCardButtonText", Resource.StatusShowCardButtonText);
+                variablesToValues.Add("openStatusText", Resource.OpenStatusText);
+                variablesToValues.Add("assignStatusText", Resource.AssignStatusText);
+                variablesToValues.Add("closeStatusText", Resource.CloseStatusText);
+                variablesToValues.Add("submitButtonText", Resource.SubmitButtonText);
+                variablesToValues.Add("closedDispalyText", Resource.ClosedDispalyText);
+                variablesToValues.Add("dateClosedValue", DateTime.UtcNow.ToString());
+                variablesToValues.Add("statusText", Resource.StatusText);
+                variablesToValues.Add("statusValue", Resource.OpenStatusText);
                 return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
             }
 

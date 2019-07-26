@@ -34,6 +34,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             {
                 { "cardHeader", Resource.FeedbackHeaderText },
                 { "subHeader", Resource.FeedbackText1 },
+                { "titleText",  Resource.TitleText },
+                { "showcardTitleText",  Resource.ShowCardTitleText },
+                { "descriptionText", Resource.DescriptionText },
                 { "descriptionPlaceholder", Resource.FeedbackDescriptionPlaceholderText },
                 { "shareAppFeedbackButtonText", Resource.ShareAppFeedbackButtonText },
             };

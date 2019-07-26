@@ -10,6 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     using System.Net.Http;
     using System.Threading.Tasks;
     using Microsoft.Bot.Schema;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -19,6 +20,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     public class WelcomeCard
     {
         private static readonly string CardTemplate;
+        private static readonly IConfiguration Configuration;
 
         static WelcomeCard()
         {
@@ -40,6 +42,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             var bulletedList = welcomeTextValues[3];
             var messageText2 = welcomeTextValues[4];
             var takeATourButtonText = welcomeTextValues[5];
+            var cardImageUrl = Configuration["AppBaseUri"] + "/content/Appicon.png";
+
             var variablesToValues = new Dictionary<string, string>()
             {
                 { "welcomeText1", welcomeText1 },
@@ -48,6 +52,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 { "bulletedList", bulletedList },
                 { "messageText2", messageText2 },
                 { "takeATourButtonText", takeATourButtonText },
+                { "cardImageUrl", cardImageUrl },
             };
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
         }
