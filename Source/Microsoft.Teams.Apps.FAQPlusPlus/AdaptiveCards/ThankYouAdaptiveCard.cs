@@ -2,15 +2,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// The class process Thank You adaptive card-upon bot posting user feedback to SME team.
@@ -38,12 +36,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             var cardImageUrl = ImageUri + "/content/ShareFeedback.png";
             var thankYouAdaptiveCardTitleText = Resource.ThankYouAdaptiveCardTitleText;
             var thankYouAdaptiveCardContent = Resource.ThankYouAdaptiveCardContent;
+            var todaysDate = DateTime.Now.ToString("D");
+            var closedDate = "N/A";
 
             var variablesToValues = new Dictionary<string, string>()
             {
                 { "thankYouAdaptiveCardTitleText", thankYouAdaptiveCardTitleText },
                 { "cardImageUrl", cardImageUrl },
                 { "thankYouAdaptiveCardContent", thankYouAdaptiveCardContent },
+                { "todaysDate", todaysDate },
+                { "closedDate", closedDate },
             };
 
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));

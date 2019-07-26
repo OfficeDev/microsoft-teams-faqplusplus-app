@@ -78,7 +78,10 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "%submitButtonText%"
+            "title": "%submitButtonText%",
+            "data": {
+              "rowKey": "%ticketId%"
+            }
           }
         ],
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"

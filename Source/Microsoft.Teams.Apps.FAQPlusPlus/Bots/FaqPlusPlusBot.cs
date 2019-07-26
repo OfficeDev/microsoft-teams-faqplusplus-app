@@ -16,10 +16,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
-    using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Validations;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using IConfigurationProvider = Common.Helpers.IConfigurationProvider;
 
@@ -42,6 +45,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
         private readonly IQnAMakerFactory qnaMakerFactory;
+        private readonly ITicketsProvider ticketsProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -49,18 +53,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="telemetryClient"> Telemetry Client.</param>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="configuration">Configuration.</param>
-        /// <param name="client">Http Client.</param>
-        /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
+        /// <param name="qnaMakerFactory">The QnAMaker Factory - repository for all the QnAMaker calls.</param>
+        /// <param name="ticketsProvider">The repository for all the calls to the database.</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
             IConfiguration configuration,
-            IQnAMakerFactory qnaMakerFactory)
+            IQnAMakerFactory qnaMakerFactory,
+            ITicketsProvider ticketsProvider)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
             this.configuration = configuration;
             this.qnaMakerFactory = qnaMakerFactory;
+            this.ticketsProvider = ticketsProvider;
         }
 
         /// <summary>
@@ -77,6 +83,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 updateActivityAttachment,
             };
+
             await turnContext.SendActivityAsync(reply, cancellationToken);
         }
 
@@ -133,10 +140,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Sends the message to SME team upon collecting feedback or question from the user.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="configurationProvider">Configuration Provider.</param>
+        /// <param name="ticketsProvider">The tickets Provider.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, IConfigurationProvider configurationProvider, CancellationToken cancellationToken)
+        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, ITicketsProvider ticketsProvider, CancellationToken cancellationToken)
         {
             var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
             var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
@@ -150,7 +157,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert);
+                    var ticketId = await CreateUserTicketEntity(turnContext, ticketsProvider, payload, channelAccountDetails);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert, string.Empty, string.Empty, ticketId);
                     break;
 
                 case ResultsFeedback:
@@ -162,11 +170,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             await this.DisplayTypingIndicator(turnContext);
-            await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
 
+            // await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
             if (payload.QuestionForExpert != null)
             {
-                await this.UpdateFeedbackActivity(turnContext, ConfirmationCard.GetCard(), cancellationToken);
+                var confirmationAttachment = ThankYouAdaptiveCard.GetCard();
+                await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
+                await this.UpdateFeedbackActivity(turnContext, confirmationAttachment, cancellationToken);
             }
             else
             {
@@ -188,6 +198,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return ((JObject)members[0].Properties).ToObject<TeamsChannelAccount>();
         }
 
+        public async Task UpdateTableEntityValues(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var ticketDetails = JsonConvert.DeserializeObject<TicketDetails>(turnContext.Activity.Value.ToString());
+            var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketDetails.RowKey);
+            var ticketEntity = tableResult;
+            ticketEntity.Status = Convert.ToInt16(ticketDetails.Status);
+            ticketEntity.AssignedTo = turnContext.Activity.From.Name;
+            ticketEntity.DateAssigned = DateTime.UtcNow;
+            await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
+        }
+
         /// <summary>
         /// The method that gets invoked each time there is a message that is coming in.
         /// </summary>
@@ -202,8 +223,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 this.telemetryClient.TrackTrace("Starting Message Activity");
 
+                // var response = client.Conversations.CreateOrGetDirectConversation(activity.Recipient, activity.From, activity.GetTenantId());
+                var data = turnContext.Activity.GetConversationReference();
+
+                var conversationType = turnContext.Activity.Conversation.ConversationType;
+
                 // when conversation is from Teams channel
-                if (turnContext.Activity.Conversation.ConversationType == "channel")
+                if (conversationType == "channel")
                 {
                     string activityText = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
                     this.telemetryClient.TrackTrace($"User entered text = {activityText}");
@@ -215,8 +241,40 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0)
                     {
-                        // To do:
+                        // TODO: Send cards to the user
                         // await this.SendCardsUsrAsync(turnContext, cancellationToken);
+                        await this.UpdateTableEntityValues(turnContext, cancellationToken);
+
+                        // TODO: Reply to the card and update card in place
+                        var ticketDetails = JsonConvert.DeserializeObject<TicketDetails>(turnContext.Activity.Value.ToString());
+                        var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketDetails.RowKey);
+
+                        var updateActivityMessage = string.Empty;
+                        var conversationUpdateMessage = string.Empty;
+
+                        if (tableResult.Status == 2)
+                        {
+                            updateActivityMessage = string.Format(Resource.SMEAssignedStatus, tableResult.AssignedTo);
+                        }
+                        else if (tableResult.Status == 1)
+                        {
+                            updateActivityMessage = string.Format(Resource.SMEOpenedStatus, tableResult.AssignedTo);
+                        }
+                        else if (tableResult.Status == 0)
+                        {
+                            updateActivityMessage = string.Format(Resource.SMEClosedStatus, tableResult.AssignedTo);
+                        }
+
+                        var replyToCardActivity = new Activity()
+                        {
+                            Id = tableResult.CardActivityId,
+                            Type = ActivityTypes.Message,
+                            Text = updateActivityMessage,
+                        };
+
+                        await turnContext.SendActivityAsync(replyToCardActivity, cancellationToken);
+
+                        // await this.NotifyTeam(turnContext, ConfirmationCard.GetCard(), this.configuration["ChannelId"], cancellationToken);
                     }
                     else
                     {
@@ -224,7 +282,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         await this.SendTeamMessage(turnContext, teamtourCardAttachment, cancellationToken);
                     }
                 }
-                else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0 && !string.IsNullOrEmpty(turnContext.Activity.Text))
+                else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0 && conversationType == "personal")
                 {
                     await this.SendCardsToSMEAsync(turnContext, cancellationToken);
                 }
@@ -296,6 +354,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
+        /// Method to create the user ticket entity.
+        /// </summary>
+        /// <param name="turnContext">The turn context.</param>
+        /// <param name="ticketsProvider">The tickets provider.</param>
+        /// <param name="payload">The activity data.</param>
+        /// <param name="member">The user.</param>
+        /// <returns>A unit of execution that returns a string.</returns>
+        private static async Task<string> CreateUserTicketEntity(ITurnContext<IMessageActivity> turnContext, ITicketsProvider ticketsProvider, UserActivity payload, TeamsChannelAccount member)
+        {
+            TicketEntity ticketEntity = new TicketEntity();
+            ticketEntity.OpenedBy = turnContext.Activity.From.Name;
+            ticketEntity.Status = 1;
+            ticketEntity.Text = payload.QuestionForExpert;
+            ticketEntity.Timestamp = DateTime.UtcNow;
+            ticketEntity.CardActivityId = turnContext.Activity.Id.ToString();
+            ticketEntity.RowKey = Guid.NewGuid().ToString();
+            ticketEntity.DateAssigned = DateTime.UtcNow;
+            ticketEntity.DateCreated = DateTime.UtcNow;
+            ticketEntity.OpenedByConversationId = turnContext.Activity.Conversation.Id;
+
+            if (await ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity))
+            {
+                return ticketEntity.RowKey;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// This method displays typing indicator for user when bot is interacting with SME team.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
@@ -305,31 +394,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Activity isTypingActivity = turnContext.Activity.CreateReply();
             isTypingActivity.Type = ActivityTypes.Typing;
             await turnContext.SendActivityAsync((Activity)isTypingActivity);
-        }
-
-        /// <summary>
-        /// Notification to the SME team when bot post a question or feedback to the SME team.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="attachmentToSend">sends Adaptive card.</param>
-        /// <param name="teamId">Team Id to which the message is being sent.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Message to the SME Team.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task NotifyTeam(ITurnContext turnContext, Attachment attachmentToSend, string teamId, CancellationToken cancellationToken)
-        {
-            var teamMessageActivity = new Activity()
-            {
-                Type = ActivityTypes.Message,
-                Conversation = new ConversationAccount()
-                {
-                    Id = teamId,
-                },
-                Attachments = new List<Attachment>()
-                {
-                    attachmentToSend,
-                },
-            };
-            await ((BotFrameworkAdapter)turnContext.Adapter).SendActivitiesAsync(turnContext, new Activity[] { teamMessageActivity }, cancellationToken);
         }
 
         /// <summary>
@@ -343,24 +407,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
             await this.NotifyTeam(turnContext, attachment, teamDetails.Team.Id, cancellationToken);
-        }
-
-        /// <summary>
-        /// Method sends the user activity information to SME channel.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns appropriate adaptive card.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task SendCardsToSMEAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-            var validation = UserInputValidations.Validate(turnContext, cancellationToken);
-            if (validation == true)
-            {
-                await this.BroadcastTeamMessage(
-                       turnContext,
-                       this.configurationProvider,
-                       cancellationToken);
-            }
         }
 
         /// <summary>
@@ -425,6 +471,58 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 this.telemetryClient.TrackException(ex);
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Notification to the SME team when user post a question or feedback to the SME team.
+        /// </summary>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="attachmentToSend">sends Adaptive card.</param>
+        /// <param name="teamId">Team Id to which the message is being sent.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Message to the SME Team.<see cref="Task"/> representing the asynchronous operation.</returns>
+        private async Task NotifyTeam(ITurnContext turnContext, Attachment attachmentToSend, string teamId, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var teamMessageActivity = new Activity()
+                {
+                    Type = ActivityTypes.Message,
+                    Conversation = new ConversationAccount()
+                    {
+                        Id = teamId,
+                    },
+                    Attachments = new List<Attachment>()
+                    {
+                        attachmentToSend,
+                    },
+                };
+
+                await ((BotFrameworkAdapter)turnContext.Adapter).SendActivitiesAsync(turnContext, new Activity[] { teamMessageActivity }, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                this.telemetryClient.TrackTrace($"There is a snag: {ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Method sends the user activity information to SME channel.
+        /// </summary>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Returns appropriate adaptive card.<see cref="Task"/> representing the asynchronous operation.</returns>
+        private async Task SendCardsToSMEAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var validation = UserInputValidations.Validate(turnContext, cancellationToken);
+            if (validation == true)
+            {
+                await this.BroadcastTeamMessage(
+                       turnContext,
+                       this.ticketsProvider,
+                       cancellationToken);
             }
         }
     }

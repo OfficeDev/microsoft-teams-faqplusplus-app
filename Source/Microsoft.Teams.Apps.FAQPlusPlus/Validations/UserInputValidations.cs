@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Validations
 {
     using System.Threading;
     using Microsoft.Bot.Builder;

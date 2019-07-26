@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System;
     using System.Collections.Generic;
@@ -39,6 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <param name="incomingFeedbackText">User request- question for expert or providing feedback.</param>
         /// <param name="incomingQuestionText">User requested  question for expert.</param>
         /// <param name="incomingAnswerText">Pre filled response from the QnA maker for  question by the user.</param>
+        /// <param name="ticketId">The ticketId.</param>
         /// <returns>The card JSON string.</returns>
         public static Attachment GetCard(
             string feedbackType,
@@ -47,7 +48,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             string personEmail,
             string incomingFeedbackText,
             string incomingQuestionText = "",
-            string incomingAnswerText = "")
+            string incomingAnswerText = "",
+            string ticketId = "")
         {
             var incomingTitleText = feedbackType;
             var incomingSubtitleText = string.Empty;
@@ -83,6 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 { "assignStatusText", assignStatusText },
                 { "closeStatusText", closeStatusText },
                 { "submitButtonText", submitButtonText },
+                { "ticketId", ticketId },
             };
 
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));

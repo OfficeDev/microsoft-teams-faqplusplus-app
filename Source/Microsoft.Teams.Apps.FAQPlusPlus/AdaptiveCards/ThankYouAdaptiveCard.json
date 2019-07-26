@@ -6,9 +6,11 @@
       "items": [
         {
           "type": "TextBlock",
-          "weight": "bolder",
+          "size": "Medium",
+          "weight": "Bolder",
           "text": "%thankYouAdaptiveCardTitleText%",
-          "wrap": true
+          "separator": true,
+          "color": "Attention"
         },
         {
           "type": "Image",
@@ -20,8 +22,25 @@
         {
           "type": "TextBlock",
           "text": "%thankYouAdaptiveCardContent%",
-          "spacing": "medium",
+          "spacing": "Medium",
           "wrap": true
+        },
+        {
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "Created:",
+              "value": "%todaysDate%"
+            },
+            {
+              "title": "Closed:",
+              "value": "%closedDate%"
+            },
+            {
+              "title": "Status:",
+              "value": "Open"
+            }
+          ]
         }
       ]
     }

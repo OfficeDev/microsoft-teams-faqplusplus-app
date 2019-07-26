@@ -372,4 +372,16 @@
     <value>Status</value>
     <comment>Title of the show card drop down menu: Status</comment>
   </data>
+  <data name="SMEAssignedStatus" xml:space="preserve">
+    <value>The request is now assigned. Assigned by {0}.</value>
+    <comment>The {0} placeholder is for the SME responsible for assigning the request.</comment>
+  </data>
+  <data name="SMEClosedStatus" xml:space="preserve">
+    <value>The request is now closed. Closed by {0}.</value>
+    <comment>The {0} placeholder is for the SME responsible for closing the request.</comment>
+  </data>
+  <data name="SMEOpenedStatus" xml:space="preserve">
+    <value>The request is now open. Opened by {0}. </value>
+    <comment>The {0} placeholder is for the SME responsible for opening the request.</comment>
+  </data>
 </root>

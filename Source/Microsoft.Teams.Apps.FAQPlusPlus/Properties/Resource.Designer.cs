@@ -520,6 +520,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The request is now assigned. Assigned by {0}..
+        /// </summary>
+        public static string SMEAssignedStatus {
+            get {
+                return ResourceManager.GetString("SMEAssignedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The request is now closed. Closed by {0}..
+        /// </summary>
+        public static string SMEClosedStatus {
+            get {
+                return ResourceManager.GetString("SMEClosedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The request is now open. Opened by {0}. .
+        /// </summary>
+        public static string SMEOpenedStatus {
+            get {
+                return ResourceManager.GetString("SMEOpenedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status.
         /// </summary>
         public static string StatusShowCardHeader {
@@ -646,7 +673,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!.I am a  friendly HR bot can be used by  any team or individual within the org. As an SME, you and your team memebers can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using staus fields like open assign and close.,.
+        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!.I am a  friendly HR bot can be used by  any team or individual within the org. As an SME, you and your team memebers can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using staus fields like open assign and close..
         /// </summary>
         public static string WelcomeTeamCardContent {
             get {
