@@ -159,7 +159,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             await this.DisplayTypingIndicator(turnContext);
-            var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(MSTeams);
+            var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
             await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
             if (payload.QuestionForExpert != null)
             {

@@ -28,7 +28,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
             obj.UserTitleText = obj.UserTitleText ?? string.Empty;
             obj.ResultsFeedback = obj.ResultsFeedback ?? string.Empty;
 
-            if (obj.UserTitleText == string.Empty || obj.QuestionForExpert == string.Empty)
+            if (obj.UserTitleText == string.Empty)
             {
                     turnContext.SendActivityAsync(MessageFactory.Text("All Fields are Mandatory"), cancellationToken);
                     return false;

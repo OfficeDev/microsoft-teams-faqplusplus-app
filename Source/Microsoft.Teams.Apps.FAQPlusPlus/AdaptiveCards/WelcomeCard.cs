@@ -8,8 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     using System.IO;
     using System.Threading.Tasks;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
+    using Microsoft.Extensions.Configuration;
 
     /// <summary>
     ///  This class process Welcome Card, when bot is installed by the user in personal scope.
