@@ -1,4 +1,4 @@
-﻿// <copyright file="QnAMakerFactory.cs" company="PlaceholderCompany">
+﻿// <copyright file="QnAMakerFactory.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
