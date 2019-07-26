@@ -265,14 +265,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             updateActivityMessage = string.Format(Resource.SMEClosedStatus, tableResult.AssignedTo);
                         }
 
-                        var replyToCardActivity = new Activity()
-                        {
-                            Id = tableResult.CardActivityId,
-                            Type = ActivityTypes.Message,
-                            Text = updateActivityMessage,
-                        };
-
-                        await turnContext.SendActivityAsync(replyToCardActivity, cancellationToken);
+                        await this.UpdateAuditTrail(tableResult.CardActivityId, updateActivityMessage, turnContext, cancellationToken);
 
                         // await this.NotifyTeam(turnContext, ConfirmationCard.GetCard(), this.configuration["ChannelId"], cancellationToken);
                     }
@@ -524,6 +517,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                        this.ticketsProvider,
                        cancellationToken);
             }
+        }
+
+        /// <summary>
+        /// Adds to the audit trail for the card that is coming in for the SME team.
+        /// </summary>
+        /// <param name="cardActivityId">The CardActivityId to reply to.</param>
+        /// <param name="updateActivityMessage">The message to write in the SME team.</param>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
+        private async Task UpdateAuditTrail(string cardActivityId, string updateActivityMessage, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var replyToCardActivity = new Activity()
+            {
+                Id = cardActivityId,
+                Type = ActivityTypes.Message,
+                Text = updateActivityMessage,
+            };
+
+            await turnContext.SendActivityAsync(replyToCardActivity, cancellationToken);
         }
     }
 }
