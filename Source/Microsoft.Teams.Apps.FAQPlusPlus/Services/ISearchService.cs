@@ -19,6 +19,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         /// <param name="searchScope">Scope of the search</param>
         /// <param name="searchQuery">searchQuery to be provided by message extension</param>
         /// <returns>List of search results</returns>
-        Task<IList<TicketEntity>> SMESearchServiceForMessageExtension(TicketSearchScope searchScope, string searchQuery);
+        Task<IList<TicketEntity>> SearchTicketsAsync(TicketSearchScope searchScope, string searchQuery);
     }
 }

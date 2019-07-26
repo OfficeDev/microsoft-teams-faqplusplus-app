@@ -47,7 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IList<TicketEntity>> SMESearchServiceForMessageExtension(TicketSearchScope searchScope, string searchQuery)
+        public async Task<IList<TicketEntity>> SearchTicketsAsync(TicketSearchScope searchScope, string searchQuery)
         {
             bool isTicketIndexingServiceCreated = await this.EnsureInitializedAsync();
             IList<TicketEntity> ticketList = null;
