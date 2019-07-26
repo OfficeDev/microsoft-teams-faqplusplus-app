@@ -47,25 +47,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IList<TicketEntity>> SMESearchServiceForMessageExtension(string searchQuery, string tabType)
+        public async Task<IList<TicketEntity>> SMESearchServiceForMessageExtension(TicketSearchScope searchScope, string searchQuery)
         {
             bool isTicketIndexingServiceCreated = await this.EnsureInitializedAsync();
             IList<TicketEntity> ticketList = null;
             if (isTicketIndexingServiceCreated)
             {
                 SearchParameters searchParam = new SearchParameters();
-                switch (tabType)
+                switch (searchScope)
                 {
-                    case MessagingExtensionTabTypes.RecentTabType:
+                    case TicketSearchScope.RecentTickets:
                         searchParam.OrderBy = new[] { "DateAssigned asc" };
                         break;
 
-                    case MessagingExtensionTabTypes.OpenTabType:
+                    case TicketSearchScope.OpenTickets:
                         searchParam.Filter = "Status eq 0";
                         searchParam.OrderBy = new[] { "DateCreated asc" };
                         break;
 
-                    case MessagingExtensionTabTypes.AssignedTabType:
+                    case TicketSearchScope.AssignedTickets:
                         searchParam.Filter = "AssignedTo ne ' '";
                         searchParam.OrderBy = new[] { "DateAssigned asc" };
                         break;
