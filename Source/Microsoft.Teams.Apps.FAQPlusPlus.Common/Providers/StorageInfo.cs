@@ -6,7 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     /// <summary>
     /// References to storage table.
     /// </summary>
-    internal class StorageInfo
+    public class StorageInfo
     {
         /// <summary>
         /// Table name where configuration app details will be saved

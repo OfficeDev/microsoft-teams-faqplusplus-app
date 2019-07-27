@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Azure.Search" Version="9.0.1" />
     <PackageReference Include="Microsoft.Bot.Builder" Version="4.5.1" />
     <PackageReference Include="Microsoft.Bot.Builder.AI.QnA" Version="4.5.1" />
     <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.5.1" />
