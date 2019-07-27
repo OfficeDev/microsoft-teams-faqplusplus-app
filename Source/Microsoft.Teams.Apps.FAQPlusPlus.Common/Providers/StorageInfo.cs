@@ -1,7 +1,7 @@
 ﻿// <copyright file="StorageInfo.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     /// <summary>
     /// References to storage table.

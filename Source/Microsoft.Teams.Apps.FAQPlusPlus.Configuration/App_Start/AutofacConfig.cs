@@ -10,7 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
     using Autofac;
     using Autofac.Integration.Mvc;
     using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
     /// <summary>
     /// Autofac configuration
