@@ -49,6 +49,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
             services.AddTransient<IBot, FaqPlusPlusBot>();
             services.AddSingleton<TelemetryClient>();
+            services.AddSingleton<MessagingExtension>();
+            services.AddSingleton<ISearchService>(new SearchService(this.Configuration["StorageConnectionString"], this.Configuration["SearchServiceName"], this.Configuration["SearchServiceAdminApiKey"]));
         }
 
         /// <summary>

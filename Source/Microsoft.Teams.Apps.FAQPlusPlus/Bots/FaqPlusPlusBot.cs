@@ -40,6 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IConfiguration configuration;
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
+        private readonly MessagingExtension messageExtension;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -51,11 +52,43 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            MessagingExtension messageExtension)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
             this.configuration = configuration;
+            this.messageExtension = messageExtension;
+        }
+
+        public override Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            switch (turnContext.Activity.Type)
+            {
+                case ActivityTypes.Message:
+                    return this.OnMessageActivityAsync(new DelegatingTurnContext<IMessageActivity>(turnContext), cancellationToken);
+
+                case ActivityTypes.Invoke:
+                    return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
+
+                default:
+                    return base.OnTurnAsync(turnContext, cancellationToken);
+            }
+        }
+
+        protected async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
+        {
+            if (turnContext.Activity.Name == "composeExtension/query")
+            {
+
+                InvokeResponse invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
+                await turnContext.SendActivityAsync(
+                    new Activity
+                    {
+                        Value = invokeResponse,
+                        Type = ActivityTypesEx.InvokeResponse,
+                    }).ConfigureAwait(false);
+            }
         }
 
         /// <summary>

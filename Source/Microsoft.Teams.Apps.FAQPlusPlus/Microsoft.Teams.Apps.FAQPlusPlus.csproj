@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.5.1" />
     <PackageReference Include="Microsoft.Bot.Builder.Teams" Version="4.3.0-beta1" />
     <PackageReference Include="Microsoft.Bot.Schema" Version="4.5.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -28,5 +29,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="MessagingExtension\" />
+    </ItemGroup>
 
 </Project>
