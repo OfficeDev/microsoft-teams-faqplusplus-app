@@ -177,13 +177,55 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             if (payload.QuestionForExpert != null)
             {
                 var confirmationAttachment = ThankYouAdaptiveCard.GetCard();
-                await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
-                await this.SendInfoReceievedConfirmation(turnContext, confirmationAttachment, cancellationToken);
+
+                // Create the conversationId and activity
+                var bot = new ChannelAccount { Id = turnContext.Activity.Recipient.Id };
+                var conversationParameters = new ConversationParameters()
+                {
+                    Bot = bot,
+                    ChannelData = new TeamsChannelData()
+                    {
+                        Channel = new ChannelInfo(this.configuration["ChannelId"]),
+                    },
+                    IsGroup = true,
+                    Activity = new Activity()
+                    {
+                        Type = ActivityTypes.Message,
+                        Attachments = new List<Attachment>()
+                        {
+                            teamCardAttachment,
+                        },
+                    },
+                };
+
+                try
+                {
+                    await ((BotFrameworkAdapter)turnContext.Adapter).CreateConversationAsync(this.configuration["ChannelId"], turnContext.Activity.ServiceUrl, new Bot.Connector.Authentication.MicrosoftAppCredentials(this.configuration["MicrosoftAppId"], this.configuration["MicrosoftAppPassword"]), conversationParameters, (turnCtx, canToken) => 
+                    {
+                        var activityId = turnCtx.Activity.Id;
+                        var conversationId = turnCtx.Activity.Conversation.Id;
+                        _ = this.SendInfoReceievedConfirmation(turnContext, confirmationAttachment, cancellationToken);
+                        _ = this.UpdateConversationInfo(ticketId, activityId, conversationId);
+                        return null;
+                    },
+                    cancellationToken);
+
+                    await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    this.telemetryClient.TrackException(ex);
+                }
             }
             else
             {
                 await this.SendInfoReceievedConfirmation(turnContext, ThankYouAdaptiveCard.GetCard(), cancellationToken);
             }
+        }
+
+        private BotCallbackHandler ExtractInformation(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -269,6 +311,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         }
 
                         await this.UpdateAuditTrail(tableResult.CardActivityId, updateActivityMessage, turnContext, cancellationToken);
+                        await this.UpdateSMEEnquiryCard(tableResult.CardActivityId, tableResult.ThreadConversationId, turnContext, cancellationToken);
 
                         // await this.NotifyTeam(turnContext, ConfirmationCard.GetCard(), this.configuration["ChannelId"], cancellationToken);
                     }
@@ -542,16 +585,56 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="turnContext">The current turn/execution flow.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A unit of execution.</returns>
-        private async Task UpdateAuditTrail(string cardActivityId, string updateActivityMessage, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        private async Task UpdateAuditTrail(
+            string cardActivityId,
+            string updateActivityMessage,
+            ITurnContext<IMessageActivity> turnContext,
+            CancellationToken cancellationToken)
         {
             var replyToCardActivity = new Activity()
             {
-                Id = cardActivityId,
                 Type = ActivityTypes.Message,
                 Text = updateActivityMessage,
             };
 
             await turnContext.SendActivityAsync(replyToCardActivity, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates the SME activity card in place.
+        /// </summary>
+        /// <param name="cardActivityId">The activityId to replace.</param>
+        /// <param name="conversationId">The conversationId reference.</param>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
+        private async Task UpdateSMEEnquiryCard(
+            string cardActivityId,
+            string conversationId,
+            ITurnContext<IMessageActivity> turnContext,
+            CancellationToken cancellationToken)
+        {
+            var updateCardActivity = new Activity()
+            {
+                Id = cardActivityId,
+                Conversation = new ConversationAccount()
+                {
+                    Id = conversationId,
+                },
+                Type = ActivityTypes.Message,
+                Text = "Yahtzee!",
+            };
+
+            await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
+        }
+
+        private async Task UpdateConversationInfo(string ticketId, string activityId, string threadConversationId)
+        {
+            var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketId);
+            var ticketEntity = tableResult;
+            ticketEntity.CardActivityId = activityId;
+            ticketEntity.ThreadConversationId = threadConversationId;
+            await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
         }
     }
 }
