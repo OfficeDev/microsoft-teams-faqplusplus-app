@@ -200,7 +200,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 try
                 {
-                    await ((BotFrameworkAdapter)turnContext.Adapter).CreateConversationAsync(this.configuration["ChannelId"], turnContext.Activity.ServiceUrl, new Bot.Connector.Authentication.MicrosoftAppCredentials(this.configuration["MicrosoftAppId"], this.configuration["MicrosoftAppPassword"]), conversationParameters, (turnCtx, canToken) => 
+                    await ((BotFrameworkAdapter)turnContext.Adapter).CreateConversationAsync(this.configuration["ChannelId"], turnContext.Activity.ServiceUrl, new Bot.Connector.Authentication.MicrosoftAppCredentials(this.configuration["MicrosoftAppId"], this.configuration["MicrosoftAppPassword"]), conversationParameters, (turnCtx, canToken) =>
                     {
                         var activityId = turnCtx.Activity.Id;
                         var conversationId = turnCtx.Activity.Conversation.Id;
@@ -219,11 +219,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 await this.SendInfoReceievedConfirmation(turnContext, ThankYouAdaptiveCard.GetCard(), cancellationToken);
             }
-        }
-
-        private BotCallbackHandler ExtractInformation(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
