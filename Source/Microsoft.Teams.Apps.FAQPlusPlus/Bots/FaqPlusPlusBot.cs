@@ -209,8 +209,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         return null;
                     },
                     cancellationToken);
-
-                    await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
                 }
                 catch (Exception ex)
                 {
