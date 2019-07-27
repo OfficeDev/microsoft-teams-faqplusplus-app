@@ -51,11 +51,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="configuration">Configuration.</param>
         /// <param name="client">Http Client.</param>
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
+        /// <param name="messageExtension">Messaging extension instance</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
             IConfiguration configuration,
-            IQnAMakerFactory qnaMakerFactory)
+            IQnAMakerFactory qnaMakerFactory,
+            MessagingExtension messageExtension)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
@@ -64,6 +66,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.messageExtension = messageExtension;
         }
 
+        /// <summary>
+        /// The method that gets invoked each time any activity happens in bot.
+        /// Based on activity type appropriate activity will be invoked
+        /// </summary>
+        /// <param name="turnContext">The current turn.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
         public override Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
             switch (turnContext.Activity.Type)
@@ -76,21 +85,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 default:
                     return base.OnTurnAsync(turnContext, cancellationToken);
-            }
-        }
-
-        protected async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
-        {
-            if (turnContext.Activity.Name == "composeExtension/query")
-            {
-
-                InvokeResponse invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
-                await turnContext.SendActivityAsync(
-                    new Activity
-                    {
-                        Value = invokeResponse,
-                        Type = ActivityTypesEx.InvokeResponse,
-                    }).ConfigureAwait(false);
             }
         }
 
@@ -217,6 +211,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var members = ((BotFrameworkAdapter)turnContext.Adapter).GetConversationMembersAsync(turnContext, cancellationToken).GetAwaiter().GetResult();
             return ((JObject)members[0].Properties).ToObject<TeamsChannelAccount>();
+        }
+
+        /// <summary>
+        /// The method that gets invoked when activity is of type Invoke is received from bot.
+        /// </summary>
+        /// <param name="turnContext">The current turn of invoke activity.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
+        protected async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
+        {
+            if (turnContext.Activity.Name == "composeExtension/query")
+            {
+                InvokeResponse invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
+                await turnContext.SendActivityAsync(
+                    new Activity
+                    {
+                        Value = invokeResponse,
+                        Type = ActivityTypesEx.InvokeResponse,
+                    }).ConfigureAwait(false);
+            }
         }
 
         /// <summary>

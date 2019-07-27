@@ -1,18 +1,26 @@
-﻿// <copyright file="StaticTabController.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="StaticTabController.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
 {
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Helpers;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
 
+    /// <summary>
+    /// This is a Static tab controller class which will be used to display Help
+    /// details in the bot tab.
+    /// </summary>
     [ApiController]
     public class StaticTabController : ControllerBase
     {
         private readonly IConfigurationProvider configurationProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StaticTabController"/> class.
+        /// </summary>
+        /// <param name="configurationProvider">configurationProvider DI</param>
         public StaticTabController(IConfigurationProvider configurationProvider)
         {
             this.configurationProvider = configurationProvider;
@@ -25,7 +33,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         [Route("api/statictab")]
         public async Task<string> GetSavedStaticTabTextAsync()
         {
-            return await this.configurationProvider.GetSavedEntityDetailAsync(Constants.StaticTabEntityType);
+            return await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
         }
     }
 }

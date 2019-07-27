@@ -53,7 +53,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<MessagingExtension>();
-            services.AddSingleton<ISearchService>(new SearchService(this.Configuration["StorageConnectionString"], this.Configuration["SearchServiceName"], this.Configuration["SearchServiceAdminApiKey"]));
         }
 
         /// <summary>
