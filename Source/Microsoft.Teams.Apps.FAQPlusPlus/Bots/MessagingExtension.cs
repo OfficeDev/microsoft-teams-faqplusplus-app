@@ -7,6 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using System.Collections.Generic;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
@@ -22,15 +23,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     public class MessagingExtension
     {
         private const int TextTrimLengthForCard = 10;
+        private const string ManifestExtensionParameter = "searchText"; // searchText is the parameter name in the manifest file
         private readonly ISearchService searchService;
+        private readonly TelemetryClient telemetryClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
         /// </summary>
         /// <param name="searchService">searchService DI.</param>
-        public MessagingExtension(ISearchService searchService)
+        /// <param name="telemetryClient">telemetryClient DI.</param>
+        public MessagingExtension(ISearchService searchService, TelemetryClient telemetryClient)
         {
             this.searchService = searchService;
+            this.telemetryClient = telemetryClient;
         }
 
         /// <summary>
@@ -45,25 +50,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 if (turnContext.Activity.Name == "composeExtension/query")
                 {
                     var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContext.Activity.Value.ToString());
-                    var searchQuery = this.GetMessagingExtensionQueryParameter(messageExtensionQuery);
+                    var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
 
                     return new InvokeResponse
                     {
                         Body = new MessagingExtensionResponse
                         {
-                            ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId),
+                            ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Skip, messageExtensionQuery.QueryOptions.Count),
                         },
                         Status = 200,
                     };
                 }
                 else
                 {
-                    return this.MessageExtensionErrorResponse("Activity not of type query");
+                    InvokeResponse response = null;
+                    return response;
                 }
             }
             catch (Exception error)
             {
-                return this.MessageExtensionErrorResponse(error.Message);
+                this.telemetryClient.TrackTrace($"Failed to compose a list for messaging extension: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(error);
+                throw;
             }
         }
 
@@ -72,8 +80,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
+        /// <param name="skip">skip for pagination.</param>
+        /// <param name="count">count for pagination.</param>
         /// <returns><see cref="Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId)
+        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? skip, int? count)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -88,7 +98,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (commandId)
             {
                 case "recents":
-                    searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.RecentTickets, query);
+                    searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.RecentTickets, query, count, skip);
                     break;
 
                 case "openrequests":
@@ -103,7 +113,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             foreach (var searchResult in searchServiceResults)
             {
                 var formattedResultTextForPreview = this.FormatSubTextForThumbnailCard(searchResult, true);
-
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
                     Title = searchResult.AssignedTo,
@@ -162,39 +171,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Return error message to be dispalyed in message extension.
-        /// </summary>
-        /// <param name="message">error message.</param>
-        /// <returns> returns InvokeResponse which contains error message.</returns>
-        private InvokeResponse MessageExtensionErrorResponse(string message)
-        {
-            return new InvokeResponse
-            {
-                Body = new MessagingExtensionResponse
-                {
-                    ComposeExtension = new MessagingExtensionResult
-                    {
-                        Text = "Failed to search due to " + message,
-                        Type = "message"
-                    },
-                },
-                Status = 200,
-            };
-        }
-
-        /// <summary>
         /// Returns query which the user has typed in message extension search.
         /// </summary>
         /// <param name="query">query typed by user in message extension.</param>
         /// <returns> returns user typed query.</returns>
-        private string GetMessagingExtensionQueryParameter(MessagingExtensionQuery query)
+        private string GetSearchQueryString(MessagingExtensionQuery query)
         {
             string messageExtensionInputText = string.Empty;
-            foreach (var response in query.Parameters)
+            foreach (var parameter in query.Parameters)
             {
-                if (response.Name != "initialRun")
+                if (parameter.Name.Equals(ManifestExtensionParameter, StringComparison.OrdinalIgnoreCase))
                 {
-                    messageExtensionInputText = response.Value.ToString();
+                    messageExtensionInputText = parameter.Value.ToString();
+                    break;
                 }
             }
 
