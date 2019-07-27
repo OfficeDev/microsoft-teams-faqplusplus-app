@@ -200,6 +200,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 try
                 {
+                    // Creates the new conversation and posts the ticket to the SME team.
+                    // Inside of the callback function, the ticket information will be updated with the correct attributes.
                     await ((BotFrameworkAdapter)turnContext.Adapter).CreateConversationAsync(this.configuration["ChannelId"], turnContext.Activity.ServiceUrl, new Bot.Connector.Authentication.MicrosoftAppCredentials(this.configuration["MicrosoftAppId"], this.configuration["MicrosoftAppPassword"]), conversationParameters, (turnCtx, canToken) =>
                     {
                         var activityId = turnCtx.Activity.Id;
@@ -213,6 +215,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 catch (Exception ex)
                 {
                     this.telemetryClient.TrackException(ex);
+                    await turnContext.SendActivityAsync(MessageFactory.Text("An error occurred while trying to send the ticket to the expert team. Please try again later"), cancellationToken);
                 }
             }
             else
@@ -293,20 +296,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         if (tableResult.Status == 2)
                         {
                             updateActivityMessage = string.Format(Resource.SMEAssignedStatus, tableResult.AssignedTo);
+                            conversationUpdateMessage = "Your request has been assigned to an expert. They will directly send you a chat message.";
                         }
                         else if (tableResult.Status == 1)
                         {
                             updateActivityMessage = string.Format(Resource.SMEOpenedStatus, tableResult.AssignedTo);
+                            conversationUpdateMessage = "Your request has been opened again. An expert will directly send you a chat message.";
                         }
                         else if (tableResult.Status == 0)
                         {
                             updateActivityMessage = string.Format(Resource.SMEClosedStatus, tableResult.AssignedTo);
+                            conversationUpdateMessage = "Your request has been closed. Please ask an expert again if you still need more assistance or have a new request.";
                         }
 
-                        await this.UpdateAuditTrail(tableResult.CardActivityId, updateActivityMessage, turnContext, cancellationToken);
-                        await this.UpdateSMEEnquiryCard(tableResult.CardActivityId, tableResult.ThreadConversationId, turnContext, cancellationToken);
+                        await this.UpdateAuditTrail(updateActivityMessage, turnContext, cancellationToken);
+                        await this.InformUserOfUpdates(tableResult.OpenedByConversationId, conversationUpdateMessage, turnContext, cancellationToken);
 
-                        // await this.NotifyTeam(turnContext, ConfirmationCard.GetCard(), this.configuration["ChannelId"], cancellationToken);
+                        // await this.UpdateSMEEnquiryCard(tableResult.CardActivityId, tableResult.ThreadConversationId, turnContext, cancellationToken);
                     }
                     else
                     {
@@ -406,7 +412,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticketEntity.Status = (int)TicketState.Open;
             ticketEntity.Text = payload.QuestionForExpert;
             ticketEntity.Timestamp = DateTime.UtcNow;
-            ticketEntity.CardActivityId = turnContext.Activity.Id.ToString();
+            ticketEntity.CardActivityId = turnContext.Activity.ReplyToId.ToString();
             ticketEntity.RowKey = ticketGuid;
             ticketEntity.TicketId = ticketGuid;
             ticketEntity.DateAssigned = DateTime.UtcNow;
@@ -573,13 +579,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <summary>
         /// Adds to the audit trail for the card that is coming in for the SME team.
         /// </summary>
-        /// <param name="cardActivityId">The CardActivityId to reply to.</param>
         /// <param name="updateActivityMessage">The message to write in the SME team.</param>
         /// <param name="turnContext">The current turn/execution flow.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A unit of execution.</returns>
         private async Task UpdateAuditTrail(
-            string cardActivityId,
             string updateActivityMessage,
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
@@ -621,6 +625,40 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
         }
 
+        /// <summary>
+        /// Method which will inform the user of the updates in the ticket.
+        /// </summary>
+        /// <param name="conversationId">The original conversationId that posted the request.</param>
+        /// <param name="messageToSend">The text to send back to the user (status update).</param>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
+        private async Task InformUserOfUpdates(
+            string conversationId,
+            string messageToSend,
+            ITurnContext<IMessageActivity> turnContext,
+            CancellationToken cancellationToken)
+        {
+            var userMessageActivity = new Activity()
+            {
+                Conversation = new ConversationAccount()
+                {
+                    Id = conversationId,
+                },
+                Type = ActivityTypes.Message,
+                Text = messageToSend,
+            };
+
+            await ((BotFrameworkAdapter)turnContext.Adapter).SendActivitiesAsync(turnContext, new Activity[] { userMessageActivity }, cancellationToken);
+        }
+
+        /// <summary>
+        /// Updates the newly created ticket record with the right information about the conversation.
+        /// </summary>
+        /// <param name="ticketId">The ticketId to update.</param>
+        /// <param name="activityId">The correct activityId.</param>
+        /// <param name="threadConversationId">The conversationId in the SME channel.</param>
+        /// <returns>A unit of execution.</returns>
         private async Task UpdateConversationInfo(string ticketId, string activityId, string threadConversationId)
         {
             var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketId);
