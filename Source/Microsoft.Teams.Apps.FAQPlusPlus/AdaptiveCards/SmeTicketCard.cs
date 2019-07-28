@@ -6,8 +6,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System.Collections.Generic;
     using global::AdaptiveCards;
+    using Microsoft.AspNetCore.Rewrite.Internal.IISUrlRewrite;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Newtonsoft.Json;
 
     public class SmeTicketCard
     {
@@ -46,14 +48,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                         {
                             Body = new List<AdaptiveElement>
                             {
-                                new AdaptiveTextBlock
-                                {
-                                    Text = "Making sure to have the dropdown here"
-                                },
                                 new AdaptiveChoiceSetInput
                                 {
                                     Id = "statuscode",
                                     IsMultiSelect = false,
+                                    Style = AdaptiveChoiceInputStyle.Compact,
                                     Choices = new List<AdaptiveChoice>
                                     {
                                         new AdaptiveChoice
@@ -73,6 +72,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                         },
                                     },
                                 },
+                            },
+                            Actions = new List<AdaptiveAction>
+                            {
+                                new AdaptiveSubmitAction
+                                {
+                                    Type = "Action.Submit",
+                                    DataJson = JsonConvert.SerializeObject(new { rowKey = this.ticketModel.TicketId })
+                                }
                             },
                         },
                     },
