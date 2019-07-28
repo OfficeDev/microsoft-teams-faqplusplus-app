@@ -1,5 +1,5 @@
-﻿// <copyright file="TicketSearchScope.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
+﻿// <copyright file="TicketSearchScope.cs" company="Microsoft">
+// Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
 {

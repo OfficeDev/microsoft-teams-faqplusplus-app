@@ -52,6 +52,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<TelemetryClient>();
             services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
             services.AddSingleton<ISearchService, SearchService>();
+            services.AddSingleton<MessagingExtension>();
         }
 
         /// <summary>
