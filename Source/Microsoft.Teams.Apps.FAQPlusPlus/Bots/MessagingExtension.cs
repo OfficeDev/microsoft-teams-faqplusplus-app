@@ -56,7 +56,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         Body = new MessagingExtensionResponse
                         {
-                            ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Skip, messageExtensionQuery.QueryOptions.Count),
+                            ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
                         },
                         Status = 200,
                     };
@@ -80,10 +80,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
-        /// <param name="skip">skip for pagination.</param>
         /// <param name="count">count for pagination.</param>
+        /// <param name="skip">skip for pagination.</param>
         /// <returns><see cref="Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? skip, int? count)
+        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? count, int? skip)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -94,7 +94,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             IList<TicketEntity> searchServiceResults = null;
 
-            // commandId should be equal to Id mentioned in Manifet file under composeExtensions section
+            // commandId should be equal to Id mentioned in Manifest file under composeExtensions section
             switch (commandId)
             {
                 case "recents":
@@ -102,11 +102,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 case "openrequests":
-                    searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.OpenTickets, query);
+                    searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.OpenTickets, query, count, skip);
                     break;
 
                 case "assignedrequests":
-                    searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.AssignedTickets, query);
+                    searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.AssignedTickets, query, count, skip);
                     break;
             }
 
