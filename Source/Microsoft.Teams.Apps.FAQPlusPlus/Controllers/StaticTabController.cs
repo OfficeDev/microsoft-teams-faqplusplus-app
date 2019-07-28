@@ -12,8 +12,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
     /// This is a Static tab controller class which will be used to display Help
     /// details in the bot tab.
     /// </summary>
-    [ApiController]
-    public class StaticTabController : ControllerBase
+    public class StaticTabController : Controller
     {
         private readonly IConfigurationProvider configurationProvider;
 
@@ -31,9 +30,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         /// </summary>
         /// <returns>Static tab text</returns>
         [Route("api/statictab")]
-        public async Task<string> GetSavedStaticTabTextAsync()
+        public async Task<ActionResult> GetSavedStaticTabTextAsync()
         {
-            return await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
+            string staticTabTextFromStorage = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
+
+            return this.View("~/Views/StaticTab/StaticTabContent.cshtml", (object)staticTabTextFromStorage);
         }
     }
 }
