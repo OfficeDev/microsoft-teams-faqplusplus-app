@@ -50,6 +50,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 {
                                     Text = "Making sure to have the dropdown here"
                                 },
+                                new AdaptiveChoiceSetInput
+                                {
+                                    Id = "statuscode",
+                                    IsMultiSelect = false,
+                                    Choices = new List<AdaptiveChoice>
+                                    {
+                                        new AdaptiveChoice
+                                        {
+                                           Title = "Open",
+                                           Value = "1",
+                                        },
+                                        new AdaptiveChoice
+                                        {
+                                            Title = "Assign",
+                                            Value = "2",
+                                        },
+                                        new AdaptiveChoice
+                                        {
+                                            Title = "Closed",
+                                            Value = "0",
+                                        },
+                                    },
+                                },
                             },
                         },
                     },
