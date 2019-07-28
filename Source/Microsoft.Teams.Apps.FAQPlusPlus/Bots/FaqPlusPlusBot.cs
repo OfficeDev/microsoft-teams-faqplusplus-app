@@ -311,8 +311,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                         await this.UpdateAuditTrail(updateActivityMessage, turnContext, cancellationToken);
                         await this.InformUserOfUpdates(tableResult.OpenedByConversationId, conversationUpdateMessage, turnContext, cancellationToken);
-
-                        // await this.UpdateSMEEnquiryCard(tableResult.CardActivityId, tableResult.ThreadConversationId, turnContext, cancellationToken);
+                        await this.UpdateSMEEnquiryCard(tableResult, turnContext, cancellationToken);
                     }
                     else
                     {
@@ -600,26 +599,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <summary>
         /// Updates the SME activity card in place.
         /// </summary>
-        /// <param name="cardActivityId">The activityId to replace.</param>
-        /// <param name="conversationId">The conversationId reference.</param>
+        /// <param name="ticket">The ticket for which the information should be shown.</param>
         /// <param name="turnContext">The current turn/execution flow.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A unit of execution.</returns>
         private async Task UpdateSMEEnquiryCard(
-            string cardActivityId,
-            string conversationId,
-            ITurnContext<IMessageActivity> turnContext,
-            CancellationToken cancellationToken)
+           TicketEntity ticket,
+           ITurnContext<IMessageActivity> turnContext,
+           CancellationToken cancellationToken)
         {
+            var cardToUpdate = new SmeTicketCard(ticket);
             var updateCardActivity = new Activity()
             {
-                Id = cardActivityId,
+                Id = ticket.CardActivityId,
                 Conversation = new ConversationAccount()
                 {
-                    Id = conversationId,
+                    Id = ticket.ThreadConversationId,
                 },
                 Type = ActivityTypes.Message,
-                Text = "Yahtzee!",
+                Attachments = new List<Attachment>
+                {
+                    cardToUpdate.ToAttachment(),
+                },
             };
 
             await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
