@@ -6,7 +6,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System.Collections.Generic;
     using global::AdaptiveCards;
-    using Microsoft.AspNetCore.Rewrite.Internal.IISUrlRewrite;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Newtonsoft.Json;
