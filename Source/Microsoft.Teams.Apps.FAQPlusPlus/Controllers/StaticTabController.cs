@@ -32,9 +32,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         [Route("/Help")]
         public async Task<ActionResult> GetSavedStaticTabTextAsync()
         {
-            string staticTabTextFromStorage = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
+            string helpTabText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
 
-            return this.View("~/Views/StaticTab/StaticTabContent.cshtml", staticTabTextFromStorage);
+            var marked = new MarkedNet.Marked();
+            var htmlTabHtml = marked.Parse(helpTabText);
+
+            return this.View("~/Views/StaticTab/StaticTabContent.cshtml", htmlTabHtml);
         }
     }
 }
