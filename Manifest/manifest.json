@@ -5,10 +5,10 @@
   "id": "98fc546e-ef74-42cb-8a16-9e7df8c9851f",
   "packageName": "com.microsoft.teams.faqplus",
   "developer": {
-    "name": "<company name>",
-    "websiteUrl": "<website url>",
-    "privacyUrl": "<privacy url>",
-    "termsOfUseUrl": "<terms of use url>"
+    "name": "<COMPANY_NAME>",
+    "websiteUrl": "<WEBSITE_URL>",
+    "privacyUrl": "<PRIVACY_URL>",
+    "termsOfUseUrl": "<TERMS_OF_USE_URL>"
   },
   "icons": {
     "color": "color.png",
@@ -19,12 +19,12 @@
   },
   "description": {
     "short": "A friendly FAQ bot that answers questions and connects you to experts.",
-    "full": "A friendly question and answer bot that answers commonly asked questions. If it can’t answer, it will put you in touch with an expert as soon as they are available."
+    "full": "A friendly question and answer bot that answers commonly asked questions. If it canï¿½t answer, it will put you in touch with an expert as soon as they are available."
   },
   "accentColor": "#64A2CC",
   "bots": [
     {
-      "botId": "<bot id>",
+      "botId": "<BOT_ID>",
       "scopes": [
         "personal",
         "team"
@@ -33,11 +33,21 @@
       "isNotificationOnly": false
     }
   ],
+  "staticTabs": [
+    {
+      "entityId": "help",
+      "name": "Help",
+      "contentUrl": "https://<APP_DOMAIN>/help",
+      "scopes": [
+        "personal"
+      ]
+    }
+  ],
   "permissions": [
     "identity",
     "messageTeamMembers"
   ],
   "validDomains": [
-    "<app domain>"
+    "<APP_DOMAIN>"
   ]
 }
