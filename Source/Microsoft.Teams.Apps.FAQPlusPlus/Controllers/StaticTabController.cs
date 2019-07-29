@@ -29,12 +29,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         /// Get already saved static tab message from table storage
         /// </summary>
         /// <returns>Static tab text</returns>
-        [Route("api/statictab")]
+        [Route("/help")]
         public async Task<ActionResult> GetSavedStaticTabTextAsync()
         {
             string staticTabTextFromStorage = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
 
-            return this.View("~/Views/StaticTab/StaticTabContent.cshtml", (object)staticTabTextFromStorage);
+            return this.View("~/Views/StaticTab/StaticTabContent.cshtml", staticTabTextFromStorage);
         }
     }
 }
