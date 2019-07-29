@@ -48,14 +48,6 @@
         "description": "The ID of the tenant to which the app will be deployed."
       }
     },
-    "refreshEndpointKey": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "[newGuid()]",
-      "metadata": {
-        "description": "A secret used to prevent unauthorized access to the list refresh endpoint."
-      }
-    },
     "tokenEncryptionKey": {
       "type": "string",
       "minLength": 13,
@@ -139,7 +131,6 @@
     "messageExtAppName": "[parameters('baseResourceName')]",
     "messageExtAppDomain": "[concat(variables('messageExtAppName'), '.azurewebsites.net')]",
     "messageExtAppUrl": "[concat('https://', variables('messageExtAppDomain'))]",
-    "messageExtLogicAppName": "[parameters('baseResourceName')]",
     "graphAppClientId": "[parameters('messagingExtensionClientId')]",
     "graphAppClientSecret": "[parameters('messagingExtensionClientSecret')]",
     "hostingPlanName": "[parameters('baseResourceName')]",
@@ -233,10 +224,6 @@
             {
               "name": "GraphAppClientSecret",
               "value": "[variables('graphAppClientSecret')]"
-            },
-            {
-              "name": "RefreshEndpointKey",
-              "value": "[parameters('refreshEndpointKey')]"
             },
             {
               "name": "StorageConnectionString",
@@ -370,45 +357,6 @@
           ]
         }
       ]
-    },
-    {
-      "type": "Microsoft.Logic/workflows",
-      "apiVersion": "2017-07-01",
-      "name": "[variables('messageExtLogicAppName')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "state": "Enabled",
-        "definition": {
-          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {},
-          "triggers": {
-            "Recurrence": {
-              "recurrence": {
-                "frequency": "Hour",
-                "interval": 6
-              },
-              "type": "Recurrence"
-            }
-          },
-          "actions": {
-            "HTTP": {
-              "runAfter": {},
-              "type": "Http",
-              "inputs": {
-                "authentication": {
-                  "type": "Raw",
-                  "value": "[concat('Bearer ', parameters('refreshEndpointKey'))]"
-                },
-                "method": "POST",
-                "uri": "[concat(variables('messageExtAppUrl'), '/api/Refresh/RefreshAllKBs')]"
-              }
-            }
-          },
-          "outputs": {}
-        },
-        "parameters": {}
-      }
     },
     {
       "type": "Microsoft.Web/sites",
