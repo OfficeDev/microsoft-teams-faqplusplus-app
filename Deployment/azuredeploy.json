@@ -9,19 +9,19 @@
         "description": "The base name to use for the resources that will be provisioned."
       }
     },
-    "messagingExtensionClientId": {
+    "botClientId": {
       "type": "string",
       "minLength": 36,
       "maxLength": 36,
       "metadata": {
-        "description": "The client ID of the messaging extension Azure AD app, e.g., 123e4567-e89b-12d3-a456-426655440000."
+        "description": "The client ID of the bot Azure AD app, e.g., 123e4567-e89b-12d3-a456-426655440000."
       }
     },
-    "messagingExtensionClientSecret": {
+    "botClientSecret": {
       "type": "string",
       "minLength": 1,
       "metadata": {
-        "description": "The client secret of the messaging extension Azure AD app."
+        "description": "The client secret of the bot Azure AD app."
       }
     },
     "configAppClientId": {
@@ -128,14 +128,14 @@
   },
   "variables": {
     "botName": "[parameters('baseResourceName')]",
-    "messageExtAppName": "[parameters('baseResourceName')]",
-    "messageExtAppDomain": "[concat(variables('messageExtAppName'), '.azurewebsites.net')]",
-    "messageExtAppUrl": "[concat('https://', variables('messageExtAppDomain'))]",
-    "graphAppClientId": "[parameters('messagingExtensionClientId')]",
-    "graphAppClientSecret": "[parameters('messagingExtensionClientSecret')]",
+    "botAppName": "[parameters('baseResourceName')]",
+    "botAppDomain": "[concat(variables('botAppName'), '.azurewebsites.net')]",
+    "botAppUrl": "[concat('https://', variables('botAppDomain'))]",
+    "graphAppClientId": "[parameters('botClientId')]",
+    "graphAppClientSecret": "[parameters('botClientSecret')]",
     "hostingPlanName": "[parameters('baseResourceName')]",
     "storageAccountName": "[uniquestring(concat(resourceGroup().id, parameters('baseResourceName')))]",
-    "messageExtAppInsightsName": "[parameters('baseResourceName')]",
+    "botAppInsightsName": "[parameters('baseResourceName')]",
     "configAppName": "[concat(parameters('baseResourceName'), '-config')]",
     "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.net')]",
     "configAppInsightsName": "[concat(parameters('baseResourceName'), '-config')]",
@@ -192,11 +192,11 @@
     {
       "apiVersion": "2016-08-01",
       "type": "Microsoft.Web/sites",
-      "name": "[variables('messageExtAppName')]",
+      "name": "[variables('botAppName')]",
       "location": "[parameters('location')]",
       "kind": "app",
       "properties": {
-        "name": "[variables('messageExtAppName')]",
+        "name": "[variables('botAppName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
         "enabled": true,
         "reserved": false,
@@ -215,7 +215,7 @@
             },
             {
               "name": "MicrosoftAppId",
-              "value": "[parameters('messagingExtensionClientId')]"
+              "value": "[parameters('botClientId')]"
             },
             {
               "name": "GraphAppClientId",
@@ -251,15 +251,15 @@
             },
             {
               "name": "AppBaseDomain",
-              "value": "[variables('messageExtAppDomain')]"
+              "value": "[variables('botAppDomain')]"
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId('Microsoft.Insights/components/', variables('messageExtAppInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId('Microsoft.Insights/components/', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "ApplicationInsightsInstrumentationKey",
-              "value": "[reference(resourceId('Microsoft.Insights/components/', variables('messageExtAppInsightsName')), '2015-05-01').InstrumentationKey]"
+              "value": "[reference(resourceId('Microsoft.Insights/components/', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
               "name": "ApplicationInsightsLogLevel",
@@ -289,7 +289,7 @@
         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
         "[resourceId('Microsoft.Web/sites', variables('qnaMakerAppServiceName'))]",
         "[resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName'))]",
-        "[resourceId('Microsoft.Insights/components/', variables('messageExtAppInsightsName'))]"
+        "[resourceId('Microsoft.Insights/components/', variables('botAppInsightsName'))]"
       ],
       "resources": [
         {
@@ -298,7 +298,7 @@
           "type": "sourcecontrols",
           "condition": "[not(empty(parameters('gitRepoUrl')))]",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', variables('messageExtAppName'))]"
+            "[resourceId('Microsoft.Web/sites', variables('botAppName'))]"
           ],
           "properties": {
             "RepoUrl": "[parameters('gitRepoUrl')]",
@@ -310,11 +310,11 @@
     },
     {
       "apiVersion": "2015-05-01",
-      "name": "[variables('messageExtAppInsightsName')]",
+      "name": "[variables('botAppInsightsName')]",
       "type": "Microsoft.Insights/components",
       "location": "[parameters('location')]",
       "tags": {
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('messageExtAppName'))]": "Resource"
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('botAppName'))]": "Resource"
       },
       "properties": {
         "Application_Type": "web",
@@ -332,9 +332,9 @@
       "kind": "sdk",
       "properties": {
         "displayName": "[variables('botName')]",
-        "msaAppId": "[parameters('messagingExtensionClientId')]",
-        "endpoint": "[concat(variables('messageExtAppUrl'), '/api/messages')]",
-        "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('messageExtAppInsightsName')), '2015-05-01').InstrumentationKey]"
+        "msaAppId": "[parameters('botClientId')]",
+        "endpoint": "[concat(variables('botAppUrl'), '/api/messages')]",
+        "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
       },
       "resources": [
         {
