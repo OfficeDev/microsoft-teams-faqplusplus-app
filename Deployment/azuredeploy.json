@@ -129,7 +129,6 @@
     "configAppName": "[concat(parameters('baseResourceName'), '-config')]",
     "configAppUrl": "[concat('https://', variables('configAppName'), '.azurewebsites.net')]",
     "configAppInsightsName": "[concat(parameters('baseResourceName'), '-config')]",
-    "listSearchBlobContainerName": "ListSearchKbBlob",
     "qnaMakerAccountName": "[parameters('baseResourceName')]",
     "qnaMakerLocation": "westus",
     "qnaMakerAppServiceName": "[concat(parameters('baseResourceName'), '-qnamaker')]",
@@ -242,18 +241,6 @@
             {
               "name": "ApplicationInsightsLogLevel",
               "value": "Debug"
-            },
-            {
-              "name": "SearchDelayInMilliseconds",
-              "value": "500"
-            },
-            {
-              "name": "TopResultCount",
-              "value": "50"
-            },
-            {
-              "name": "JwtLifetimeInMinutes",
-              "value": "30"
             },
             {
               "name": "MinimumConfidenceScore",
