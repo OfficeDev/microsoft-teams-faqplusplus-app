@@ -5,6 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MessagingExtension\**" />
+    <Content Remove="MessagingExtension\**" />
+    <EmbeddedResource Remove="MessagingExtension\**" />
+    <None Remove="MessagingExtension\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Microsoft.Teams.Apps.FAQPlusPlus.xml" />
   </ItemGroup>
 
@@ -38,9 +45,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="MessagingExtension\" />
-    </ItemGroup>
 
 </Project>
