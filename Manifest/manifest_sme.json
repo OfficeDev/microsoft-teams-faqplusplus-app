@@ -42,6 +42,13 @@
           "id": "recents",
           "type": "query",
           "title": "Recent",
+          "description": "Search recent requests",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search"
+            }
+          ],
           "context": [
             "compose",
             "commandBox"
@@ -52,6 +59,13 @@
           "id": "openrequests",
           "type": "query",
           "title": "Open",
+          "description": "Search open requests not yet assigned to an expert",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search"
+            }
+          ],
           "context": [
             "compose",
             "commandBox"
@@ -62,6 +76,13 @@
           "id": "assignedrequests",
           "type": "query",
           "title": "Assigned",
+          "description": "Search requests assigned to an expert",
+          "parameters": [
+            {
+              "name": "searchText",
+              "title": "Search"
+            }
+          ],
           "context": [
             "compose",
             "commandBox"
