@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
+    using System;
     using System.Collections.Generic;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -35,7 +36,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = "Yahtzee!",
+                        Text = this.ticketModel.OpenedBy != null ?
+                        "Everyone there is a new request coming in, please see the details below:" :
+                        string.Format("**{0}** is requesting support. Details as follows:", this.ticketModel.OpenedBy),
+                    },
+                    new AdaptiveFactSet
+                    {
+                        Facts = new List<AdaptiveFact>
+                        {
+                            new AdaptiveFact
+                            {
+                                Title = "Status:",
+                                Value = this.GetTicketStatus(this.ticketModel),
+                            },
+                            new AdaptiveFact
+                            {
+                                Title = "Created:",
+                                Value = this.ticketModel.DateCreated.ToString("D"),
+                            },
+                            new AdaptiveFact
+                            {
+                                Title = "Closed:",
+                                Value = this.GetTicketClosedDate(this.ticketModel),
+                            }
+                        },
                     },
                 },
                 Actions = new List<AdaptiveAction>
@@ -90,6 +114,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
             };
+        }
+
+        /// <summary>
+        /// Gets the ticket status currently.
+        /// </summary>
+        /// <param name="ticketModel">The current ticket information.</param>
+        /// <returns>A status string.</returns>
+        private string GetTicketStatus(TicketEntity ticketModel)
+        {
+            if (ticketModel.Status == 1)
+            {
+                return "Open";
+            }
+            else if (ticketModel.Status == 2)
+            {
+                return $"Assigned to {ticketModel.AssignedTo}";
+            }
+            else
+            {
+                return "Closed";
+            }
+        }
+
+        /// <summary>
+        /// Gets the closed date of the ticket.
+        /// </summary>
+        /// <param name="ticketModel">The current ticket information.</param>
+        /// <returns>The closed date of the ticket.</returns>
+        private string GetTicketClosedDate(TicketEntity ticketModel)
+        {
+            return ticketModel.Status == 0 ? DateTime.Now.ToString("D") : "N/A";
         }
     }
 }
