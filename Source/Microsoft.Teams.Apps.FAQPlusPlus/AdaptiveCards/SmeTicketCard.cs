@@ -52,6 +52,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             },
                             new AdaptiveFact
                             {
+                                Title = "Title:",
+                                Value = this.ticketModel.UserTitleText,
+                            },
+                            new AdaptiveFact
+                            {
+                                Title = "Description:",
+                                Value = this.ticketModel.Text,
+                            },
+                            new AdaptiveFact
+                            {
+                                Title = "Knowledge Base Entry:",
+                                Value = this.ticketModel.KbEntryResponse != null ? this.ticketModel.KbEntryResponse : "N/A",
+                            },
+                            new AdaptiveFact
+                            {
+                                Title = "Question asked:",
+                                Value = this.ticketModel.KbEntryQuestion != null ? this.ticketModel.KbEntryQuestion : "N/A",
+                            },
+                            new AdaptiveFact
+                            {
                                 Title = "Created:",
                                 Value = this.ticketModel.DateCreated.ToString("D"),
                             },
@@ -141,7 +161,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             }
             else
             {
-                return "Closed";
+                return $"Closed by {ticketModel.AssignedTo}";
             }
         }
 
