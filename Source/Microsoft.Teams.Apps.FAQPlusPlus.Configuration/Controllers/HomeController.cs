@@ -201,7 +201,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// Get already saved help tab message from table storage
         /// </summary>
         /// <returns>Help tab text</returns>
-        public async Task<string> GetHelpTabTextAsync()
+        public async Task<string> GetSavedHelpTabTextAsync()
         {
             return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
         }
