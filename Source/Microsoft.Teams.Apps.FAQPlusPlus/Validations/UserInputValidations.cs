@@ -7,6 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
     using System.Threading;
     using Microsoft.Bot.Builder;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -30,7 +31,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
 
             if (obj.UserTitleText == string.Empty)
             {
-                    turnContext.SendActivityAsync(MessageFactory.Text("All Fields are Mandatory"), cancellationToken);
+                turnContext.SendActivityAsync(MessageFactory.Text(Resource.MandatoryFieldsText), cancellationToken);
                     return false;
             }
 

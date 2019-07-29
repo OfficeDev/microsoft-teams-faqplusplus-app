@@ -35,16 +35,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <returns>The JSON string for the adaptive card.</returns>
         public static Attachment GetCard(string question, string userTitleValue)
         {
+            question = string.IsNullOrEmpty(question) ? "NA" : question;
             var variablesToValues = new Dictionary<string, string>()
             {
                 { "notificationCardTitleText", Resource.NotificationCardTitleText },
                 { "notificationAdaptiveCardContent", Resource.NotificationAdaptiveCardContent },
-                { "dateCreatedDisplayText", Resource.DateCreatedDisplayText },
+                { "dateCreatedDisplayFactTitle", Resource.DateCreatedDisplayFactTitle },
 
                 // TO-DO: need to pass date created value from the previous entity creation method
-                { "dateCreatedValue",  DateTime.UtcNow.ToString() },
-                { "closedDispalyText",  Resource.ClosedDispalyText },
-                { "statusText",  Resource.StatusText },
+                { "dateCreatedValue",  DateTime.Now.ToString("s") + "Z" },
+                { "closedDisplayFactTitle",  Resource.ClosedFactTitle },
+                { "statusText",  Resource.StatusFactTitle },
 
                  // TO-DO: need to pass dynamic status change as per the updated conversation
                 { "statusValue",  Resource.OpenStatusText },

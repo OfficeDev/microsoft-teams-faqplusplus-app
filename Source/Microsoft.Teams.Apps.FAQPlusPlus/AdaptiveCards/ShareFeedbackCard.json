@@ -37,7 +37,7 @@
         },
         {
           "type": "Input.Text",
-          "id": "QuestionForExpert",
+          "id": "AppFeedback",
           "placeholder": "%descriptionPlaceholder%",
           "isMultiline": true
         }

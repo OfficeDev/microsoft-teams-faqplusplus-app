@@ -48,7 +48,7 @@
     {
 
       "type": "Action.Submit",
-      "title": "%askanExpertButtonText%",
+      "title": "%askAnExpertButtonText%",
       "data": {
         "msteams": {
           "type": "messageBack",

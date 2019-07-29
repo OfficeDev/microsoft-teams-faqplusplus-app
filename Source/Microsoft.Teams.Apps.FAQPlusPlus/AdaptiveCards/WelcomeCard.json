@@ -4,14 +4,6 @@
     {
       "type": "Container",
       "items": [
-        
-        {
-          "type": "TextBlock",
-          "spacing": "None",
-          "weight": "bolder",
-          "text": "%welcomeText1%",
-          "isSubtle": true
-        },
         {
           "type": "ColumnSet",
           "columns": [
@@ -22,7 +14,9 @@
                   "type": "Image",
                   "spacing": "None",
                   "url": "%cardImageUrl%",
-                  "size": "small"
+                  "width": "56px",
+                  "horizontalAlignment": "Left",
+                  "height": "56px"
                 }
               ],
               "width": "auto"
@@ -32,10 +26,11 @@
               "items": [
                 {
                   "type": "TextBlock",
-                  "horizontalAlignment": "left",
-                  "size": "small",
-                  "weight": "bolder",
-                  "text": "%welcomeText2%",
+                  "horizontalAlignment": "Left",
+                  "size": "Small",
+                  "weight": "Bolder",
+                  "text": "%welcomeText1%",
+                  "spacing": "Small",
                   "wrap": true
                 }
               ],
@@ -50,27 +45,39 @@
       "items": [
         {
           "type": "TextBlock",
-          "horizontalAlignment": "left",
+          "horizontalAlignment": "Left",
           "spacing": "None",
-          "weight": "bolder",
-          "color": "dark",
+          "weight": "Bolder",
+          "color": "Dark",
           "text": "%messageText1%",
           "wrap": true
         },
         {
-          "type": "TextBlock",
-          "horizontalAlignment": "left",
-          "spacing": "None",
-          "color": "dark",
-          "text": "%bulletedList%",
-          "wrap": true
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "%bulletFactTitle%",
+              "value": "%welcomeMessageBulletText1%"
+            },
+            {
+              "title": "%bulletFactTitle%",
+              "value": "%welcomeMessageBulletText2%"
+            },
+            {
+              "title": "%bulletFactTitle%",
+              "value": "%welcomeMessageBulletText3%"
+            },
+            {
+              "title": "%bulletFactTitle%",
+              "value": "%welcomeMessageBulletText4%"
+            }
+          ]
         },
-
         {
           "type": "TextBlock",
-          "horizontalAlignment": "left",
-          "spacing": "None",
-          "color": "dark",
+          "horizontalAlignment": "Left",
+          "spacing": "Small",
+          "color": "Dark",
           "text": "%messageText2%",
           "wrap": true
         }
@@ -80,7 +87,7 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "%takeATourButtonText%",
+      "title": "Take a tour",
       "data": {
         "msteams": {
           "type": "messageBack",

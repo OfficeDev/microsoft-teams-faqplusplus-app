@@ -41,7 +41,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                { "descriptionText", Resource.DescriptionText },
                { "resultQuestionText", question },
                { "submitButtonText",  Resource.SubmitButtonText },
-               { "shareResultsFeedbackButtonText", Resource.ShareFeedbackTitleText },
+               { "shareResultsFeedbackButtonText", Resource.ShareFeedbackButtonText },
                { "resultsFeedbackDetails", Resource.Resultsfeedbackdetails },
             };
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));

@@ -20,11 +20,11 @@
           "type": "FactSet",
           "facts": [
             {
-              "title": "%dateCreatedDisplayText%",
-              "value": "%dateCreatedValue%"
+              "title": "%dateCreatedDisplayFactTitle%",
+              "value": "{{DATE(%dateCreatedValue%, SHORT)}}"
             },
             {
-              "title": "%closedDispalyText%",
+              "title": "%closedDisplayFactTitle%",
               "value": "NA"
             },
             {

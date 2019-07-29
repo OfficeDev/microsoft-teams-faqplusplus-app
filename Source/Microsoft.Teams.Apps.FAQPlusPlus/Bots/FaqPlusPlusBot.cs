@@ -88,7 +88,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return new List<Attachment>()
             {
                 TourCarousel.GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, this.configuration["AppBaseUri"] + "/content/Alert.png"),
-                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.configuration["AppBaseUri"] + "/content/UserChat.png"),
+                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.configuration["AppBaseUri"] + "/content/Userchat.png"),
                 TourCarousel.GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, this.configuration["AppBaseUri"] + "/content/Ticket.png"),
             };
         }
@@ -101,9 +101,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             return new List<Attachment>()
             {
-                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.configuration["AppBaseUri"] + "/content/QnaMaker.png"),
-                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/AskAnExpert.png"),
-                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/ShareFeedback.png"),
+                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.configuration["AppBaseUri"] + "/content/Qnamaker.png"),
+                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/Askanexpert.png"),
+                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/Shareappfeedback.png"),
             };
         }
 
@@ -143,15 +143,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (activityType)
             {
                 case AppFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback, string.Empty, string.Empty, payload.UserTitleText);
-                    break;
+                    teamCardAttachment = this.GetAppFeedbackAttachment(channelAccountDetails, payload);
+                        break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert",  channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert, payload.SMEQuestion, payload.SMEAnswer, payload.UserTitleText);
+                    teamCardAttachment = this.GetQuestionForExpertAttachment(channelAccountDetails, payload);
                     break;
 
                 case ResultsFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer, payload.UserTitleText);
+                    teamCardAttachment = this.GetResultsFeedbackAttachment(channelAccountDetails, payload);
                     break;
 
                 default:
@@ -159,6 +159,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             await this.DisplayTypingIndicator(turnContext);
+
             var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
             await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
             if (payload.QuestionForExpert != null)
@@ -257,7 +258,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (member.Id != turnContext.Activity.Recipient.Id)
                     {
                         var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                        var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
+                        var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText, this.configuration["AppBaseUri"]);
                         this.telemetryClient.TrackTrace($"Member Id of User = {member.Id}");
                         await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
                     }
@@ -359,6 +360,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
         }
 
+        private Attachment GetAppFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload)
+        {
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, channelAccountDetails.GivenName, Resource.AppFeedbackText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.AppFeedbackText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
+        }
+
+        private Attachment GetQuestionForExpertAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload)
+        {
+            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, channelAccountDetails.GivenName, Resource.QuestionForExpertText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.QuestionForExpertText, incomingSubtitleText, channelAccountDetails, userActivityPayload, true);
+        }
+
+        private Attachment GetResultsFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload)
+        {
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, channelAccountDetails.GivenName, Resource.ResultsFeedbackText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.ResultsFeedbackText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
+        }
+
         /// <summary>
         /// Sends the Appropriate Adaptive Card to the user for the respective command.
         /// Or Hits the QnA maker if user has asked a question.
@@ -375,7 +394,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 if (string.IsNullOrEmpty(activityText))
                 {
                     var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                    var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
+                    var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText, this.configuration["AppBaseUri"]);
                     await context.SendActivityAsync(MessageFactory.Text("Hey, I don't understand what you're saying, would you like to take a tour"), cancellationToken);
                     await context.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
                 }
@@ -403,7 +422,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             this.telemetryClient.TrackTrace("Calling QnA Maker Service");
                             var kbID = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
 
-                            // ToDo: Validate Null condition when KB is not available.
                             if (!string.IsNullOrEmpty(kbID))
                             {
                                 await this.GetAnswersAsync(kbID, context);

@@ -19,13 +19,14 @@
         {
           "type": "TextBlock",
           "text": "%incomingSubtitleText%",
-          "wrap": true
+          "wrap": true,
+          "value": "%dateCreatedValue%"
         },
         {
           "type": "FactSet",
           "facts": [
             {
-              "title": "%statusText%",
+              "title": "%statusFactTitle%",
               "value": "%statusValue%"
             },
             {
@@ -45,11 +46,11 @@
               "value": "%smeQuestion%"
             },
             {
-              "title": "%dateCreatedDisplayText%",
-              "value": "%dateCreatedValue%"
+              "title": "%dateCreatedDisplayFactTitle%",
+              "value": "{{DATE(%dateCreatedValue%, SHORT)}}"
             },
             {
-              "title": "%closedDispalyText%",
+              "title": "%closedFactTitle%",
               "value": "%dateClosedValue%"
             }
           ]
@@ -65,7 +66,7 @@
     },
     {
       "type": "Action.ShowCard",
-      "title": "%statusShowCardButtonText%",
+      "title": "%changeStatusButtonText%",
       "card": {
         "type": "AdaptiveCard",
         "style": "emphasis",

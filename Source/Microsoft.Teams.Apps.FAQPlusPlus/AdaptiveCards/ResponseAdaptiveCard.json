@@ -102,7 +102,7 @@
           },
           {
             "type": "Input.Text",
-            "id": "QuestionForExpert",
+            "id": "ResultsFeedback",
             "maxLenght": "300",
             "isMultiline": true,
             "placeholder": "%resultsFeedbackDetails%"
