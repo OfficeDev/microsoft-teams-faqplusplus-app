@@ -4,6 +4,8 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
+    using Microsoft.Azure.Search;
     using Microsoft.WindowsAzure.Storage.Table;
     using Newtonsoft.Json;
 
@@ -13,8 +15,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
     public class TicketEntity : TableEntity
     {
         /// <summary>
-        /// Gets or sets the unique ticket Id which is stored in table storage
+        /// Gets or sets unique ticket Id which is stored in table storage
         /// </summary>
+        [Key]
         [JsonProperty("TicketId")]
         public string TicketId { get; set; }
 
@@ -51,24 +54,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <summary>
         /// Gets or sets status of the ticket which will be stored in table storage
         /// </summary>
+        [IsSortable]
+        [IsFilterable]
         [JsonProperty("Status")]
         public int Status { get; set; }
 
         /// <summary>
         /// Gets or sets assigned SME currently working on the ticket which will be stored in table storage
         /// </summary>
+        [IsSearchable]
+        [IsFilterable]
         [JsonProperty("AssignedTo")]
         public string AssignedTo { get; set; }
 
         /// <summary>
         /// Gets or sets created date of ticket which will be stored in table storage
         /// </summary>
+        [IsSortable]
         [JsonProperty("DateCreated")]
         public DateTime DateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets assigned date of ticket which will be stored in table storage
         /// </summary>
+        [IsSortable]
         [JsonProperty("DateAssigned")]
         public DateTime DateAssigned { get; set; }
 

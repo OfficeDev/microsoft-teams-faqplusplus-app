@@ -43,6 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IConfiguration configuration;
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
+        private readonly MessagingExtension messageExtension;
         private readonly IQnAMakerFactory qnaMakerFactory;
         private readonly ITicketsProvider ticketsProvider;
 
@@ -52,20 +53,43 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="telemetryClient"> Telemetry Client.</param>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="configuration">Configuration.</param>
-        /// <param name="qnaMakerFactory">The QnAMaker Factory - repository for all the QnAMaker calls.</param>
-        /// <param name="ticketsProvider">The repository for all the calls to the database.</param>
+        /// <param name="client">Http Client.</param>
+        /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
+        /// <param name="messageExtension">Messaging extension instance</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
             IConfiguration configuration,
             IQnAMakerFactory qnaMakerFactory,
-            ITicketsProvider ticketsProvider)
+            MessagingExtension messageExtension)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
             this.configuration = configuration;
             this.qnaMakerFactory = qnaMakerFactory;
-            this.ticketsProvider = ticketsProvider;
+            this.messageExtension = messageExtension;
+        }
+
+        /// <summary>
+        /// The method that gets invoked each time any activity happens in bot.
+        /// Based on activity type appropriate activity will be invoked
+        /// </summary>
+        /// <param name="turnContext">The current turn.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
+        public override Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            switch (turnContext.Activity.Type)
+            {
+                case ActivityTypes.Message:
+                    return this.OnMessageActivityAsync(new DelegatingTurnContext<IMessageActivity>(turnContext), cancellationToken);
+
+                case ActivityTypes.Invoke:
+                    return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
+
+                default:
+                    return base.OnTurnAsync(turnContext, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -248,6 +272,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticketEntity.DateAssigned = DateTime.UtcNow;
             ticketEntity.AssignedToObjectId = turnContext.Activity.From.AadObjectId;
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
+        }
+
+        /// <summary>
+        /// The method that gets invoked when activity is of type Invoke is received from bot.
+        /// </summary>
+        /// <param name="turnContext">The current turn of invoke activity.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
+        protected async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
+        {
+            if (turnContext.Activity.Name == "composeExtension/query")
+            {
+                InvokeResponse invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
+                await turnContext.SendActivityAsync(
+                    new Activity
+                    {
+                        Value = invokeResponse,
+                        Type = ActivityTypesEx.InvokeResponse,
+                    }).ConfigureAwait(false);
+            }
         }
 
         /// <summary>
