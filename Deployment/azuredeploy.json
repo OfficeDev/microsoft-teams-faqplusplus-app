@@ -48,14 +48,6 @@
         "description": "The ID of the tenant to which the app will be deployed."
       }
     },
-    "tokenEncryptionKey": {
-      "type": "string",
-      "minLength": 13,
-      "defaultValue": "[concat(uniqueString(newGuid()), uniqueString(newGuid()))]",
-      "metadata": {
-        "description": "A secret used to further encrypt stored tokens at rest."
-      }
-    },
     "sku": {
       "type": "string",
       "allowedValues": [
@@ -131,8 +123,6 @@
     "botAppName": "[parameters('baseResourceName')]",
     "botAppDomain": "[concat(variables('botAppName'), '.azurewebsites.net')]",
     "botAppUrl": "[concat('https://', variables('botAppDomain'))]",
-    "graphAppClientId": "[parameters('botClientId')]",
-    "graphAppClientSecret": "[parameters('botClientSecret')]",
     "hostingPlanName": "[parameters('baseResourceName')]",
     "storageAccountName": "[uniquestring(concat(resourceGroup().id, parameters('baseResourceName')))]",
     "botAppInsightsName": "[parameters('baseResourceName')]",
@@ -218,14 +208,6 @@
               "value": "[parameters('botClientId')]"
             },
             {
-              "name": "GraphAppClientId",
-              "value": "[variables('graphAppClientId')]"
-            },
-            {
-              "name": "GraphAppClientSecret",
-              "value": "[variables('graphAppClientSecret')]"
-            },
-            {
               "name": "StorageConnectionString",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
             },
@@ -240,10 +222,6 @@
             {
               "name": "QnAMakerSubscriptionKey",
               "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts/', variables('qnaMakerAccountName')), '2017-04-18').key1]"
-            },
-            {
-              "name": "TokenEncryptionKey",
-              "value": "[parameters('tokenEncryptionKey')]"
             },
             {
               "name": "TenantId",
@@ -390,20 +368,8 @@
               "value": "Source/Microsoft.Teams.Apps.ListSearch.Configuration/Microsoft.Teams.Apps.ListSearch.Configuration.csproj"
             },
             {
-              "name": "GraphAppClientId",
-              "value": "[variables('graphAppClientId')]"
-            },
-            {
-              "name": "GraphAppClientSecret",
-              "value": "[variables('graphAppClientSecret')]"
-            },
-            {
               "name": "StorageConnectionString",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')),'2015-05-01-preview').key1)]"
-            },
-            {
-              "name": "TokenEncryptionKey",
-              "value": "[parameters('tokenEncryptionKey')]"
             },
             {
               "name": "QnAMakerApiEndpointUrl",
