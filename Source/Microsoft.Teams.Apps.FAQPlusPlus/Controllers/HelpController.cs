@@ -1,4 +1,4 @@
-﻿// <copyright file="StaticTabController.cs" company="Microsoft">
+﻿// <copyright file="HelpController.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
@@ -12,32 +12,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
     /// This is a Static tab controller class which will be used to display Help
     /// details in the bot tab.
     /// </summary>
-    public class StaticTabController : Controller
+    [Route("/help")]
+    public class HelpController : Controller
     {
         private readonly IConfigurationProvider configurationProvider;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StaticTabController"/> class.
+        /// Initializes a new instance of the <see cref="HelpController"/> class.
         /// </summary>
         /// <param name="configurationProvider">configurationProvider DI</param>
-        public StaticTabController(IConfigurationProvider configurationProvider)
+        public HelpController(IConfigurationProvider configurationProvider)
         {
             this.configurationProvider = configurationProvider;
         }
 
         /// <summary>
-        /// Get already saved static tab message from table storage
+        /// Display help tab.
         /// </summary>
-        /// <returns>Static tab text</returns>
-        [Route("/Help")]
-        public async Task<ActionResult> GetSavedStaticTabTextAsync()
+        /// <returns>Help tab view</returns>
+        public async Task<ActionResult> Index()
         {
             string helpTabText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
 
             var marked = new MarkedNet.Marked();
-            var htmlTabHtml = marked.Parse(helpTabText);
+            var helpTabHtml = marked.Parse(helpTabText);
 
-            return this.View("~/Views/StaticTab/StaticTabContent.cshtml", htmlTabHtml);
+            return this.View(nameof(this.Index), helpTabHtml);
         }
     }
 }
