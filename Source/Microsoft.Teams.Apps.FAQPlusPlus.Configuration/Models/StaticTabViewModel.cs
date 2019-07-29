@@ -13,10 +13,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Models
         /// <summary>
         /// Gets or sets static tab message text box to be used in View
         /// </summary>
-        [Required(ErrorMessage = "Enter a static tab text.")]
-        [StringLength(maximumLength: 300, ErrorMessage = "Enter static tab text which should contain less than 300 characters.", MinimumLength = 2)]
+        [Required(ErrorMessage = "Enter help tab text.")]
+        [StringLength(maximumLength: 3000, ErrorMessage = "Help tab text should contain less than 3000 characters.", MinimumLength = 2)]
         [DataType(DataType.Text)]
-        [Display(Name = "Static tab text")]
+        [Display(Name = "Help tab text")]
         public string StaticTabText { get; set; }
     }
 }

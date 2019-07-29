@@ -8,7 +8,7 @@
             <span class="mandatoryField">*</span>
         </div>
         <div class="col-lg-5">
-            @Html.TextAreaFor(model => model.StaticTabText, htmlAttributes: new { @class = "form-control staticTabTextIdTextBox toggleTextBox", @placeholder = "Enter static tab text less than 300 characters." })
+            @Html.TextAreaFor(model => model.StaticTabText, htmlAttributes: new { @class = "form-control staticTabTextIdTextBox toggleTextBox", @placeholder = "Enter help tab text, up to 3000 characters. Markdown is supported." })
             @Html.ValidationMessageFor(model => model.StaticTabText, "", htmlAttributes: new { @class = "error-message" })
         </div>
         <div class="col-lg-1">
