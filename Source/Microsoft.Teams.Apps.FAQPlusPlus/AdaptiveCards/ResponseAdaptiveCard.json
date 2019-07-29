@@ -28,11 +28,16 @@
         "body": [
           {
             "type": "Input.Text",
+            "placeholder": "Please provide a title here",
+            "id": "UserTitleText",
+            "isMultiline": true
+          },
+          {
+            "type": "Input.Text",
             "id": "questionForExpert",
             "isMultiline": true,
             "value": "%resultQuestionText%"
           }
-
         ],
         "actions": [
           {
@@ -43,7 +48,9 @@
                 "type": "messageBack",
                 "displayText": "QuestionForExpert",
                 "text": "QuestionForExpert"
-              }
+              },
+              "KbQuestion": "%resultQuestionText%",
+              "KbAnswer": "%resultAnswerText%"
             }
           }
         ],

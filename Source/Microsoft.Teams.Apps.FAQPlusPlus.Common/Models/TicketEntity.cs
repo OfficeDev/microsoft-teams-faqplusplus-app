@@ -31,6 +31,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string OpenedBy { get; set; }
 
         /// <summary>
+        /// Gets or sets the email address of the person that has opened the request originally
+        /// </summary>
+        [JsonProperty("OpenedByUpn")]
+        public string OpenedByUpn { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Aad Object Id of the person that has opened the request
+        /// </summary>
+        [JsonProperty("OpenedByObjectId")]
+        public string OpenedByObjectId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the first name of the person that has opened the request
+        /// </summary>
+        [JsonProperty("OpenedByFirstName")]
+        public string OpenedByFirstName { get; set; }
+
+        /// <summary>
         /// Gets or sets status of the ticket which will be stored in table storage
         /// </summary>
         [JsonProperty("Status")]
@@ -77,5 +95,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("AssignedToObjectId")]
         public string AssignedToObjectId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user title text
+        /// </summary>
+        [JsonProperty("UserTitleText")]
+        public string UserTitleText { get; set; }
+
+        /// <summary>
+        /// Gets or sets the question that has been stored in the knowledge base
+        /// </summary>
+        [JsonProperty("KbEntryQuestion")]
+        public string KbEntryQuestion { get; set; }
+
+        /// <summary>
+        /// Gets or sets the response that has been stored in the knowledge base
+        /// </summary>
+        [JsonProperty("KbEntryResponse")]
+        public string KbEntryResponse { get; set; }
     }
 }

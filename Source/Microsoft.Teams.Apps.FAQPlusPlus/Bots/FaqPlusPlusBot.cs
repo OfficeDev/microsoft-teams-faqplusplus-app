@@ -408,6 +408,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var ticketGuid = Guid.NewGuid().ToString();
             TicketEntity ticketEntity = new TicketEntity();
             ticketEntity.OpenedBy = turnContext.Activity.From.Name;
+            ticketEntity.OpenedByObjectId = member.AadObjectId;
+            ticketEntity.OpenedByUpn = member.UserPrincipalName;
+            ticketEntity.OpenedByFirstName = member.GivenName;
             ticketEntity.Status = (int)TicketState.Open;
             ticketEntity.Text = payload.QuestionForExpert;
             ticketEntity.Timestamp = DateTime.UtcNow;
@@ -416,6 +419,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticketEntity.TicketId = ticketGuid;
             ticketEntity.DateAssigned = DateTime.UtcNow;
             ticketEntity.DateCreated = DateTime.UtcNow;
+            ticketEntity.UserTitleText = payload.UserTitleText;
+            ticketEntity.KbEntryQuestion = payload.SMEQuestion;
+            ticketEntity.KbEntryResponse = payload.SMEAnswer;
             ticketEntity.OpenedByConversationId = turnContext.Activity.Conversation.Id;
 
             if (await ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity))

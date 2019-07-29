@@ -37,8 +37,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveTextBlock
                     {
                         Text = this.ticketModel.OpenedBy != null ?
-                        "Everyone there is a new request coming in, please see the details below:" :
-                        string.Format("**{0}** is requesting support. Details as follows:", this.ticketModel.OpenedBy),
+                         string.Format("**{0}** is requesting support. Details as follows:", this.ticketModel.OpenedBy) :
+                        "Everyone there is a new request coming in, please see the details below:",
+                        Wrap = true,
                     },
                     new AdaptiveFactSet
                     {
@@ -64,6 +65,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 },
                 Actions = new List<AdaptiveAction>
                 {
+                    new AdaptiveOpenUrlAction
+                    {
+                        Type = "Action.OpenUrl",
+                        Title = $"Chat with {this.ticketModel.OpenedByFirstName}",
+                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticketModel.OpenedByUpn}"),
+                    },
                     new AdaptiveShowCardAction
                     {
                         Title = "Status",
@@ -76,6 +83,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                     Id = "statuscode",
                                     IsMultiSelect = false,
                                     Style = AdaptiveChoiceInputStyle.Compact,
+                                    Value = this.ticketModel.Status.ToString(),
                                     Choices = new List<AdaptiveChoice>
                                     {
                                         new AdaptiveChoice
