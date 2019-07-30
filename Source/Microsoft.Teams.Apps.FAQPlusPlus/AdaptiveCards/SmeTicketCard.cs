@@ -109,7 +109,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                         new AdaptiveChoice
                                         {
                                            Title = "Open",
-                                           Value = "1",
+                                           Value = "0",
                                         },
                                         new AdaptiveChoice
                                         {
@@ -119,7 +119,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                         new AdaptiveChoice
                                         {
                                             Title = "Closed",
-                                            Value = "0",
+                                            Value = "1",
                                         },
                                     },
                                 },
@@ -151,11 +151,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>A status string.</returns>
         private string GetTicketStatus(TicketEntity ticketModel)
         {
-            if (ticketModel.Status == 1 && string.IsNullOrEmpty(ticketModel.AssignedTo))
+            if (ticketModel.Status == 0 && string.IsNullOrEmpty(ticketModel.AssignedTo))
             {
                 return "Open";
             }
-            else if (ticketModel.Status == 1 && !string.IsNullOrEmpty(ticketModel.AssignedTo))
+            else if (ticketModel.Status == 0 && !string.IsNullOrEmpty(ticketModel.AssignedTo))
             {
                 return $"Assigned to {ticketModel.AssignedTo}";
             }
@@ -172,7 +172,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>The closed date of the ticket.</returns>
         private string GetTicketClosedDate(TicketEntity ticketModel)
         {
-            return ticketModel.Status == 0 ? DateTime.Now.ToString("D") : "N/A";
+            return ticketModel.Status == 1 ? DateTime.Now.ToString("D") : "N/A";
         }
     }
 }

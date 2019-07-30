@@ -184,15 +184,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (activityType)
             {
                 case AppFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback", fullName, channelAccountDetails, payload);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback);
                     break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails, payload, false, ticketId);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert, string.Empty, string.Empty, ticketId);
                     break;
 
                 case ResultsFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", fullName, channelAccountDetails, payload, false, string.Empty);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer);
                     break;
 
                 default:
@@ -271,9 +271,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketDetails.RowKey);
             var ticketEntity = tableResult;
             ticketEntity.Status = ticketDetails.Status != "0" && ticketDetails.Status != "1" ? Convert.ToInt16(TicketState.Open) : Convert.ToInt16(ticketDetails.Status);
-            ticketEntity.AssignedTo = ticketDetails.Status == "1" ? string.Empty : turnContext.Activity.From.Name;
+            ticketEntity.AssignedTo = ticketDetails.Status == "0" ? string.Empty : turnContext.Activity.From.Name;
             ticketEntity.DateAssigned = this.SetDateTime(ticketDetails);
-            ticketEntity.AssignedToObjectId = ticketDetails.Status == "1" ? string.Empty : turnContext.Activity.From.AadObjectId;
+            ticketEntity.AssignedToObjectId = ticketDetails.Status == "0" ? string.Empty : turnContext.Activity.From.AadObjectId;
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
         }
 
@@ -339,6 +339,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                         var updateActivityMessage = string.Empty;
                         var conversationUpdateMessage = string.Empty;
+                        Attachment smeUpdateAttachment = null;
 
                         if (tableResult.Status == 1 && tableResult.AssignedTo != string.Empty)
                         {
@@ -729,13 +730,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <returns>A nullable object.</returns>
         private DateTime? SetDateTime(TicketDetails ticketDetails)
         {
-            if (ticketDetails.Status == "1")
+            if (ticketDetails.Status == "0")
             {
                 return null;
             }
             else
             {
-                return DateTime.UtcNow;
+                return DateTime.Now;
             }
         }
     }
