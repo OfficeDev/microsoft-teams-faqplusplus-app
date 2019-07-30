@@ -63,12 +63,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Knowledge Base Entry:",
-                                Value = this.ticketModel.KbEntryResponse != null ? this.ticketModel.KbEntryResponse : "N/A",
+                                Value = this.ticketModel.KbEntryResponse,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Question asked:",
-                                Value = this.ticketModel.KbEntryQuestion != null ? this.ticketModel.KbEntryQuestion : "N/A",
+                                Value = this.ticketModel.KbEntryQuestion,
                             },
                             new AdaptiveFact
                             {
@@ -93,36 +93,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     },
                     new AdaptiveShowCardAction
                     {
-                        Title = "Status",
+                        Title = "Change status",
                         Card = new AdaptiveCard
                         {
                             Body = new List<AdaptiveElement>
                             {
-                                new AdaptiveChoiceSetInput
-                                {
-                                    Id = "statuscode",
-                                    IsMultiSelect = false,
-                                    Style = AdaptiveChoiceInputStyle.Compact,
-                                    Value = this.ticketModel.Status.ToString(),
-                                    Choices = new List<AdaptiveChoice>
-                                    {
-                                        new AdaptiveChoice
-                                        {
-                                           Title = "Open",
-                                           Value = "0",
-                                        },
-                                        new AdaptiveChoice
-                                        {
-                                            Title = "Assign",
-                                            Value = "2",
-                                        },
-                                        new AdaptiveChoice
-                                        {
-                                            Title = "Closed",
-                                            Value = "1",
-                                        },
-                                    },
-                                },
+                                this.GetAdaptiveInputSet(this.ticketModel),
                             },
                             Actions = new List<AdaptiveAction>
                             {
@@ -142,6 +118,87 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
             };
+        }
+
+        private AdaptiveElement GetAdaptiveInputSet(TicketEntity ticket)
+        {
+            AdaptiveChoiceSetInput adaptiveChoices = null;
+            if (ticket.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticket.AssignedTo))
+            {
+                adaptiveChoices = new AdaptiveChoiceSetInput
+                {
+                    Id = "statuscode",
+                    IsMultiSelect = false,
+                    Style = AdaptiveChoiceInputStyle.Compact,
+                    Value = this.ticketModel.Status.ToString(),
+                    Choices = new List<AdaptiveChoice>
+                    {
+                        new AdaptiveChoice
+                        {
+                            Title = "Assign",
+                            Value = "2",
+                        },
+                        new AdaptiveChoice
+                        {
+                            Title = "Closed",
+                            Value = "1",
+                        },
+                    },
+                };
+            }
+            else if (ticket.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticket.AssignedTo))
+            {
+                adaptiveChoices = new AdaptiveChoiceSetInput
+                {
+                    Id = "statuscode",
+                    IsMultiSelect = false,
+                    Style = AdaptiveChoiceInputStyle.Compact,
+                    Value = this.ticketModel.Status.ToString(),
+                    Choices = new List<AdaptiveChoice>
+                    {
+                        new AdaptiveChoice
+                        {
+                            Title = "Open",
+                            Value = "0",
+                        },
+                        new AdaptiveChoice
+                        {
+                            Title = "Assign",
+                            Value = "2",
+                        },
+                        new AdaptiveChoice
+                        {
+                            Title = "Closed",
+                            Value = "1",
+                        },
+                    },
+                };
+            }
+            else if (ticket.Status == (int)TicketState.Closed)
+            {
+                adaptiveChoices = new AdaptiveChoiceSetInput
+                {
+                    Id = "statuscode",
+                    IsMultiSelect = false,
+                    Style = AdaptiveChoiceInputStyle.Compact,
+                    Value = this.ticketModel.Status.ToString(),
+                    Choices = new List<AdaptiveChoice>
+                    {
+                        new AdaptiveChoice
+                        {
+                            Title = "Open",
+                            Value = "0",
+                        },
+                        new AdaptiveChoice
+                        {
+                            Title = "Assign",
+                            Value = "2",
+                        },
+                    },
+                };
+            }
+
+            return adaptiveChoices;
         }
 
         /// <summary>

@@ -339,19 +339,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                         var updateActivityMessage = string.Empty;
                         var conversationUpdateMessage = string.Empty;
-                        Attachment smeUpdateAttachment = null;
+                        var smeCard = new SmeTicketCard(tableResult);
+                        Attachment smeUpdateAttachment = smeCard.ToAttachment();
 
-                        if (tableResult.Status == 1 && tableResult.AssignedTo != string.Empty)
+                        if (tableResult.Status == 0 && tableResult.AssignedTo != string.Empty)
                         {
                             updateActivityMessage = string.Format(Resource.SMEAssignedStatus, tableResult.AssignedTo);
                             conversationUpdateMessage = "Your request has been assigned to an expert. They will directly send you a chat message.";
                         }
-                        else if (tableResult.Status == 1 && string.IsNullOrEmpty(tableResult.AssignedTo))
+                        else if (tableResult.Status == 0 && string.IsNullOrEmpty(tableResult.AssignedTo))
                         {
                             updateActivityMessage = string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name);
                             conversationUpdateMessage = "Your request has reopened again. An expert will directly send you a chat message.";
                         }
-                        else if (tableResult.Status == 0)
+                        else if (tableResult.Status == 1)
                         {
                             updateActivityMessage = string.Format(Resource.SMEClosedStatus, tableResult.AssignedTo);
                             conversationUpdateMessage = "Your request has been closed. Please ask an expert again if you still need more assistance or have a new request.";
@@ -359,7 +360,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                         await this.UpdateAuditTrail(updateActivityMessage, turnContext, cancellationToken);
                         await this.InformUserOfUpdates(tableResult.OpenedByConversationId, conversationUpdateMessage, turnContext, cancellationToken);
-                        await this.UpdateSMEEnquiryCard(tableResult, turnContext, cancellationToken);
+                        await this.UpdateSMEEnquiryCard(tableResult, smeUpdateAttachment, turnContext, cancellationToken);
                     }
                     else
                     {
@@ -468,8 +469,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticketEntity.DateAssigned = DateTime.UtcNow;
             ticketEntity.DateCreated = DateTime.UtcNow;
             ticketEntity.UserTitleText = payload.UserTitleText;
-            ticketEntity.KbEntryQuestion = payload.SMEQuestion;
-            ticketEntity.KbEntryResponse = payload.SMEAnswer;
+            ticketEntity.KbEntryQuestion = string.IsNullOrEmpty(payload.SMEQuestion) ? "N/A" : payload.SMEQuestion;
+            ticketEntity.KbEntryResponse = string.IsNullOrEmpty(payload.SMEAnswer) ? "N/A" : payload.SMEAnswer;
             ticketEntity.OpenedByConversationId = turnContext.Activity.Conversation.Id;
 
             if (await ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity))
@@ -654,15 +655,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Updates the SME activity card in place.
         /// </summary>
         /// <param name="ticket">The ticket for which the information should be shown.</param>
+        /// <param name="attachmentToSend">The card which will update the current card in the conversation.</param>
         /// <param name="turnContext">The current turn/execution flow.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A unit of execution.</returns>
         private async Task UpdateSMEEnquiryCard(
            TicketEntity ticket,
+           Attachment attachmentToSend,
            ITurnContext<IMessageActivity> turnContext,
            CancellationToken cancellationToken)
         {
-            var cardToUpdate = new SmeTicketCard(ticket);
             var updateCardActivity = new Activity()
             {
                 Id = ticket.CardActivityId,
@@ -673,7 +675,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 Type = ActivityTypes.Message,
                 Attachments = new List<Attachment>
                 {
-                    cardToUpdate.ToAttachment(),
+                    attachmentToSend,
                 },
             };
 

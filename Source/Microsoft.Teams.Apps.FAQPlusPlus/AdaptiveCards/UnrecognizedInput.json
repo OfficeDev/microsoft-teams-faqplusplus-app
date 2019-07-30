@@ -38,7 +38,14 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "%submitButtonText%"
+            "title": "%submitButtonText%",
+            "data": {
+              "msteams": {
+                "type": "messageBack",
+                "displayText": "QuestionForExpert",
+                "text": "QuestionForExpert"
+              }
+            }
           }
         ],
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
