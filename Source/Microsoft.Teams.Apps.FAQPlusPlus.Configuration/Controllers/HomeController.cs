@@ -179,31 +179,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// Save or update static tab text to be used by bot in table storage which is received from View
+        /// Save or update help tab text to be used by bot in table storage which is received from View
         /// </summary>
-        /// <param name="staticTabText">staticTabText</param>
+        /// <param name="helpTabText">help tab text</param>
         /// <returns>View</returns>
         [HttpPost]
-        public async Task<ActionResult> SaveStaticTabTextAsync(string staticTabText)
+        public async Task<ActionResult> SaveHelpTabTextAsync(string helpTabText)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, ConfigurationEntityTypes.StaticTabText);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(helpTabText, ConfigurationEntityTypes.HelpTabText);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the static tab text due to an internal error. Try again.");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the help tab text due to an internal error. Try again.");
             }
         }
 
         /// <summary>
-        /// Get already saved static tab message from table storage
+        /// Get already saved help tab message from table storage
         /// </summary>
-        /// <returns>Static tab text</returns>
-        public async Task<string> GetSavedStaticTabTextAsync()
+        /// <returns>Help tab text</returns>
+        public async Task<string> GetSavedHelpTabTextAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
         }
 
         /// <summary>
