@@ -55,6 +55,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="configuration">Configuration.</param>
         /// <param name="client">Http Client.</param>
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
+        /// <param name="ticketsProvider">The tickets provider.</param>
         /// <param name="messageExtension">Messaging extension instance</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
@@ -183,15 +184,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (activityType)
             {
                 case AppFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback", fullName, channelAccountDetails, payload);
                     break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert, string.Empty, string.Empty, ticketId);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails, payload, false, ticketId);
                     break;
 
                 case ResultsFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer);
+                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", fullName, channelAccountDetails, payload, false, string.Empty);
                     break;
 
                 default:
@@ -721,6 +722,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
         }
 
+        /// <summary>
+        /// Gets the date/time for the current ticket.
+        /// </summary>
+        /// <param name="ticketDetails">The ticket details.</param>
+        /// <returns>A nullable object.</returns>
         private DateTime? SetDateTime(TicketDetails ticketDetails)
         {
             if (ticketDetails.Status == "1")
