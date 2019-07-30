@@ -118,14 +118,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var formattedResultTextForPreview = this.FormatSubTextForThumbnailCard(searchResult, true);
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
-                    Title = searchResult.AssignedTo,
+                    Title = searchResult.AssignedToName,
                     Text = formattedResultTextForPreview,
                 };
 
                 var formattedResultTextForCard = this.FormatSubTextForThumbnailCard(searchResult, false);
                 ThumbnailCard card = new ThumbnailCard
                 {
-                    Title = searchResult.AssignedTo,
+                    Title = searchResult.AssignedToName,
                     Text = formattedResultTextForCard,
                 };
 
@@ -144,15 +144,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private string FormatSubTextForThumbnailCard(TicketEntity searchResult, bool isPreview)
         {
             StringBuilder resultSubText = new StringBuilder();
-            if (!string.IsNullOrEmpty(searchResult.Text))
+            if (!string.IsNullOrEmpty(searchResult.Title))
             {
-                if (searchResult.Text.Length > TextTrimLengthForCard && isPreview)
+                if (searchResult.Title.Length > TextTrimLengthForCard && isPreview)
                 {
-                    resultSubText.Append("Request: " + searchResult.Text.Substring(0, TextTrimLengthForCard) + "...");
+                    resultSubText.Append("Request: " + searchResult.Title.Substring(0, TextTrimLengthForCard) + "...");
                 }
                 else
                 {
-                    resultSubText.Append("Request: " + searchResult.Text);
+                    resultSubText.Append("Request: " + searchResult.Title);
                 }
             }
 
