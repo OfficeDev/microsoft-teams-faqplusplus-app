@@ -92,7 +92,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 Attachments = new List<MessagingExtensionAttachment>(),
             };
 
-            IList<TicketEntity> searchServiceResults = null;
+            IList<TicketEntity> searchServiceResults = new List<TicketEntity>();
+
+            // Enable prefix matches
+            query = (query ?? string.Empty) + "*";
 
             // commandId should be equal to Id mentioned in Manifest file under composeExtensions section
             switch (commandId)
