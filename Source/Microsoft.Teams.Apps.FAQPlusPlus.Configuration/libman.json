@@ -46,8 +46,7 @@
       "provider": "cdnjs",
       "library": "jquery-validation-unobtrusive@3.2.11",
       "destination": "lib/jquery-validation-unobtrusive/"
-    }
-  ,
+    },
     {
       "provider": "cdnjs",
       "library": "jquery-validate@1.19.1",
