@@ -79,7 +79,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [IsSortable]
         [JsonProperty("DateAssigned")]
-        public DateTime DateAssigned { get; set; }
+        public DateTime? DateAssigned { get; set; }
 
         /// <summary>
         /// Gets or sets opened by conversation Id of 1:1 chat which will be stored in table storage

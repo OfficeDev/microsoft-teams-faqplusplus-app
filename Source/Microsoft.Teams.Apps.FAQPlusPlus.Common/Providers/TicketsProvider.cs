@@ -39,8 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             ticketEntity.PartitionKey = PartitionKey;
             if (ticketEntity.Status == (int)TicketState.Closed ||
-                ticketEntity.Status == (int)TicketState.Open ||
-                ticketEntity.Status == 2)
+                ticketEntity.Status == (int)TicketState.Open)
             {
                 var result = await this.StoreOrUpdateTicketEntityAsync(ticketEntity);
                 return result.HttpStatusCode == (int)HttpStatusCode.NoContent;

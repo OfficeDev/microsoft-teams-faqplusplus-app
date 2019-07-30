@@ -151,11 +151,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>A status string.</returns>
         private string GetTicketStatus(TicketEntity ticketModel)
         {
-            if (ticketModel.Status == 1)
+            if (ticketModel.Status == 1 && string.IsNullOrEmpty(ticketModel.AssignedTo))
             {
                 return "Open";
             }
-            else if (ticketModel.Status == 2)
+            else if (ticketModel.Status == 1 && !string.IsNullOrEmpty(ticketModel.AssignedTo))
             {
                 return $"Assigned to {ticketModel.AssignedTo}";
             }

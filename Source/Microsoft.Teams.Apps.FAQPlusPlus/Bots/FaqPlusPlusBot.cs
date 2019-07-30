@@ -61,6 +61,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IConfigurationProvider configurationProvider,
             IConfiguration configuration,
             IQnAMakerFactory qnaMakerFactory,
+            ITicketsProvider ticketsProvider,
             MessagingExtension messageExtension)
         {
             this.telemetryClient = telemetryClient;
@@ -68,6 +69,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.configuration = configuration;
             this.qnaMakerFactory = qnaMakerFactory;
             this.messageExtension = messageExtension;
+            this.ticketsProvider = ticketsProvider;
         }
 
         /// <summary>
@@ -267,10 +269,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var ticketDetails = JsonConvert.DeserializeObject<TicketDetails>(turnContext.Activity.Value.ToString());
             var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketDetails.RowKey);
             var ticketEntity = tableResult;
-            ticketEntity.Status = Convert.ToInt16(ticketDetails.Status);
-            ticketEntity.AssignedTo = turnContext.Activity.From.Name;
-            ticketEntity.DateAssigned = DateTime.UtcNow;
-            ticketEntity.AssignedToObjectId = turnContext.Activity.From.AadObjectId;
+            ticketEntity.Status = ticketDetails.Status != "0" && ticketDetails.Status != "1" ? Convert.ToInt16(TicketState.Open) : Convert.ToInt16(ticketDetails.Status);
+            ticketEntity.AssignedTo = ticketDetails.Status == "1" ? string.Empty : turnContext.Activity.From.Name;
+            ticketEntity.DateAssigned = this.SetDateTime(ticketDetails);
+            ticketEntity.AssignedToObjectId = ticketDetails.Status == "1" ? string.Empty : turnContext.Activity.From.AadObjectId;
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
         }
 
@@ -337,15 +339,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         var updateActivityMessage = string.Empty;
                         var conversationUpdateMessage = string.Empty;
 
-                        if (tableResult.Status == 2)
+                        if (tableResult.Status == 1 && tableResult.AssignedTo != string.Empty)
                         {
                             updateActivityMessage = string.Format(Resource.SMEAssignedStatus, tableResult.AssignedTo);
                             conversationUpdateMessage = "Your request has been assigned to an expert. They will directly send you a chat message.";
                         }
-                        else if (tableResult.Status == 1)
+                        else if (tableResult.Status == 1 && string.IsNullOrEmpty(tableResult.AssignedTo))
                         {
-                            updateActivityMessage = string.Format(Resource.SMEOpenedStatus, tableResult.AssignedTo);
-                            conversationUpdateMessage = "Your request has been opened again. An expert will directly send you a chat message.";
+                            updateActivityMessage = string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name);
+                            conversationUpdateMessage = "Your request has reopened again. An expert will directly send you a chat message.";
                         }
                         else if (tableResult.Status == 0)
                         {
@@ -717,6 +719,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticketEntity.CardActivityId = activityId;
             ticketEntity.ThreadConversationId = threadConversationId;
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
+        }
+
+        private DateTime? SetDateTime(TicketDetails ticketDetails)
+        {
+            if (ticketDetails.Status == "1")
+            {
+                return null;
+            }
+            else
+            {
+                return DateTime.UtcNow;
+            }
         }
     }
 }
