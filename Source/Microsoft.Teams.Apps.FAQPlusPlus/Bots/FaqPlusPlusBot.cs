@@ -99,7 +99,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.telemetryClient.TrackTrace($"Received message activity");
                 this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
 
-                await this.DisplayTypingIndicator(turnContext);
+                await this.SendTypingIndicatorAsync(turnContext);
 
                 switch (message.Conversation.ConversationType)
                 {
@@ -414,15 +414,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// This method displays typing indicator for user when bot is interacting with SME team.
+        /// Send typing indicator to the user.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <returns>Displays Typing Indicator to the user while the message is sent to the SME channel.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task DisplayTypingIndicator(ITurnContext turnContext)
+        /// <returns><see cref="Task"/> representing the asynchronous operation.</returns>
+        private Task SendTypingIndicatorAsync(ITurnContext turnContext)
         {
             var typingActivity = turnContext.Activity.CreateReply();
             typingActivity.Type = ActivityTypes.Typing;
-            await turnContext.SendActivityAsync(typingActivity);
+            return turnContext.SendActivityAsync(typingActivity);
         }
 
         /// <summary>
