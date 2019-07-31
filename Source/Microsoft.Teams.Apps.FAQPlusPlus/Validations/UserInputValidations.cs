@@ -5,10 +5,10 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
 {
     using System.Threading;
+    using System.Threading.Tasks;
     using Microsoft.Bot.Builder;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-    using Newtonsoft.Json;
 
     /// <summary>
     ///  This Class Validates the User fields in Adaptive cards.
@@ -18,21 +18,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
         /// <summary>
         ///  Validates the User fields in Adaptive cards.
         /// </summary>
+        /// <param name="payload">The adaptive card payload.</param>
         /// <param name="turnContext">The current turn.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Return bool value.</returns>
-        public static bool Validate(ITurnContext turnContext, CancellationToken cancellationToken)
+        public static async Task<bool> Validate(UserActivity payload, ITurnContext turnContext, CancellationToken cancellationToken)
         {
-            var obj = JsonConvert.DeserializeObject<UserActivity>(turnContext.Activity.Value.ToString());
-            obj.AppFeedback = obj.AppFeedback ?? string.Empty;
-            obj.QuestionForExpert = obj.QuestionForExpert ?? string.Empty;
-            obj.QuestionUserTitleText = obj.QuestionUserTitleText ?? string.Empty;
-            obj.FeedbackUserTitleText = obj.FeedbackUserTitleText ?? string.Empty;
-            obj.ResultsFeedback = obj.ResultsFeedback ?? string.Empty;
+            payload.AppFeedback = payload.AppFeedback ?? string.Empty;
+            payload.QuestionForExpert = payload.QuestionForExpert ?? string.Empty;
+            payload.QuestionUserTitleText = payload.QuestionUserTitleText ?? string.Empty;
+            payload.FeedbackUserTitleText = payload.FeedbackUserTitleText ?? string.Empty;
+            payload.ResultsFeedback = payload.ResultsFeedback ?? string.Empty;
 
-            if (obj.QuestionUserTitleText == string.Empty && obj.FeedbackUserTitleText == string.Empty)
+            if (payload.QuestionUserTitleText == string.Empty && payload.FeedbackUserTitleText == string.Empty)
             {
-                turnContext.SendActivityAsync(MessageFactory.Text(Resource.MandatoryFieldText), cancellationToken);
+                await turnContext.SendActivityAsync(MessageFactory.Text(Resource.MandatoryFieldText), cancellationToken);
                 return false;
             }
 

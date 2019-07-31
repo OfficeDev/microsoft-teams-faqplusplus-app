@@ -35,9 +35,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
         private const string TeamTour = "team tour";
-        private const string AppFeedback = "appfeedback";
-        private const string ResultsFeedback = "resultsfeedback";
-        private const string QuestionForExpert = "questionforexpert";
+        private const string AppFeedback = "AppFeedback";
+        private const string ResultsFeedback = "ResultsFeedback";
+        private const string QuestionForExpert = "QuestionForExpert";
         private static readonly int Top = 1;
 
         private readonly IConfiguration configuration;
@@ -115,6 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
             catch (Exception ex)
             {
+                // TODO: Respond to the user with an error message
                 this.telemetryClient.TrackTrace($"Error processing message: {ex.Message}", SeverityLevel.Error);
                 this.telemetryClient.TrackException(ex);
                 throw;
@@ -187,13 +188,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
                 var botDisplayName = turnContext.Activity.Recipient.Name;
                 var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(botDisplayName, teamDetails.Team.Name);
-                await this.NotifyTeam(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
+                await this.SendMessageToTeamAsync(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
             }
         }
 
         // Handles message activity in 1:1 chat
         private async Task OnMessageActivityInPersonalChatAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
+            if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
+            {
+                this.telemetryClient.TrackTrace("Card submit in 1:1 chat");
+                await this.OnAdaptiveCardSubmitInPersonalChatAsync(message, turnContext, cancellationToken);
+                return;
+            }
+
             string text = (message.Text ?? string.Empty).Trim().ToLower();
 
             switch (text)
@@ -233,6 +241,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Handles message activity in channel
         private async Task OnMessageActivityInChannelAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
+            if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
+            {
+                this.telemetryClient.TrackTrace("Card submit in channel");
+                await this.OnAdaptiveCardSubmitInChannelAsync(message, turnContext, cancellationToken);
+                return;
+            }
+
             string text = (message.Text ?? string.Empty).Trim().ToLower();
 
             switch (text)
@@ -244,19 +259,67 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
 
                 default:
-                    if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
-                    {
-                        this.telemetryClient.TrackTrace("Card submit in channel");
-                        await this.OnAdaptiveCardSubmitInChannelAsync(message, turnContext, cancellationToken);
-                    }
-                    else
-                    {
-                        this.telemetryClient.TrackTrace("Unrecognized input in channel");
-                        var unrecognizedInputCard = UnrecognizedTeamInput.GetCard();
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedInputCard));
-                    }
-
+                    this.telemetryClient.TrackTrace("Unrecognized input in channel");
+                    var unrecognizedInputCard = UnrecognizedTeamInput.GetCard();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedInputCard));
                     break;
+            }
+        }
+
+        // Handles adaptive card submit in 1:1 chat
+        // Submits the question or feedback to the SME team
+        private async Task OnAdaptiveCardSubmitInPersonalChatAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var payload = ((JObject)message.Value).ToObject<UserActivity>();
+
+            if (!await UserInputValidations.Validate(payload, turnContext, cancellationToken))
+            {
+                return;
+            }
+
+            Attachment smeTeamCard = null;      // Notification to SME team
+            Attachment userCard = null;         // Acknowledgement to the user
+
+            var channelAccountDetails = await this.GetPersonalChatUserAccountDetailsAsync(turnContext, cancellationToken);
+            var fullName = turnContext.Activity.From.Name;
+
+            switch (message.Text)
+            {
+                case QuestionForExpert:
+                    // TODO: Create the ticket
+                    this.telemetryClient.TrackTrace($"Received question for expert");
+                    smeTeamCard = this.GetQuestionForExpertAttachment(channelAccountDetails, payload, fullName);
+                    userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
+                    break;
+
+                case AppFeedback:
+                    this.telemetryClient.TrackTrace($"Received general app feedback");
+                    smeTeamCard = this.GetAppFeedbackAttachment(channelAccountDetails, payload, fullName);
+                    userCard = ThankYouAdaptiveCard.GetCard();
+                    break;
+
+                case ResultsFeedback:
+                    this.telemetryClient.TrackTrace($"Received feedback about an answer");
+                    smeTeamCard = this.GetResultsFeedbackAttachment(channelAccountDetails, payload, fullName);
+                    userCard = ThankYouAdaptiveCard.GetCard();
+                    break;
+
+                default:
+                    this.telemetryClient.TrackTrace($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
+                    break;
+            }
+
+            // Send message to SME team
+            if (smeTeamCard != null)
+            {
+                var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
+                await this.SendMessageToTeamAsync(turnContext, smeTeamCard, channelId, cancellationToken);
+            }
+
+            // Send acknowledgement to the user
+            if (userCard != null)
+            {
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(userCard), cancellationToken);
             }
         }
 
@@ -333,23 +396,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Sends update to the user in adaptive cards, after bot posting user query to SME channel.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="updateActivityAttachment">Activity update adaptive card attachment.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Thank you Card.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task UpdateFeedbackActivity(ITurnContext turnContext, Attachment updateActivityAttachment, CancellationToken cancellationToken)
-        {
-            var reply = turnContext.Activity.CreateReply();
-            reply.Attachments = new List<Attachment>()
-            {
-                updateActivityAttachment,
-            };
-            await turnContext.SendActivityAsync(reply, cancellationToken);
-        }
-
-        /// <summary>
         /// Displays Carousel of Tour Cards when bot is added to a team scope.
         /// </summary>
         /// <returns>The Tour Adaptive card.</returns>
@@ -375,49 +421,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/Askanexpert.png"),
                 TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/Shareappfeedback.png"),
             };
-        }
-
-        /// <summary>
-        /// Sends the message to SME team upon collecting feedback or question from the user.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-            var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
-            var channelAccountDetails = await this.GetPersonalChatUserAccountDetailsAsync(turnContext, cancellationToken);
-            var fullName = turnContext.Activity.From.Name;
-            Attachment teamCardAttachment = null;
-            string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
-            switch (activityType)
-            {
-                case AppFeedback:
-                    teamCardAttachment = this.GetAppFeedbackAttachment(channelAccountDetails, payload, fullName);
-                    break;
-
-                case QuestionForExpert:
-                    teamCardAttachment = this.GetQuestionForExpertAttachment(channelAccountDetails, payload, fullName);
-                    break;
-
-                case ResultsFeedback:
-                    teamCardAttachment = this.GetResultsFeedbackAttachment(channelAccountDetails, payload, fullName);
-                    break;
-
-                default:
-                    break;
-            }
-
-            var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
-            await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
-            if (!string.IsNullOrEmpty(payload.QuestionUserTitleText))
-            {
-                await this.UpdateFeedbackActivity(turnContext, NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText), cancellationToken);
-            }
-            else
-            {
-                await this.UpdateFeedbackActivity(turnContext, ThankYouAdaptiveCard.GetCard(), cancellationToken);
-            }
         }
 
         /// <summary>
@@ -454,49 +457,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="teamId">Team Id to which the message is being sent.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Message to the SME Team.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task NotifyTeam(ITurnContext turnContext, Attachment attachmentToSend, string teamId, CancellationToken cancellationToken)
+        private async Task<ConversationResourceResponse> SendMessageToTeamAsync(ITurnContext turnContext, Attachment attachmentToSend, string teamId, CancellationToken cancellationToken)
         {
-            var teamMessageActivity = new Activity()
+            var conversationParameters = new ConversationParameters
             {
-                Type = ActivityTypes.Message,
-                Conversation = new ConversationAccount()
-                {
-                    Id = teamId,
-                },
-                Attachments = new List<Attachment>()
-                {
-                    attachmentToSend,
-                },
+                Activity = (Activity)MessageFactory.Attachment(attachmentToSend),
+                ChannelData = new TeamsChannelData { Channel = new ChannelInfo(teamId) },
             };
-            await ((BotFrameworkAdapter)turnContext.Adapter).SendActivitiesAsync(turnContext, new Activity[] { teamMessageActivity }, cancellationToken);
-        }
 
-        /// <summary>
-        /// Generic method sends messages to the team when team member interacts with the bot.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="attachment">Adaptive card attachment.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns appropriate adaptive card.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task SendTeamMessage(ITurnContext<IMessageActivity> turnContext, Attachment attachment, CancellationToken cancellationToken)
-        {
-            var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
-            await this.NotifyTeam(turnContext, attachment, teamDetails.Team.Id, cancellationToken);
-        }
+            var tcs = new TaskCompletionSource<ConversationResourceResponse>();
+            await ((BotFrameworkAdapter)turnContext.Adapter).CreateConversationAsync(
+                null,       // If we set channel = "msteams", there is an error as preinstalled middleware expects ChannelData to be present
+                turnContext.Activity.ServiceUrl,
+                new Bot.Connector.Authentication.MicrosoftAppCredentials(this.configuration["MicrosoftAppId"], this.configuration["MicrosoftAppPassword"]),
+                conversationParameters,
+                (newTurnContext, newCancellationToken) =>
+                {
+                    var activity = newTurnContext.Activity;
+                    tcs.SetResult(new ConversationResourceResponse
+                    {
+                        Id = activity.Conversation.Id,
+                        ActivityId = activity.Id,
+                        ServiceUrl = activity.ServiceUrl,
+                    });
+                    return Task.CompletedTask;
+                },
+                cancellationToken);
 
-        /// <summary>
-        /// Method sends the user activity information to SME channel.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns appropriate adaptive card.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task SendCardsToSMEAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-            var validation = UserInputValidations.Validate(turnContext, cancellationToken);
-            if (validation == true)
-            {
-                await this.BroadcastTeamMessage(turnContext, cancellationToken);
-            }
+            return await tcs.Task;
         }
 
         private Attachment GetAppFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
