@@ -63,7 +63,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided team ID is not valid.");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "The provided team ID is not valid.");
             }
         }
 
@@ -82,7 +82,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save team ID due to internal server error. Try again.");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the team ID due to an internal error. Try again.");
             }
         }
 
@@ -110,12 +110,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save knowledge base ID due to internal server error. Try again.");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the knowledge base ID due to an internal error. Try again.");
             }
         }
 
         /// <summary>
-        /// Validate knowledge base Id from QnA Maker service first and then proceed to save it on success
+        /// Validate knowledge base Id from QnA Maker service first and then proceed to save it on success.
+        /// The QnA Maker endpoint key is also refreshed as part of this process.
         /// </summary>
         /// <param name="knowledgeBaseId">knowledgeBaseId is the unique string knowledge Id</param>
         /// <returns>View</returns>
@@ -125,11 +126,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             bool isValidKnowledgeBaseId = await this.IsKnowledgeBaseIdValid(knowledgeBaseId);
             if (isValidKnowledgeBaseId)
             {
+                var endpointRefreshStatus = await this.RefreshQnAMakerEndpointKeyAsync();
+                if (!endpointRefreshStatus)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the QnAMaker endpoint key due to an internal error. Try again.");
+                }
+
                 return await this.SaveOrUpdateKnowledgeBaseIdAsync(knowledgeBaseId);
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, provided knowledge base ID is not valid.");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "The provided knowledge base ID is not valid.");
             }
         }
 
@@ -158,7 +165,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save welcome message due to internal server error. Try again.");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the welcome message due to an internal error. Try again.");
             }
         }
 
@@ -172,31 +179,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         }
 
         /// <summary>
-        /// Save or update static tab text to be used by bot in table storage which is received from View
+        /// Save or update help tab text to be used by bot in table storage which is received from View
         /// </summary>
-        /// <param name="staticTabText">staticTabText</param>
+        /// <param name="helpTabText">help tab text</param>
         /// <returns>View</returns>
         [HttpPost]
-        public async Task<ActionResult> SaveStaticTabTextAsync(string staticTabText)
+        public async Task<ActionResult> SaveHelpTabTextAsync(string helpTabText)
         {
-            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(staticTabText, ConfigurationEntityTypes.StaticTabText);
+            bool saved = await this.configurationPovider.SaveOrUpdateEntityAsync(helpTabText, ConfigurationEntityTypes.HelpTabText);
             if (saved)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.OK);
             }
             else
             {
-                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save static tab text due to internal server error. Try again.");
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, "Sorry, unable to save the help tab text due to an internal error. Try again.");
             }
         }
 
         /// <summary>
-        /// Get already saved static tab message from table storage
+        /// Get already saved help tab message from table storage
         /// </summary>
-        /// <returns>Static tab text</returns>
-        public async Task<string> GetSavedStaticTabTextAsync()
+        /// <returns>Help tab text</returns>
+        public async Task<string> GetSavedHelpTabTextAsync()
         {
-            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.StaticTabText);
+            return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
         }
 
         /// <summary>
@@ -236,8 +243,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
             try
             {
                 var kbIdDetail = await this.qnaMakerClient.Knowledgebase.GetDetailsAsync(knowledgeBaseId);
-
                 return kbIdDetail.Id == knowledgeBaseId;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Update the saved endpoint key
+        /// </summary>
+        /// <returns>Tracking task</returns>
+        private async Task<bool> RefreshQnAMakerEndpointKeyAsync()
+        {
+            try
+            {
+                var endpointKeys = await this.qnaMakerClient.EndpointKeys.GetKeysAsync();
+                await this.configurationPovider.SaveOrUpdateEntityAsync(endpointKeys.PrimaryEndpointKey, ConfigurationEntityTypes.QnAMakerEndpointKey);
+                return true;
             }
             catch
             {

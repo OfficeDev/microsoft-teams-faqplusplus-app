@@ -24,8 +24,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public const string WelcomeMessageText = "WelcomeMessageText";
 
         /// <summary>
-        /// Static tab entity
+        /// Help tab text entity
         /// </summary>
-        public const string StaticTabText = "StaticTabText";
+        public const string HelpTabText = "HelpTabText";
+
+        /// <summary>
+        /// QnaMaker endpoint key entity
+        /// </summary>
+        public const string QnAMakerEndpointKey = "QnaMakerEndpointKey";
     }
 }
