@@ -194,13 +194,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Handles message activity in 1:1 chat
         private async Task OnMessageActivityInPersonalChatAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            if (message.Value != null && ((JObject)message.Value).Count != 0 && !string.IsNullOrEmpty(message.Text))
+            string text = (message.Text ?? string.Empty).Trim().ToLower();
+
+            switch (text)
             {
-                await this.SendCardsToSMEAsync(turnContext, cancellationToken);
-            }
-            else if (!string.IsNullOrEmpty(message.Text))
-            {
-                await this.SendCardsAsync(turnContext, cancellationToken);
+                case AskAnExpert:
+                    this.telemetryClient.TrackTrace("Sending user ask an expert card");
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard()));
+                    break;
+
+                case Feedback:
+                    this.telemetryClient.TrackTrace("Sending user feedback card");
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard()));
+                    break;
+
+                case TakeATour:
+                    this.telemetryClient.TrackTrace("Sending user tour card");
+                    var tourCardCarouselAttachment = this.CreateUserTourCardCarouselAttachment();
+                    await turnContext.SendActivityAsync(MessageFactory.Carousel(tourCardCarouselAttachment));
+                    break;
+
+                default:
+                    this.telemetryClient.TrackTrace("Sending input to QnAMaker");
+                    var queryResult = await this.GetAnswerFromQnAMakerAsync(text, turnContext, cancellationToken);
+                    if (queryResult != null)
+                    {
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(queryResult.Questions[0], queryResult.Answer, text)));
+                    }
+                    else
+                    {
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(text)));
+                    }
+
+                    break;
             }
         }
 
@@ -239,6 +265,45 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             // TODO: Handle ticket lifecycle (rename this method as needed)
             await turnContext.SendActivityAsync(MessageFactory.Text("Not yet implemented"));
+        }
+
+        // Get an answer from QnAMaker
+        private async Task<QueryResult> GetAnswerFromQnAMakerAsync(string message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return null;
+            }
+
+            try
+            {
+                var kbId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
+                if (string.IsNullOrEmpty(kbId))
+                {
+                    this.telemetryClient.TrackTrace("Knowledge base ID was not found in configuration", SeverityLevel.Warning);
+                    return null;
+                }
+
+                var endpointKey = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.QnAMakerEndpointKey);
+                if (string.IsNullOrEmpty(endpointKey))
+                {
+                    this.telemetryClient.TrackTrace("QnAMaker endpoint key was not found in configuration", SeverityLevel.Warning);
+                    return null;
+                }
+
+                var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId);
+                var options = new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) };
+
+                var response = await qnaMaker.GetAnswersAsync(turnContext, options);
+                return response?.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                // Per spec, treat errors getting a response from QnAMaker as if we got no results from QnAMaker
+                this.telemetryClient.TrackTrace($"Error getting answer from QnAMaker, will convert to no result: {ex.Message}");
+                this.telemetryClient.TrackException(ex);
+                return null;
+            }
         }
 
         /// <summary>
@@ -310,27 +375,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/Askanexpert.png"),
                 TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/Shareappfeedback.png"),
             };
-        }
-
-        /// <summary>
-        /// Method that gets an answer from the QnAMaker resource.
-        /// </summary>
-        /// <param name="kbId">Knowledgebase Id.</param>
-        /// <param name="turnContext">The turn context.</param>
-        /// <returns>A unit of execution.</returns>
-        private async Task GetAnswersAsync(string kbId, ITurnContext<IMessageActivity> turnContext)
-        {
-            var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId);
-            var options = new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) };
-            var response = await qnaMaker.GetAnswersAsync(turnContext, options);
-            if (response != null && response.Length > 0)
-            {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer, turnContext.Activity.Text)));
-            }
-            else
-            {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(turnContext.Activity.Text)));
-            }
         }
 
         /// <summary>
@@ -471,70 +515,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, fullName, Resource.ResultsFeedbackText);
             return IncomingSMEEnquiryCard.GetCard(Resource.ResultsFeedbackText, userActivityPayload.FeedbackUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
-        }
-
-        /// <summary>
-        /// Sends the Appropriate Adaptive Card to the user for the respective command.
-        /// Or Hits the QnA maker if user has asked a question.
-        /// </summary>
-        /// <param name="context">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns appropriate adaptive card.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task SendCardsAsync(ITurnContext<IMessageActivity> context, CancellationToken cancellationToken)
-        {
-            try
-            {
-                string activityText = string.IsNullOrEmpty(context.Activity.Text) ? string.Empty : context.Activity.Text.Trim().ToLower();
-                this.telemetryClient.TrackTrace($"User entered text = {activityText}");
-                if (string.IsNullOrEmpty(activityText))
-                {
-                    var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                    var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
-                    await context.SendActivityAsync(MessageFactory.Text("Hey, I don't understand what you're saying, would you like to take a tour"), cancellationToken);
-                    await context.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
-                }
-                else
-                {
-                    switch (activityText)
-                    {
-                        case AskAnExpert:
-                            this.telemetryClient.TrackTrace("Calling AskAnExpert Card");
-                            await context.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard()));
-                            break;
-
-                        case Feedback:
-                            this.telemetryClient.TrackTrace("Calling Feedback Card");
-                            await context.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard()));
-                            break;
-
-                        case TakeATour:
-                            this.telemetryClient.TrackTrace("Calling TakeATour Card");
-                            var tourCardCarouselAttachment = await Task.Run(() => this.CreateUserTourCardCarouselAttachment());
-                            await context.SendActivityAsync(MessageFactory.Carousel(tourCardCarouselAttachment));
-                            break;
-
-                        default:
-                            this.telemetryClient.TrackTrace("Calling QnA Maker Service");
-                            var kbID = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
-
-                            if (!string.IsNullOrEmpty(kbID))
-                            {
-                                await this.GetAnswersAsync(kbID, context);
-                            }
-                            else
-                            {
-                                await context.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(context.Activity.Text)));
-                            }
-
-                            break;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.telemetryClient.TrackException(ex);
-                throw;
-            }
         }
     }
 }
