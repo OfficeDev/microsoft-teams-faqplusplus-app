@@ -65,13 +65,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.messageExtension = messageExtension;
         }
 
-        /// <summary>
-        /// The method that gets invoked each time any activity happens in bot.
-        /// Based on activity type appropriate activity will be invoked
-        /// </summary>
-        /// <param name="turnContext">The current turn.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A unit of execution.</returns>
+        /// <inheritdoc/>
         public override Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
             switch (turnContext.Activity.Type)
@@ -87,155 +81,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
         }
 
-        /// <summary>
-        /// Sends update to the user in adaptive cards, after bot posting user query to SME channel.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="updateActivityAttachment">Activity update adaptive card attachment.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Thank you Card.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task UpdateFeedbackActivity(ITurnContext turnContext, Attachment updateActivityAttachment, CancellationToken cancellationToken)
-        {
-            var reply = turnContext.Activity.CreateReply();
-            reply.Attachments = new List<Attachment>()
-            {
-                updateActivityAttachment,
-            };
-            await turnContext.SendActivityAsync(reply, cancellationToken);
-        }
-
-        /// <summary>
-        /// Displays Carousel of Tour Cards when bot is added to a team scope.
-        /// </summary>
-        /// <returns>The Tour Adaptive card.</returns>
-        public List<Attachment> CreateTeamTourCardCarouselAttachment()
-        {
-            return new List<Attachment>()
-            {
-                TourCarousel.GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, this.configuration["AppBaseUri"] + "/content/Alert.png"),
-                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.configuration["AppBaseUri"] + "/content/Userchat.png"),
-                TourCarousel.GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, this.configuration["AppBaseUri"] + "/content/Ticket.png"),
-            };
-        }
-
-        /// <summary>
-        /// Displays Carousel of Tour Cards- for personal scope.
-        /// </summary>
-        /// <returns>The Tour Adaptive card.</returns>
-        public List<Attachment> CreateUserTourCardCarouselAttachment()
-        {
-            return new List<Attachment>()
-            {
-                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.configuration["AppBaseUri"] + "/content/Qnamaker.png"),
-                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/Askanexpert.png"),
-                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/Shareappfeedback.png"),
-            };
-        }
-
-        /// <summary>
-        /// Method that gets an answer from the QnAMaker resource.
-        /// </summary>
-        /// <param name="kbId">Knowledgebase Id.</param>
-        /// <param name="turnContext">The turn context.</param>
-        /// <returns>A unit of execution.</returns>
-        public async Task GetAnswersAsync(string kbId, ITurnContext<IMessageActivity> turnContext)
-        {
-            var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId);
-            var options = new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) };
-            var response = await qnaMaker.GetAnswersAsync(turnContext, options);
-            if (response != null && response.Length > 0)
-            {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer, turnContext.Activity.Text)));
-            }
-            else
-            {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(turnContext.Activity.Text)));
-            }
-        }
-
-        /// <summary>
-        /// Sends the message to SME team upon collecting feedback or question from the user.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
-        {
-            var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
-            var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
-            var fullName = turnContext.Activity.From.Name;
-            Attachment teamCardAttachment = null;
-            string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
-            switch (activityType)
-            {
-                case AppFeedback:
-                    teamCardAttachment = this.GetAppFeedbackAttachment(channelAccountDetails, payload, fullName);
-                    break;
-
-                case QuestionForExpert:
-                    teamCardAttachment = this.GetQuestionForExpertAttachment(channelAccountDetails, payload, fullName);
-                    break;
-
-                case ResultsFeedback:
-                    teamCardAttachment = this.GetResultsFeedbackAttachment(channelAccountDetails, payload, fullName);
-                    break;
-
-                default:
-                    break;
-            }
-
-            var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
-            await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
-            if (!string.IsNullOrEmpty(payload.QuestionUserTitleText))
-            {
-                await this.UpdateFeedbackActivity(turnContext, NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText), cancellationToken);
-            }
-            else
-            {
-                await this.UpdateFeedbackActivity(turnContext, ThankYouAdaptiveCard.GetCard(), cancellationToken);
-            }
-        }
-
-        /// <summary>
-        /// This methods gets teams channel account details.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns> Team channel account details.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public TeamsChannelAccount GetTeamsChannelAccountDetails(
-          ITurnContext<IMessageActivity> turnContext,
-          CancellationToken cancellationToken)
-        {
-            var members = ((BotFrameworkAdapter)turnContext.Adapter).GetConversationMembersAsync(turnContext, cancellationToken).GetAwaiter().GetResult();
-            return ((JObject)members[0].Properties).ToObject<TeamsChannelAccount>();
-        }
-
-        /// <summary>
-        /// The method that gets invoked when activity is of type Invoke is received from bot.
-        /// </summary>
-        /// <param name="turnContext">The current turn of invoke activity.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A unit of execution.</returns>
-        protected async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
-        {
-            if (turnContext.Activity.Name == "composeExtension/query")
-            {
-                InvokeResponse invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
-                await turnContext.SendActivityAsync(
-                    new Activity
-                    {
-                        Value = invokeResponse,
-                        Type = ActivityTypesEx.InvokeResponse,
-                    }).ConfigureAwait(false);
-            }
-        }
-
-        /// <summary>
-        /// The method that gets invoked each time there is a message that is coming in.
-        /// </summary>
-        /// <param name="turnContext">The current turn.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A unit of execution.</returns>
+        /// <inheritdoc/>
         protected override async Task OnMessageActivityAsync(
             ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
@@ -284,13 +130,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
         }
 
-        /// <summary>
-        /// The method that gets invoked when the bot is added to Team or 1:1 scope.
-        /// </summary>
-        /// <param name="membersAdded">The account that has been either added or interacting with the bot.</param>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A unit of Execution.</returns>
+        /// <inheritdoc/>
         protected override async Task OnMembersAddedAsync(
             IList<ChannelAccount> membersAdded,
             ITurnContext<IConversationUpdateActivity> turnContext,
@@ -327,16 +167,154 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
         }
 
-        /// <summary>
-        /// Method that fires first when updating any activity in a team.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns appropriate adaptive card.<see cref="Task"/> representing the asynchronous operation.</returns>
+        /// <inheritdoc/>
         protected override async Task OnConversationUpdateActivityAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
             var membersAdded = turnContext.Activity.MembersAdded;
             await this.OnMembersAddedAsync(membersAdded, turnContext, cancellationToken);
+        }
+
+        /// <summary>
+        /// The method that gets invoked when activity is of type Invoke is received from bot.
+        /// </summary>
+        /// <param name="turnContext">The current turn of invoke activity.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A unit of execution.</returns>
+        private async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
+        {
+            if (turnContext.Activity.Name == "composeExtension/query")
+            {
+                InvokeResponse invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
+                await turnContext.SendActivityAsync(
+                    new Activity
+                    {
+                        Value = invokeResponse,
+                        Type = ActivityTypesEx.InvokeResponse,
+                    }).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// Sends update to the user in adaptive cards, after bot posting user query to SME channel.
+        /// </summary>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="updateActivityAttachment">Activity update adaptive card attachment.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Thank you Card.<see cref="Task"/> representing the asynchronous operation.</returns>
+        private async Task UpdateFeedbackActivity(ITurnContext turnContext, Attachment updateActivityAttachment, CancellationToken cancellationToken)
+        {
+            var reply = turnContext.Activity.CreateReply();
+            reply.Attachments = new List<Attachment>()
+            {
+                updateActivityAttachment,
+            };
+            await turnContext.SendActivityAsync(reply, cancellationToken);
+        }
+
+        /// <summary>
+        /// Displays Carousel of Tour Cards when bot is added to a team scope.
+        /// </summary>
+        /// <returns>The Tour Adaptive card.</returns>
+        private List<Attachment> CreateTeamTourCardCarouselAttachment()
+        {
+            return new List<Attachment>()
+            {
+                TourCarousel.GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, this.configuration["AppBaseUri"] + "/content/Alert.png"),
+                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.configuration["AppBaseUri"] + "/content/Userchat.png"),
+                TourCarousel.GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, this.configuration["AppBaseUri"] + "/content/Ticket.png"),
+            };
+        }
+
+        /// <summary>
+        /// Displays Carousel of Tour Cards- for personal scope.
+        /// </summary>
+        /// <returns>The Tour Adaptive card.</returns>
+        private List<Attachment> CreateUserTourCardCarouselAttachment()
+        {
+            return new List<Attachment>()
+            {
+                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.configuration["AppBaseUri"] + "/content/Qnamaker.png"),
+                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/Askanexpert.png"),
+                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/Shareappfeedback.png"),
+            };
+        }
+
+        /// <summary>
+        /// Method that gets an answer from the QnAMaker resource.
+        /// </summary>
+        /// <param name="kbId">Knowledgebase Id.</param>
+        /// <param name="turnContext">The turn context.</param>
+        /// <returns>A unit of execution.</returns>
+        private async Task GetAnswersAsync(string kbId, ITurnContext<IMessageActivity> turnContext)
+        {
+            var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId);
+            var options = new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) };
+            var response = await qnaMaker.GetAnswersAsync(turnContext, options);
+            if (response != null && response.Length > 0)
+            {
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer, turnContext.Activity.Text)));
+            }
+            else
+            {
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(turnContext.Activity.Text)));
+            }
+        }
+
+        /// <summary>
+        /// Sends the message to SME team upon collecting feedback or question from the user.
+        /// </summary>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
+        private async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
+            var channelAccountDetails = await this.GetPersonalChatUserAccountDetailsAsync(turnContext, cancellationToken);
+            var fullName = turnContext.Activity.From.Name;
+            Attachment teamCardAttachment = null;
+            string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
+            switch (activityType)
+            {
+                case AppFeedback:
+                    teamCardAttachment = this.GetAppFeedbackAttachment(channelAccountDetails, payload, fullName);
+                    break;
+
+                case QuestionForExpert:
+                    teamCardAttachment = this.GetQuestionForExpertAttachment(channelAccountDetails, payload, fullName);
+                    break;
+
+                case ResultsFeedback:
+                    teamCardAttachment = this.GetResultsFeedbackAttachment(channelAccountDetails, payload, fullName);
+                    break;
+
+                default:
+                    break;
+            }
+
+            var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
+            await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
+            if (!string.IsNullOrEmpty(payload.QuestionUserTitleText))
+            {
+                await this.UpdateFeedbackActivity(turnContext, NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText), cancellationToken);
+            }
+            else
+            {
+                await this.UpdateFeedbackActivity(turnContext, ThankYouAdaptiveCard.GetCard(), cancellationToken);
+            }
+        }
+
+        /// <summary>
+        /// This methods gets teams channel account details.
+        /// </summary>
+        /// <param name="turnContext">The current turn/execution flow.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns> Team channel account details.<see cref="Task"/> representing the asynchronous operation.</returns>
+        private async Task<TeamsChannelAccount> GetPersonalChatUserAccountDetailsAsync(
+          ITurnContext<IMessageActivity> turnContext,
+          CancellationToken cancellationToken)
+        {
+            var members = await ((BotFrameworkAdapter)turnContext.Adapter).GetConversationMembersAsync(turnContext, cancellationToken);
+            return members[0].Properties.ToObject<TeamsChannelAccount>();
         }
 
         /// <summary>
@@ -346,9 +324,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <returns>Displays Typing Indicator to the user while the message is sent to the SME channel.<see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task DisplayTypingIndicator(ITurnContext turnContext)
         {
-            Activity isTypingActivity = turnContext.Activity.CreateReply();
-            isTypingActivity.Type = ActivityTypes.Typing;
-            await turnContext.SendActivityAsync((Activity)isTypingActivity);
+            var typingActivity = turnContext.Activity.CreateReply();
+            typingActivity.Type = ActivityTypes.Typing;
+            await turnContext.SendActivityAsync(typingActivity);
         }
 
         /// <summary>
@@ -400,9 +378,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var validation = UserInputValidations.Validate(turnContext, cancellationToken);
             if (validation == true)
             {
-                await this.BroadcastTeamMessage(
-                       turnContext,
-                       cancellationToken);
+                await this.BroadcastTeamMessage(turnContext, cancellationToken);
             }
         }
 
