@@ -94,7 +94,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var message = turnContext.Activity;
 
                 this.telemetryClient.TrackTrace($"Received message activity");
-                this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversationType: {message.Conversation?.ConversationType}, replyToId: {message.ReplyToId}");
+                this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
 
                 await this.DisplayTypingIndicator(turnContext);
 
@@ -205,26 +205,40 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         // Handles message activity in channel
-        private async Task OnMessageActivityInChannelAsync(IMessageActivity activity, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        private async Task OnMessageActivityInChannelAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            string activityText = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
+            string text = (message.Text ?? string.Empty).Trim().ToLower();
 
-            if (activityText == TeamTour)
+            switch (text)
             {
-                this.telemetryClient.TrackTrace("Calling TeamTour Card");
-                var teamtourCardCarouselAttachment = await Task.Run(() => this.CreateTeamTourCardCarouselAttachment());
-                await turnContext.SendActivityAsync(MessageFactory.Carousel(teamtourCardCarouselAttachment));
+                case TeamTour:
+                    this.telemetryClient.TrackTrace("Sending team tour card");
+                    var teamTourCards = this.CreateTeamTourCardCarouselAttachment();
+                    await turnContext.SendActivityAsync(MessageFactory.Carousel(teamTourCards));
+                    break;
+
+                default:
+                    if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
+                    {
+                        this.telemetryClient.TrackTrace("Card submit in channel");
+                        await this.OnAdaptiveCardSubmitInChannelAsync(message, turnContext, cancellationToken);
+                    }
+                    else
+                    {
+                        this.telemetryClient.TrackTrace("Unrecognized input in channel");
+                        var unrecognizedInputCard = UnrecognizedTeamInput.GetCard();
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedInputCard));
+                    }
+
+                    break;
             }
-            else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0)
-            {
-                // To do:
-                // await this.SendCardsUsrAsync(turnContext, cancellationToken);
-            }
-            else
-            {
-                var unrecognizedTeamInputCard = UnrecognizedTeamInput.GetCard();
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedTeamInputCard));
-            }
+        }
+
+        // Handles adaptive card submit in channel
+        private async Task OnAdaptiveCardSubmitInChannelAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            // TODO: Handle ticket lifecycle (rename this method as needed)
+            await turnContext.SendActivityAsync(MessageFactory.Text("Not yet implemented"));
         }
 
         /// <summary>
