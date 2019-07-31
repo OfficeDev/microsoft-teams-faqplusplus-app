@@ -13,6 +13,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.AI.QnA;
+    using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
     using Microsoft.Extensions.Configuration;
@@ -45,6 +46,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IConfigurationProvider configurationProvider;
         private readonly MessagingExtension messageExtension;
         private readonly IQnAMakerFactory qnaMakerFactory;
+        private readonly string appBaseUri;
+        private readonly MicrosoftAppCredentials microsoftAppCredentials;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -54,18 +57,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="configuration">Configuration.</param>
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         /// <param name="messageExtension">Messaging extension instance</param>
+        /// <param name="appBaseUri">Base URI at which the app is served</param>
+        /// <param name="microsoftAppCredentials">Microsoft app credentials to use</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
             IConfiguration configuration,
             IQnAMakerFactory qnaMakerFactory,
-            MessagingExtension messageExtension)
+            MessagingExtension messageExtension,
+            string appBaseUri,
+            MicrosoftAppCredentials microsoftAppCredentials)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
             this.configuration = configuration;
             this.qnaMakerFactory = qnaMakerFactory;
             this.messageExtension = messageExtension;
+            this.appBaseUri = appBaseUri;
+            this.microsoftAppCredentials = microsoftAppCredentials;
         }
 
         /// <inheritdoc/>
@@ -403,9 +412,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             return new List<Attachment>()
             {
-                TourCarousel.GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, this.configuration["AppBaseUri"] + "/content/Alert.png"),
-                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.configuration["AppBaseUri"] + "/content/Userchat.png"),
-                TourCarousel.GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, this.configuration["AppBaseUri"] + "/content/Ticket.png"),
+                TourCarousel.GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, this.appBaseUri + "/content/Alert.png"),
+                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.appBaseUri + "/content/Userchat.png"),
+                TourCarousel.GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, this.appBaseUri + "/content/Ticket.png"),
             };
         }
 
@@ -417,9 +426,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             return new List<Attachment>()
             {
-                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.configuration["AppBaseUri"] + "/content/Qnamaker.png"),
-                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/Askanexpert.png"),
-                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/Shareappfeedback.png"),
+                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.appBaseUri + "/content/Qnamaker.png"),
+                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.appBaseUri + "/content/Askanexpert.png"),
+                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.appBaseUri + "/content/Shareappfeedback.png"),
             };
         }
 
@@ -456,7 +465,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="attachmentToSend">sends Adaptive card.</param>
         /// <param name="teamId">Team Id to which the message is being sent.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Message to the SME Team.<see cref="Task"/> representing the asynchronous operation.</returns>
+        /// <returns><see cref="Task"/> that resolves to a <see cref="ConversationResourceResponse"/></returns>
         private async Task<ConversationResourceResponse> SendMessageToTeamAsync(ITurnContext turnContext, Attachment attachmentToSend, string teamId, CancellationToken cancellationToken)
         {
             var conversationParameters = new ConversationParameters
@@ -469,7 +478,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await ((BotFrameworkAdapter)turnContext.Adapter).CreateConversationAsync(
                 null,       // If we set channel = "msteams", there is an error as preinstalled middleware expects ChannelData to be present
                 turnContext.Activity.ServiceUrl,
-                new Bot.Connector.Authentication.MicrosoftAppCredentials(this.configuration["MicrosoftAppId"], this.configuration["MicrosoftAppPassword"]),
+                this.microsoftAppCredentials,
                 conversationParameters,
                 (newTurnContext, newCancellationToken) =>
                 {
