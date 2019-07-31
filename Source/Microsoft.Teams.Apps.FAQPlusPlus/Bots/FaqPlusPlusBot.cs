@@ -113,8 +113,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     }
                     else
                     {
-                        var teamtourCardAttachment = UnrecognizedTeamInput.GetCard();
-                        await this.SendTeamMessage(turnContext, teamtourCardAttachment, cancellationToken);
+                        var unrecognizedTeamInputCard = UnrecognizedTeamInput.GetCard();
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedTeamInputCard));
                     }
                 }
                 else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0 && !string.IsNullOrEmpty(turnContext.Activity.Text))
