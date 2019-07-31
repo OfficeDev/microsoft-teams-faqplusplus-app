@@ -5,79 +5,41 @@
       "type": "Container",
       "items": [
         {
-          "type": "ColumnSet",
-          "columns": [
-            {
-              "type": "Column",
-              "items": [
-                {
-                  "type": "Image",
-                  "spacing": "None",
-                  "url": "%cardImageUrl%",
-                  "width": "56px",
-                  "horizontalAlignment": "Left",
-                  "height": "56px"
-                }
-              ],
-              "width": "auto"
-            },
-            {
-              "type": "Column",
-              "items": [
-                {
-                  "type": "TextBlock",
-                  "horizontalAlignment": "Left",
-                  "size": "Small",
-                  "weight": "Bolder",
-                  "text": "%welcomeText1%",
-                  "spacing": "Small",
-                  "wrap": true
-                }
-              ],
-              "width": "auto"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "Container",
-      "items": [
+          "type": "TextBlock",
+          "horizontalAlignment": "left",
+          "size": "small",
+          "spacing": "small",
+          "weight": "default",
+          "text": "%welcomeText1%",
+          "wrap": true
+        },
         {
           "type": "TextBlock",
-          "horizontalAlignment": "Left",
-          "spacing": "None",
-          "weight": "Bolder",
-          "color": "Dark",
+          "horizontalAlignment": "left",
+          "size": "small",
+          "spacing": "small",
+          "weight": "default",
+          "color": "dark",
           "text": "%messageText1%",
           "wrap": true
         },
         {
-          "type": "FactSet",
-          "facts": [
-            {
-              "title": "%bulletFactTitle%",
-              "value": "%welcomeMessageBulletText1%"
-            },
-            {
-              "title": "%bulletFactTitle%",
-              "value": "%welcomeMessageBulletText2%"
-            },
-            {
-              "title": "%bulletFactTitle%",
-              "value": "%welcomeMessageBulletText3%"
-            },
-            {
-              "title": "%bulletFactTitle%",
-              "value": "%welcomeMessageBulletText4%"
-            }
-          ]
+          "type": "TextBlock",
+          "horizontalAlignment": "left",
+          "size": "small",
+          "spacing": "none",
+          "weight": "default",
+          "color": "dark",
+          "text": "%welcomeCardBulletText%",
+          "wrap": true
+
         },
         {
           "type": "TextBlock",
-          "horizontalAlignment": "Left",
+          "horizontalAlignment": "left",
+          "size": "small",
           "spacing": "Small",
-          "color": "Dark",
+          "color": "default",
           "text": "%messageText2%",
           "wrap": true
         }

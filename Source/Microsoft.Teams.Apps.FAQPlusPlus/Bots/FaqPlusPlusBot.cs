@@ -48,7 +48,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="telemetryClient"> Telemetry Client.</param>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="configuration">Configuration.</param>
-        /// <param name="client">Http Client.</param>
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
@@ -120,7 +119,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var response = await qnaMaker.GetAnswersAsync(turnContext, options);
             if (response != null && response.Length > 0)
             {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer)));
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer, turnContext.Activity.Text)));
             }
             else
             {
@@ -138,33 +137,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
             var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
+            var fullName = turnContext.Activity.From.Name;
             Attachment teamCardAttachment = null;
             string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
             switch (activityType)
             {
                 case AppFeedback:
-                    teamCardAttachment = this.GetAppFeedbackAttachment(channelAccountDetails, payload);
-                        break;
+                    teamCardAttachment = this.GetAppFeedbackAttachment(channelAccountDetails, payload, fullName);
+                    break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = this.GetQuestionForExpertAttachment(channelAccountDetails, payload);
+                    teamCardAttachment = this.GetQuestionForExpertAttachment(channelAccountDetails, payload, fullName);
                     break;
 
                 case ResultsFeedback:
-                    teamCardAttachment = this.GetResultsFeedbackAttachment(channelAccountDetails, payload);
+                    teamCardAttachment = this.GetResultsFeedbackAttachment(channelAccountDetails, payload, fullName);
                     break;
 
                 default:
                     break;
             }
 
-            await this.DisplayTypingIndicator(turnContext);
-
             var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
             await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
-            if (payload.QuestionForExpert != null)
+            if (!string.IsNullOrEmpty(payload.QuestionUserTitleText))
             {
-                await this.UpdateFeedbackActivity(turnContext, NotificationCard.GetCard(payload.QuestionForExpert, payload.UserTitleText), cancellationToken);
+                await this.UpdateFeedbackActivity(turnContext, NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText), cancellationToken);
             }
             else
             {
@@ -199,6 +197,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             try
             {
                 this.telemetryClient.TrackTrace("Starting Message Activity");
+
+                await this.DisplayTypingIndicator(turnContext);
 
                 // when conversation is from Teams channel
                 if (turnContext.Activity.Conversation.ConversationType == "channel")
@@ -258,7 +258,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     if (member.Id != turnContext.Activity.Recipient.Id)
                     {
                         var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                        var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText, this.configuration["AppBaseUri"]);
+                        var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
                         this.telemetryClient.TrackTrace($"Member Id of User = {member.Id}");
                         await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
                     }
@@ -360,22 +360,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
         }
 
-        private Attachment GetAppFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload)
+        private Attachment GetAppFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
         {
-            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, channelAccountDetails.GivenName, Resource.AppFeedbackText);
-            return IncomingSMEEnquiryCard.GetCard(Resource.AppFeedbackText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, fullName, Resource.AppFeedbackText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.AppFeedbackText, userActivityPayload.FeedbackUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
         }
 
-        private Attachment GetQuestionForExpertAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload)
+        private Attachment GetQuestionForExpertAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
         {
-            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, channelAccountDetails.GivenName, Resource.QuestionForExpertText);
-            return IncomingSMEEnquiryCard.GetCard(Resource.QuestionForExpertText, incomingSubtitleText, channelAccountDetails, userActivityPayload, true);
+            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, fullName, Resource.QuestionForExpertText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.QuestionForExpertText, userActivityPayload.QuestionUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload, true);
         }
 
-        private Attachment GetResultsFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload)
+        private Attachment GetResultsFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
         {
-            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, channelAccountDetails.GivenName, Resource.ResultsFeedbackText);
-            return IncomingSMEEnquiryCard.GetCard(Resource.ResultsFeedbackText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, fullName, Resource.ResultsFeedbackText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.ResultsFeedbackText, userActivityPayload.FeedbackUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
         }
 
         /// <summary>
@@ -394,7 +394,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 if (string.IsNullOrEmpty(activityText))
                 {
                     var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                    var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText, this.configuration["AppBaseUri"]);
+                    var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
                     await context.SendActivityAsync(MessageFactory.Text("Hey, I don't understand what you're saying, would you like to take a tour"), cancellationToken);
                     await context.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
                 }

@@ -24,10 +24,17 @@
           "wrap": true
         },
         {
+          "type": "TextBlock",
+          "weight": "default",
+          "text": "%mandatoryFieldText%",
+          "wrap": true,
+          "color": "Attention"
+        },
+        {
           "type": "Input.Text",
           "placeholder": "%showcardTitleText%",
-          "id": "UserTitleText",
-          "isMultiline": true
+          "id": "feedbackUserTitleText",
+          "isMultiline": false
         },
         {
           "type": "TextBlock",
@@ -47,11 +54,11 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "%shareAppFeedbackButtonText%",
+      "title": "%shareFeedbackButtonText%",
       "data": {
         "msteams": {
           "type": "messageBack",
-          "displayText": "AppFeedback",
+          "displayText": "%shareFeedbackDisplayText%",
           "text": "AppFeedback"
         }
       }

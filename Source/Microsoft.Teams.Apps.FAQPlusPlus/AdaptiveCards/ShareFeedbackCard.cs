@@ -20,7 +20,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 
         static ShareFeedbackCard()
         {
-            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "ShareFeedbackCard.json");
+            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "ShareFeedbackCard.json");
             CardTemplate = File.ReadAllText(cardJsonFilePath);
         }
 
@@ -35,10 +35,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 { "cardHeader", Resource.FeedbackHeaderText },
                 { "subHeader", Resource.FeedbackText1 },
                 { "titleText",  Resource.TitleText },
+                { "mandatoryFieldText", Resource.MandatoryFieldText },
                 { "showcardTitleText",  Resource.ShowCardTitleText },
                 { "descriptionText", Resource.DescriptionText },
                 { "descriptionPlaceholder", Resource.FeedbackDescriptionPlaceholderText },
-                { "shareAppFeedbackButtonText", Resource.ShareAppFeedbackButtonText },
+                { "shareFeedbackButtonText", Resource.ShareFeedbackButtonText },
+                { "shareFeedbackDisplayText", Resource.ShareFeedbackDisplayText },
             };
 
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));

@@ -38,10 +38,17 @@
             "wrap": true
           },
           {
+            "type": "TextBlock",
+            "weight": "default",
+            "text": "%mandatoryFieldText%",
+            "wrap": true,
+            "color": "Attention"
+          },
+          {
             "type": "Input.Text",
             "placeholder": "%showCardTitleText%",
-            "id": "UserTitleText",
-            "isMultiline": true
+            "id": "questionUserTitleText",
+            "isMultiline": false
           },
           {
             "type": "TextBlock",
@@ -52,8 +59,7 @@
           {
             "type": "Input.Text",
             "id": "questionForExpert",
-            "isMultiline": true,
-            "value": "%resultQuestionText%"
+            "isMultiline": true
           }
 
         ],
@@ -64,10 +70,10 @@
             "data": {
               "msteams": {
                 "type": "messageBack",
-                "displayText": "QuestionForExpert",
+                "displayText": "%askAnExpertDisplayText%",
                 "text": "QuestionForExpert"
               },
-              "SMEQuestion": "%questionLineText%",
+              "UserQuestion": "%userQuestionText%",
               "SMEAnswer": "%answerLineText%"
             }
           }
@@ -89,10 +95,17 @@
             "wrap": true
           },
           {
+            "type": "TextBlock",
+            "weight": "default",
+            "text": "%mandatoryFieldText%",
+            "wrap": true,
+            "color": "Attention"
+          },
+          {
             "type": "Input.Text",
             "placeholder": "%showCardTitleText%",
-            "id": "UserTitleText",
-            "isMultiline": true
+            "id": "feedbackUserTitleText",
+            "isMultiline": false
           },
           {
             "type": "TextBlock",
@@ -116,10 +129,10 @@
             "data": {
               "msteams": {
                 "type": "messageBack",
-                "displayText": "Result Feedback",
+                "displayText": "%shareFeedbackDisplayText%",
                 "text": "ResultsFeedback"
               },
-              "SMEQuestion": "%questionLineText%",
+              "UserQuestion": "%userQuestionText%",
               "SMEAnswer": "%answerLineText%"
             }
           }

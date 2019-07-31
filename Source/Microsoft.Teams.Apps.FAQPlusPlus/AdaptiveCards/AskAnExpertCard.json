@@ -15,7 +15,6 @@
           "text": "%subHeader%",
           "wrap": true,
           "maxLines": 3
-
         },
         {
           "type": "TextBlock",
@@ -24,10 +23,16 @@
           "wrap": true
         },
         {
+          "type": "TextBlock",
+          "weight": "default",
+          "text": "%mandatoryFieldText%",
+          "wrap": true,
+          "color": "Attention"
+        },
+        {
           "type": "Input.Text",
           "placeholder": "%showcardTitleText%",
-          "id": "UserTitleText",
-          "isMultiline": true
+          "id": "questionUserTitleText"
         },
         {
           "type": "TextBlock",
@@ -46,17 +51,15 @@
   ],
   "actions": [
     {
-
       "type": "Action.Submit",
       "title": "%askAnExpertButtonText%",
       "data": {
         "msteams": {
           "type": "messageBack",
-          "displayText": "QuestionForExpert",
+          "displayText": "%askAnExpertDisplayText%",
           "text": "QuestionForExpert"
         }
       }
-
     }
   ],
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

@@ -23,7 +23,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// </summary>
         static NotificationCard()
         {
-            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "NotificationCard.json");
+            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "NotificationCard.json");
             CardTemplate = File.ReadAllText(cardJsonFilePath);
         }
 
@@ -35,7 +35,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <returns>The JSON string for the adaptive card.</returns>
         public static Attachment GetCard(string question, string userTitleValue)
         {
-            question = string.IsNullOrEmpty(question) ? "NA" : question;
+            question = string.IsNullOrEmpty(question) ? Resource.NotApplicable : question;
             var variablesToValues = new Dictionary<string, string>()
             {
                 { "notificationCardTitleText", Resource.NotificationCardTitleText },
@@ -43,12 +43,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 { "dateCreatedDisplayFactTitle", Resource.DateCreatedDisplayFactTitle },
 
                 // TO-DO: need to pass date created value from the previous entity creation method
-                { "dateCreatedValue",  DateTime.Now.ToString("s") + "Z" },
+                { "dateCreatedValue",  DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") },
                 { "closedDisplayFactTitle",  Resource.ClosedFactTitle },
+                { "notApplicable", Resource.NotApplicable },
                 { "statusText",  Resource.StatusFactTitle },
-
-                 // TO-DO: need to pass dynamic status change as per the updated conversation
-                { "statusValue",  Resource.OpenStatusText },
+                { "openStatusValue", Resource.OpenStatusValue },
                 { "titleText",  Resource.TitleText },
                 { "userTitleValue", userTitleValue },
                 { "descriptionText", Resource.DescriptionText },

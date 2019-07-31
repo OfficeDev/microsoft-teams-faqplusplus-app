@@ -26,13 +26,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
             var obj = JsonConvert.DeserializeObject<UserActivity>(turnContext.Activity.Value.ToString());
             obj.AppFeedback = obj.AppFeedback ?? string.Empty;
             obj.QuestionForExpert = obj.QuestionForExpert ?? string.Empty;
-            obj.UserTitleText = obj.UserTitleText ?? string.Empty;
+            obj.QuestionUserTitleText = obj.QuestionUserTitleText ?? string.Empty;
+            obj.FeedbackUserTitleText = obj.FeedbackUserTitleText ?? string.Empty;
             obj.ResultsFeedback = obj.ResultsFeedback ?? string.Empty;
 
-            if (obj.UserTitleText == string.Empty)
+            if (obj.QuestionUserTitleText == string.Empty && obj.FeedbackUserTitleText == string.Empty)
             {
-                turnContext.SendActivityAsync(MessageFactory.Text(Resource.MandatoryFieldsText), cancellationToken);
-                    return false;
+                turnContext.SendActivityAsync(MessageFactory.Text(Resource.MandatoryFieldText), cancellationToken);
+                return false;
             }
 
             return true;

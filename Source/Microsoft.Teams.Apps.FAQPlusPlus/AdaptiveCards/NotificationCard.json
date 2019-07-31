@@ -20,16 +20,8 @@
           "type": "FactSet",
           "facts": [
             {
-              "title": "%dateCreatedDisplayFactTitle%",
-              "value": "{{DATE(%dateCreatedValue%, SHORT)}}"
-            },
-            {
-              "title": "%closedDisplayFactTitle%",
-              "value": "NA"
-            },
-            {
               "title": "%statusText%",
-              "value": "%statusValue%"
+              "value": "%openStatusValue%"
             },
             {
               "title": "%titleText%",
@@ -38,6 +30,14 @@
             {
               "title": "%descriptionText%",
               "value": "%smeQuestion%"
+            },
+            {
+              "title": "%dateCreatedDisplayFactTitle%",
+              "value": "{{DATE(%dateCreatedValue%, SHORT)}} {{TIME(%dateCreatedValue%)}}"
+            },
+            {
+              "title": "%closedDisplayFactTitle%",
+              "value": "%notApplicable%"
             }
           ]
         }

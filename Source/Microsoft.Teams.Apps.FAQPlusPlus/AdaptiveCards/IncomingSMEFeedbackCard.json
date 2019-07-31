@@ -24,7 +24,7 @@
         {
           "type": "FactSet",
           "facts": [
-            
+
             {
               "title": "%titleText%",
               "value": "%userTitleValue%"
@@ -39,11 +39,11 @@
             },
             {
               "title": "%questionText%",
-              "value": "%smeQuestion%"
+              "value": "%userQuestionText%"
             },
             {
-              "title": "%dateCreatedDisplayText%",
-              "value": "%dateCreatedValue%"
+              "title": "%dateCreatedDisplayFactTitle%",
+              "value": "{{DATE(%dateCreatedValue%, SHORT)}} {{TIME(%dateCreatedValue%)}}"
             }
           ]
         }

@@ -37,11 +37,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 { "questionLineText", questionLineText },
                 { "customMessage", customMessage },
                 { "titleText",  Resource.TitleText },
+                { "mandatoryFieldText", Resource.MandatoryFieldText },
                 { "showcardTitleText",  Resource.ShowCardTitleText },
                 { "descriptionText", Resource.DescriptionText },
+                { "descriptionPlaceholder", Resource.AskAnExpertPlaceholderText },
                 { "resultQuestionText", question },
                 { "submitButtonText",  Resource.SubmitButtonText },
                 { "askAnExpertButtonText", Resource.AskAnExpertButtonText },
+                { "askAnExpertDisplayText", Resource.AskAnExpertDisplayText },
             };
 
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));

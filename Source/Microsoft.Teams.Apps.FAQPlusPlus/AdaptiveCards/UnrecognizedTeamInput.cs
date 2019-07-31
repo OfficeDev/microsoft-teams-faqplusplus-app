@@ -11,7 +11,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    ///  This class handles unrecognized input sent by the team memeber-sending random text to bot.
+    ///  This class handles unrecognized input sent by the team member-sending random text to bot.
     /// </summary>
     public class UnrecognizedTeamInput
     {

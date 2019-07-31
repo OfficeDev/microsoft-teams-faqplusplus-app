@@ -27,7 +27,7 @@
           "facts": [
             {
               "title": "%statusFactTitle%",
-              "value": "%statusValue%"
+              "value": "%openStatusValue%"
             },
             {
               "title": "%titleText%",
@@ -43,15 +43,15 @@
             },
             {
               "title": "%questionText%",
-              "value": "%smeQuestion%"
+              "value": "%userQuestionText%"
             },
             {
               "title": "%dateCreatedDisplayFactTitle%",
-              "value": "{{DATE(%dateCreatedValue%, SHORT)}}"
+              "value": "{{DATE(%dateCreatedValue%, SHORT)}} {{TIME(%dateCreatedValue%)}}"
             },
             {
               "title": "%closedFactTitle%",
-              "value": "%dateClosedValue%"
+              "value": "%notApplicable%"
             }
           ]
         }
@@ -79,16 +79,12 @@
             "value": "1",
             "choices": [
               {
-                "title": "%openStatusText%",
+                "title": "%assignStatusText%",
                 "value": "1"
               },
               {
-                "title": "%assignStatusText%",
-                "value": "2"
-              },
-              {
                 "title": "%closeStatusText%",
-                "value": "3"
+                "value": "2"
               }
             ]
           }

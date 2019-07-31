@@ -28,10 +28,17 @@
             "wrap": true
           },
           {
+            "type": "TextBlock",
+            "weight": "default",
+            "text": "%mandatoryFieldText%",
+            "wrap": true,
+            "color": "Attention"
+          },
+          {
             "type": "Input.Text",
             "placeholder": "%showcardTitleText%",
-            "id": "UserTitleText",
-            "isMultiline": true
+            "id": "questionUserTitleText",
+            "isMultiline": false
           },
           {
             "type": "TextBlock",
@@ -42,8 +49,8 @@
           {
             "type": "Input.Text",
             "id": "questionForExpert",
-            "isMultiline": true,
-            "value": "%resultQuestionText%"
+            "placeholder": "%descriptionPlaceholder%",
+            "isMultiline": true
           }
 
         ],
@@ -55,7 +62,7 @@
             "data": {
               "msteams": {
                 "type": "messageBack",
-                "displayText": "QuestionForExpert",
+                "displayText": "%askAnExpertDisplayText%",
                 "text": "QuestionForExpert"
               }
             }
