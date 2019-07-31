@@ -4,49 +4,40 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 {
-    using System;
     using System.Collections.Generic;
     using System.IO;
+    using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// The class process Thank You adaptive card-upon bot posting user feedback to SME team.
     /// </summary>
     public class ThankYouAdaptiveCard
     {
-        private const string ImageUri = "https://faqplusplus.azurewebsites.net";
-        private static readonly string CardTemplate;
-
         /// <summary>
-        /// Initializes static members of the <see cref="ThankYouAdaptiveCard"/> class.
-        /// </summary>
-        static ThankYouAdaptiveCard()
-        {
-            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "ThankYouAdaptiveCard.json");
-            CardTemplate = File.ReadAllText(cardJsonFilePath);
-        }
-
-        /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will send thank you adaptive card to user upon posting feedback to SME team.
         /// </summary>
         /// <returns>The JSON string for the adaptive card.</returns>
+        [System.Obsolete]
         public static Attachment GetCard()
         {
-            var cardImageUrl = ImageUri + "/content/ShareFeedback.png";
-            var thankYouAdaptiveCardTitleText = Resource.ThankYouAdaptiveCardTitleText;
-            var thankYouAdaptiveCardContent = Resource.ThankYouAdaptiveCardContent;
+            AdaptiveCard thankYouCard = new AdaptiveCard();
 
-            var variablesToValues = new Dictionary<string, string>()
+            thankYouCard.Body.Add(new AdaptiveTextBlock()
             {
-                { "thankYouAdaptiveCardTitleText", thankYouAdaptiveCardTitleText },
-                { "cardImageUrl", cardImageUrl },
-                { "thankYouAdaptiveCardContent", thankYouAdaptiveCardContent },
-            };
+                Weight = AdaptiveTextWeight.Bolder,
+                Text = Resource.ThankYouAdaptiveCardTitleText,
+                Wrap = true
+            });
+            thankYouCard.Body.Add(new AdaptiveTextBlock()
+            {
+                Spacing = AdaptiveSpacing.Medium,
+                Text = Resource.ThankYouAdaptiveCardContent,
+                Wrap = true
+            });
 
-            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+            return CardHelper.GenerateCardAttachment(thankYouCard.ToJson());
         }
     }
 }
