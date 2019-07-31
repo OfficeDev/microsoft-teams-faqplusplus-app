@@ -43,6 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                { "mandatoryFieldText", Resource.MandatoryFieldText },
                { "showCardTitleText", Resource.ShowCardTitleText },
                { "descriptionText", Resource.DescriptionText },
+               { "descriptionPlaceholder", Resource.AskAnExpertPlaceholderText },
                { "resultQuestionText", question },
                { "submitButtonText",  Resource.SubmitButtonText },
                { "shareResultsFeedbackButtonText", Resource.ShareFeedbackButtonText },

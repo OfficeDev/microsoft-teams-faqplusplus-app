@@ -59,6 +59,7 @@
           {
             "type": "Input.Text",
             "id": "questionForExpert",
+            "placeholder": "%descriptionPlaceholder%",
             "isMultiline": true
           }
 
