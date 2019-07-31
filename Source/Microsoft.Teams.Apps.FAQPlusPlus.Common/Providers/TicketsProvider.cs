@@ -6,8 +6,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
     using System;
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Exceptions;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.Table;
 

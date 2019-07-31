@@ -271,9 +271,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketDetails.RowKey);
             var ticketEntity = tableResult;
             ticketEntity.Status = ticketDetails.Status != "0" && ticketDetails.Status != "1" ? Convert.ToInt16(TicketState.Open) : Convert.ToInt16(ticketDetails.Status);
-            ticketEntity.AssignedTo = ticketDetails.Status == "0" ? string.Empty : turnContext.Activity.From.Name;
+            ticketEntity.AssignedToName = ticketDetails.Status == "0" ? string.Empty : turnContext.Activity.From.Name;
             ticketEntity.DateAssigned = this.SetDateTime(ticketDetails);
             ticketEntity.AssignedToObjectId = ticketDetails.Status == "0" ? string.Empty : turnContext.Activity.From.AadObjectId;
+            ticketEntity.LastModifiedByName = turnContext.Activity.From.Name;
+            ticketEntity.LastModifiedByObjectId = turnContext.Activity.From.AadObjectId;
+            ticketEntity.DateClosed = this.SetClosedDateTime(ticketDetails);
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
         }
 
@@ -342,24 +345,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         var smeCard = new SmeTicketCard(tableResult);
                         Attachment smeUpdateAttachment = smeCard.ToAttachment();
 
-                        if (tableResult.Status == 0 && tableResult.AssignedTo != string.Empty)
+                        if (tableResult.Status == 0 && tableResult.AssignedToName != string.Empty)
                         {
-                            updateActivityMessage = string.Format(Resource.SMEAssignedStatus, tableResult.AssignedTo);
+                            updateActivityMessage = string.Format(Resource.SMEAssignedStatus, tableResult.AssignedToName);
                             conversationUpdateMessage = "Your request has been assigned to an expert. They will directly send you a chat message.";
                         }
-                        else if (tableResult.Status == 0 && string.IsNullOrEmpty(tableResult.AssignedTo))
+                        else if (tableResult.Status == 0 && string.IsNullOrEmpty(tableResult.AssignedToName))
                         {
                             updateActivityMessage = string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name);
                             conversationUpdateMessage = "Your request has reopened again. An expert will directly send you a chat message.";
                         }
                         else if (tableResult.Status == 1)
                         {
-                            updateActivityMessage = string.Format(Resource.SMEClosedStatus, tableResult.AssignedTo);
+                            updateActivityMessage = string.Format(Resource.SMEClosedStatus, tableResult.AssignedToName);
                             conversationUpdateMessage = "Your request has been closed. Please ask an expert again if you still need more assistance or have a new request.";
                         }
 
                         await this.UpdateAuditTrail(updateActivityMessage, turnContext, cancellationToken);
-                        await this.InformUserOfUpdates(tableResult.OpenedByConversationId, conversationUpdateMessage, turnContext, cancellationToken);
+                        await this.InformUserOfUpdates(tableResult.RequesterConversationId, conversationUpdateMessage, turnContext, cancellationToken);
                         await this.UpdateSMEEnquiryCard(tableResult, smeUpdateAttachment, turnContext, cancellationToken);
                     }
                     else
@@ -456,22 +459,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var ticketGuid = Guid.NewGuid().ToString();
             TicketEntity ticketEntity = new TicketEntity();
-            ticketEntity.OpenedBy = turnContext.Activity.From.Name;
-            ticketEntity.OpenedByObjectId = member.AadObjectId;
-            ticketEntity.OpenedByUpn = member.UserPrincipalName;
-            ticketEntity.OpenedByFirstName = member.GivenName;
-            ticketEntity.Status = (int)TicketState.Open;
-            ticketEntity.Text = payload.QuestionForExpert;
-            ticketEntity.Timestamp = DateTime.UtcNow;
-            ticketEntity.CardActivityId = turnContext.Activity.ReplyToId.ToString();
             ticketEntity.RowKey = ticketGuid;
             ticketEntity.TicketId = ticketGuid;
-            ticketEntity.DateAssigned = DateTime.UtcNow;
+            ticketEntity.Status = (int)TicketState.Open;
             ticketEntity.DateCreated = DateTime.UtcNow;
-            ticketEntity.UserTitleText = payload.UserTitleText;
-            ticketEntity.KbEntryQuestion = string.IsNullOrEmpty(payload.SMEQuestion) ? "N/A" : payload.SMEQuestion;
-            ticketEntity.KbEntryResponse = string.IsNullOrEmpty(payload.SMEAnswer) ? "N/A" : payload.SMEAnswer;
-            ticketEntity.OpenedByConversationId = turnContext.Activity.Conversation.Id;
+            ticketEntity.Title = payload.UserTitleText;
+            ticketEntity.Description = payload.QuestionForExpert;
+            ticketEntity.RequesterName = turnContext.Activity.From.Name;
+            ticketEntity.RequesterUserPrincipalName = member.UserPrincipalName;
+            ticketEntity.RequesterGivenName = member.GivenName;
+            ticketEntity.RequesterConversationId = turnContext.Activity.Conversation.Id;
+            ticketEntity.LastModifiedByName = turnContext.Activity.From.Name;
+            ticketEntity.LastModifiedByObjectId = turnContext.Activity.From.AadObjectId;
+            ticketEntity.UserQuestion = turnContext.Activity.Text;
+            ticketEntity.KnowledgeBaseAnswer = payload.SMEAnswer;
 
             if (await ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity))
             {
@@ -667,10 +668,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var updateCardActivity = new Activity()
             {
-                Id = ticket.CardActivityId,
+                Id = ticket.SmeCardActivityId,
                 Conversation = new ConversationAccount()
                 {
-                    Id = ticket.ThreadConversationId,
+                    Id = ticket.SmeThreadConversationId,
                 },
                 Type = ActivityTypes.Message,
                 Attachments = new List<Attachment>
@@ -720,8 +721,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketId);
             var ticketEntity = tableResult;
-            ticketEntity.CardActivityId = activityId;
-            ticketEntity.ThreadConversationId = threadConversationId;
+            ticketEntity.SmeCardActivityId = activityId;
+            ticketEntity.SmeThreadConversationId = threadConversationId;
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
         }
 
@@ -738,7 +739,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
             else
             {
-                return DateTime.Now;
+                return DateTime.UtcNow;
+            }
+        }
+
+        private DateTime? SetClosedDateTime(TicketDetails ticketDetails)
+        {
+            if (ticketDetails.Status == "1")
+            {
+                return DateTime.UtcNow;
+            }
+            else
+            {
+                return null;
             }
         }
     }

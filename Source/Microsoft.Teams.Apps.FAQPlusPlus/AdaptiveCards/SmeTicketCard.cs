@@ -36,8 +36,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = this.ticketModel.OpenedBy != null ?
-                         string.Format("**{0}** is requesting support. Details as follows:", this.ticketModel.OpenedBy) :
+                        Text = this.ticketModel.RequesterName != null ?
+                         string.Format("**{0}** is requesting support. Details as follows:", this.ticketModel.RequesterName) :
                         "Everyone there is a new request coming in, please see the details below:",
                         Wrap = true,
                     },
@@ -53,22 +53,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Title:",
-                                Value = this.ticketModel.UserTitleText,
+                                Value = this.ticketModel.Title,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Description:",
-                                Value = this.ticketModel.Text,
+                                Value = this.ticketModel.Description,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Knowledge Base Entry:",
-                                Value = this.ticketModel.KbEntryResponse,
+                                Value = this.ticketModel.KnowledgeBaseAnswer,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Question asked:",
-                                Value = this.ticketModel.KbEntryQuestion,
+                                Value = this.ticketModel.UserQuestion,
                             },
                             new AdaptiveFact
                             {
@@ -88,8 +88,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveOpenUrlAction
                     {
                         Type = "Action.OpenUrl",
-                        Title = $"Chat with {this.ticketModel.OpenedByFirstName}",
-                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticketModel.OpenedByUpn}"),
+                        Title = $"Chat with {this.ticketModel.RequesterGivenName}",
+                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticketModel.RequesterUserPrincipalName}"),
                     },
                     new AdaptiveShowCardAction
                     {
@@ -123,7 +123,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         private AdaptiveElement GetAdaptiveInputSet(TicketEntity ticket)
         {
             AdaptiveChoiceSetInput adaptiveChoices = null;
-            if (ticket.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticket.AssignedTo))
+            if (ticket.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticket.AssignedToName))
             {
                 adaptiveChoices = new AdaptiveChoiceSetInput
                 {
@@ -146,7 +146,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     },
                 };
             }
-            else if (ticket.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticket.AssignedTo))
+            else if (ticket.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticket.AssignedToName))
             {
                 adaptiveChoices = new AdaptiveChoiceSetInput
                 {
@@ -208,17 +208,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>A status string.</returns>
         private string GetTicketStatus(TicketEntity ticketModel)
         {
-            if (ticketModel.Status == 0 && string.IsNullOrEmpty(ticketModel.AssignedTo))
+            if (ticketModel.Status == 0 && string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
                 return "Open";
             }
-            else if (ticketModel.Status == 0 && !string.IsNullOrEmpty(ticketModel.AssignedTo))
+            else if (ticketModel.Status == 0 && !string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
-                return $"Assigned to {ticketModel.AssignedTo}";
+                return $"Assigned to {ticketModel.AssignedToName}";
             }
             else
             {
-                return $"Closed by {ticketModel.AssignedTo}";
+                return $"Closed by {ticketModel.AssignedToName}";
             }
         }
 
@@ -229,7 +229,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>The closed date of the ticket.</returns>
         private string GetTicketClosedDate(TicketEntity ticketModel)
         {
-            return ticketModel.Status == 1 ? DateTime.Now.ToString("D") : "N/A";
+            return ticketModel.Status == 1 ? DateTime.UtcNow.ToString("D") : "N/A";
         }
     }
 }

@@ -90,14 +90,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
             {
                 foreach (SearchResult<TicketEntity> doc in docs.Results)
                 {
-                    tickets.Add(new TicketEntity
-                    {
-                        RowKey = doc.Document.TicketId,
-                        Text = doc.Document.Text,
-                        Status = doc.Document.Status,
-                        AssignedTo = doc.Document.AssignedTo,
-                        DateCreated = doc.Document.DateCreated
-                    });
+                    tickets.Add(doc.Document);
                 }
             }
 
