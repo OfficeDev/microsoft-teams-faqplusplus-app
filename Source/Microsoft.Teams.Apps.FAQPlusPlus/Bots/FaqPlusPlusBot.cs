@@ -6,9 +6,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInsights;
+    using Microsoft.ApplicationInsights.DataContracts;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.AI.QnA;
     using Microsoft.Bot.Schema;
@@ -37,6 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private const string ResultsFeedback = "resultsfeedback";
         private const string QuestionForExpert = "questionforexpert";
         private static readonly int Top = 1;
+
         private readonly IConfiguration configuration;
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
@@ -131,47 +134,73 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <inheritdoc/>
-        protected override async Task OnMembersAddedAsync(
-            IList<ChannelAccount> membersAdded,
-            ITurnContext<IConversationUpdateActivity> turnContext,
-            CancellationToken cancellationToken)
+        protected override async Task OnConversationUpdateActivityAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
             try
             {
-                foreach (var member in membersAdded)
-                {
-                    // When bot is added to a user in personal scope, for the first time.
-                    if (member.Id != turnContext.Activity.Recipient.Id)
-                    {
-                        var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                        var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
-                        this.telemetryClient.TrackTrace($"Member Id of User = {member.Id}");
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
-                    }
+                var activity = turnContext.Activity;
 
-                    // When bot is added to a team, for the first time.
-                    else if (turnContext.Activity.Conversation.ConversationType.ToLower() != "personal")
+                this.telemetryClient.TrackTrace($"Received conversationUpdateActivity");
+                this.telemetryClient.TrackTrace($"conversationType: {activity.Conversation?.ConversationType}, membersAdded: {activity.MembersAdded?.Count()}, membersRemoved: {activity.MembersRemoved?.Count()}");
+
+                if (activity.MembersAdded?.Count() > 0)
+                {
+                    switch (activity.Conversation.ConversationType)
                     {
-                        var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
-                        var botDisplayName = turnContext.Activity.Recipient.Name;
-                        this.telemetryClient.TrackTrace($"Team members are being added: {teamDetails.Team.Id}");
-                        var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(botDisplayName, teamDetails.Team.Name);
-                        await this.NotifyTeam(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
+                        case "personal":
+                            await this.OnMembersAddedToPersonalChatAsync(activity.MembersAdded, turnContext, cancellationToken);
+                            break;
+
+                        case "channel":
+                            await this.OnMembersAddedToTeamAsync(activity.MembersAdded, turnContext, cancellationToken);
+                            break;
+
+                        default:
+                            this.telemetryClient.TrackTrace($"Ignoring event from conversation type {activity.Conversation.ConversationType}");
+                            break;
                     }
+                }
+                else
+                {
+                    this.telemetryClient.TrackTrace($"Ignoring conversationUpdate that was not a membersAdded event");
                 }
             }
             catch (Exception ex)
             {
+                this.telemetryClient.TrackTrace($"Error processing conversationUpdate: {ex.Message}", SeverityLevel.Error);
                 this.telemetryClient.TrackException(ex);
-                throw;
             }
         }
 
-        /// <inheritdoc/>
-        protected override async Task OnConversationUpdateActivityAsync(ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        // Handles members added conversationUpdate event in 1:1 chat
+        private async Task OnMembersAddedToPersonalChatAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
         {
-            var membersAdded = turnContext.Activity.MembersAdded;
-            await this.OnMembersAddedAsync(membersAdded, turnContext, cancellationToken);
+            var activity = turnContext.Activity;
+            if (membersAdded.Any(m => m.Id == activity.Recipient.Id))
+            {
+                // User started chat with the bot in personal scope, for the first time
+                this.telemetryClient.TrackTrace($"Bot added to 1:1 chat {activity.Conversation.Id}");
+
+                var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
+                var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
+            }
+        }
+
+        // Handles members added conversationUpdate event in team
+        private async Task OnMembersAddedToTeamAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var activity = turnContext.Activity;
+            if (membersAdded.Any(m => m.Id == activity.Recipient.Id))
+            {
+                // Bot was added to a team
+                this.telemetryClient.TrackTrace($"Bot added to team {activity.Conversation.Id}");
+
+                var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
+                var botDisplayName = turnContext.Activity.Recipient.Name;
+                var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(botDisplayName, teamDetails.Team.Name);
+                await this.NotifyTeam(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
+            }
         }
 
         /// <summary>
@@ -182,16 +211,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <returns>A unit of execution.</returns>
         private async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
         {
-            if (turnContext.Activity.Name == "composeExtension/query")
+            var responseActivity = new Activity(ActivityTypesEx.InvokeResponse);
+
+            switch (turnContext.Activity.Name)
             {
-                InvokeResponse invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
-                await turnContext.SendActivityAsync(
-                    new Activity
-                    {
-                        Value = invokeResponse,
-                        Type = ActivityTypesEx.InvokeResponse,
-                    }).ConfigureAwait(false);
+                case "composeExtension/query":
+                    var invokeResponse = await this.messageExtension.HandleMessagingExtensionQueryAsync(turnContext).ConfigureAwait(false);
+                    responseActivity.Value = invokeResponse;
+                    break;
+
+                default:
+                    this.telemetryClient.TrackTrace($"Received invoke activity with unknown name {turnContext.Activity.Name}");
+                    responseActivity.Value = new InvokeResponse { Status = 200 };
+                    break;
             }
+
+            await turnContext.SendActivityAsync(responseActivity).ConfigureAwait(false);
         }
 
         /// <summary>
