@@ -80,12 +80,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Get the results from Azure search service and populate the preview as well as card.
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
-        /// <param name="requestorName">name of the requestor requesting for results.</param>
+        /// <param name="requesterName">name of the requester requesting for results.</param>
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
         /// <param name="count">count for pagination.</param>
         /// <param name="skip">skip for pagination.</param>
         /// <returns><see cref="Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string requestorName, string commandId, int? count, int? skip)
+        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string requesterName, string commandId, int? count, int? skip)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -117,7 +117,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             foreach (var searchResult in searchServiceResults)
             {
-                var formattedResultTextList = this.FormatSubTextForThumbnailCard(searchResult, requestorName);
+                var formattedResultTextList = this.FormatSubTextForThumbnailCard(searchResult, requesterName);
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
                     Title = searchResult.Title,
@@ -135,13 +135,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// This will format the text according to the card type which needs to be displayed in messaging extension.
         /// </summary>
         /// <param name="searchResult">searchResult from Azure search service.</param>
-        /// <param name="requestorName">name of the requestor requesting for results.</param>
+        /// <param name="requesterName">name of the requester requesting for results.</param>
         /// <returns>returns string which will be displayed in messaging extension thumbnail card.</returns>
-        private string FormatSubTextForThumbnailCard(TicketEntity searchResult, string requestorName)
+        private string FormatSubTextForThumbnailCard(TicketEntity searchResult, string requesterName)
         {
             StringBuilder resultSubText = new StringBuilder();
             resultSubText.Append("<div>");
-            string thumbNailCardSecondLineText = this.GetDateAndTicketStatus(searchResult, requestorName);
+            string thumbNailCardSecondLineText = this.GetDateAndTicketStatus(searchResult, requesterName);
             resultSubText.Append(this.TrimExceedingTextLength(thumbNailCardSecondLineText));
             resultSubText.Append("</div>");
 
@@ -176,9 +176,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// This will get date and ticket status to be dispalyed in second line of thumbnail card in messaging extension.
         /// </summary>
         /// <param name="searchResult">searchResult from Azure search service.</param>
-        /// <param name="requestorName">name of the requestor requesting for results.</param>
+        /// <param name="requesterName">name of the requester requesting for results.</param>
         /// <returns>returns string which will be used in messaging extension.</returns>
-        private string GetDateAndTicketStatus(TicketEntity searchResult, string requestorName)
+        private string GetDateAndTicketStatus(TicketEntity searchResult, string requesterName)
         {
             StringBuilder dateAndStatus = new StringBuilder();
             if (searchResult.Status == (int)TicketState.Open && string.IsNullOrEmpty(searchResult.AssignedToName))
@@ -190,7 +190,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 dateAndStatus.Append(" | ");
 
-                if (searchResult.LastModifiedByName.Equals(requestorName))
+                if (searchResult.LastModifiedByName.Equals(requesterName))
                 {
                     dateAndStatus.Append("Open");
                 }
