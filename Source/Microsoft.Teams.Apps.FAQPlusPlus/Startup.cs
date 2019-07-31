@@ -52,7 +52,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddTransient<IBot>((provider) => new FaqPlusPlusBot(
                 provider.GetRequiredService<TelemetryClient>(),
                 provider.GetRequiredService<Common.Providers.IConfigurationProvider>(),
-                provider.GetRequiredService<IConfiguration>(),
                 provider.GetRequiredService<IQnAMakerFactory>(),
                 provider.GetRequiredService<MessagingExtension>(),
                 this.Configuration["AppBaseUri"],

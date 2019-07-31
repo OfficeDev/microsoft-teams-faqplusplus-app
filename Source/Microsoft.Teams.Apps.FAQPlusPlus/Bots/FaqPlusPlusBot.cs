@@ -16,19 +16,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
     using Newtonsoft.Json.Linq;
-    using IConfigurationProvider = Common.Providers.IConfigurationProvider;
 
     /// <summary>
-    ///  This Class Invokes all Bot Conversation functionalities.
+    /// Implements the core logic of the FAQ++ bot.
     /// </summary>
     public class FaqPlusPlusBot : ActivityHandler
     {
@@ -39,9 +38,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private const string AppFeedback = "AppFeedback";
         private const string ResultsFeedback = "ResultsFeedback";
         private const string QuestionForExpert = "QuestionForExpert";
-        private static readonly int Top = 1;
 
-        private readonly IConfiguration configuration;
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
         private readonly MessagingExtension messageExtension;
@@ -54,7 +51,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// </summary>
         /// <param name="telemetryClient"> Telemetry Client.</param>
         /// <param name="configurationProvider">Configuration Provider.</param>
-        /// <param name="configuration">Configuration.</param>
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         /// <param name="messageExtension">Messaging extension instance</param>
         /// <param name="appBaseUri">Base URI at which the app is served</param>
@@ -62,7 +58,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         public FaqPlusPlusBot(
             TelemetryClient telemetryClient,
             IConfigurationProvider configurationProvider,
-            IConfiguration configuration,
             IQnAMakerFactory qnaMakerFactory,
             MessagingExtension messageExtension,
             string appBaseUri,
@@ -70,7 +65,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
-            this.configuration = configuration;
             this.qnaMakerFactory = qnaMakerFactory;
             this.messageExtension = messageExtension;
             this.appBaseUri = appBaseUri;
@@ -363,10 +357,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return null;
                 }
 
-                var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId);
-                var options = new QnAMakerOptions { Top = Top, ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"]) };
-
-                var response = await qnaMaker.GetAnswersAsync(turnContext, options);
+                var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId, endpointKey);
+                var response = await qnaMaker.GetAnswersAsync(turnContext);
                 return response?.FirstOrDefault();
             }
             catch (Exception ex)
