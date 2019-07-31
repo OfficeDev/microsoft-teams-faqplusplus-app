@@ -221,8 +221,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case TakeATour:
                     this.telemetryClient.TrackTrace("Sending user tour card");
-                    var tourCardCarouselAttachment = this.CreateUserTourCardCarouselAttachment();
-                    await turnContext.SendActivityAsync(MessageFactory.Carousel(tourCardCarouselAttachment));
+                    var userTourCards = TourCarousel.GetUserTourCards(this.appBaseUri);
+                    await turnContext.SendActivityAsync(MessageFactory.Carousel(userTourCards));
                     break;
 
                 default:
@@ -244,27 +244,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Handles message activity in channel
         private async Task OnMessageActivityInChannelAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
-            {
-                this.telemetryClient.TrackTrace("Card submit in channel");
-                await this.OnAdaptiveCardSubmitInChannelAsync(message, turnContext, cancellationToken);
-                return;
-            }
-
             string text = (message.Text ?? string.Empty).Trim().ToLower();
 
             switch (text)
             {
                 case TeamTour:
                     this.telemetryClient.TrackTrace("Sending team tour card");
-                    var teamTourCards = this.CreateTeamTourCardCarouselAttachment();
+                    var teamTourCards = TourCarousel.GetTeamTourCards(this.appBaseUri);
                     await turnContext.SendActivityAsync(MessageFactory.Carousel(teamTourCards));
                     break;
 
                 default:
-                    this.telemetryClient.TrackTrace("Unrecognized input in channel");
-                    var unrecognizedInputCard = UnrecognizedTeamInput.GetCard();
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedInputCard));
+                    if (!string.IsNullOrEmpty(message.ReplyToId) && (message.Value != null))
+                    {
+                        this.telemetryClient.TrackTrace("Card submit in channel");
+                        await this.OnAdaptiveCardSubmitInChannelAsync(message, turnContext, cancellationToken);
+                        return;
+                    }
+                    else
+                    {
+                        this.telemetryClient.TrackTrace("Unrecognized input in channel");
+                        var unrecognizedInputCard = UnrecognizedTeamInput.GetCard();
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedInputCard));
+                    }
+
                     break;
             }
         }
@@ -397,35 +400,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Displays Carousel of Tour Cards when bot is added to a team scope.
-        /// </summary>
-        /// <returns>The Tour Adaptive card.</returns>
-        private List<Attachment> CreateTeamTourCardCarouselAttachment()
-        {
-            return new List<Attachment>()
-            {
-                TourCarousel.GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, this.appBaseUri + "/content/Alert.png"),
-                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.appBaseUri + "/content/Userchat.png"),
-                TourCarousel.GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, this.appBaseUri + "/content/Ticket.png"),
-            };
-        }
-
-        /// <summary>
-        /// Displays Carousel of Tour Cards- for personal scope.
-        /// </summary>
-        /// <returns>The Tour Adaptive card.</returns>
-        private List<Attachment> CreateUserTourCardCarouselAttachment()
-        {
-            return new List<Attachment>()
-            {
-                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.appBaseUri + "/content/Qnamaker.png"),
-                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.appBaseUri + "/content/Askanexpert.png"),
-                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.appBaseUri + "/content/Shareappfeedback.png"),
-            };
-        }
-
-        /// <summary>
-        /// This methods gets teams channel account details.
+        /// This methods gets the account details of the user in a 1:1 chat with the bot.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
