@@ -22,8 +22,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
     /// <summary>
@@ -287,26 +287,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment userCard = null;         // Acknowledgement to the user
 
             var channelAccountDetails = await this.GetPersonalChatUserAccountDetailsAsync(turnContext, cancellationToken);
-            var fullName = turnContext.Activity.From.Name;
 
             switch (message.Text)
             {
                 case QuestionForExpert:
                     // TODO: Create the ticket
                     this.telemetryClient.TrackTrace($"Received question for expert");
-                    smeTeamCard = this.GetQuestionForExpertAttachment(channelAccountDetails, payload, fullName);
+                    smeTeamCard = IncomingSMEEnquiryCard.CreateTicketCard(payload.QuestionUserTitleText, channelAccountDetails, payload);
                     userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
                     break;
 
                 case AppFeedback:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
-                    smeTeamCard = this.GetAppFeedbackAttachment(channelAccountDetails, payload, fullName);
+                    smeTeamCard = IncomingSMEEnquiryCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, channelAccountDetails, payload);
                     userCard = ThankYouAdaptiveCard.GetCard();
                     break;
 
                 case ResultsFeedback:
                     this.telemetryClient.TrackTrace($"Received feedback about an answer");
-                    smeTeamCard = this.GetResultsFeedbackAttachment(channelAccountDetails, payload, fullName);
+                    smeTeamCard = IncomingSMEEnquiryCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, channelAccountDetails, payload);
                     userCard = ThankYouAdaptiveCard.GetCard();
                     break;
 
@@ -410,7 +409,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
           CancellationToken cancellationToken)
         {
             var members = await ((BotFrameworkAdapter)turnContext.Adapter).GetConversationMembersAsync(turnContext, cancellationToken);
-            return members[0].Properties.ToObject<TeamsChannelAccount>();
+            return JsonConvert.DeserializeObject<TeamsChannelAccount>(JsonConvert.SerializeObject(members[0]));
         }
 
         /// <summary>
@@ -461,24 +460,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 cancellationToken);
 
             return await tcs.Task;
-        }
-
-        private Attachment GetAppFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
-        {
-            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, fullName, Resource.AppFeedbackText);
-            return IncomingSMEEnquiryCard.GetCard(Resource.AppFeedbackText, userActivityPayload.FeedbackUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
-        }
-
-        private Attachment GetQuestionForExpertAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
-        {
-            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, fullName, Resource.QuestionForExpertText);
-            return IncomingSMEEnquiryCard.GetCard(Resource.QuestionForExpertText, userActivityPayload.QuestionUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload, true);
-        }
-
-        private Attachment GetResultsFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
-        {
-            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, fullName, Resource.ResultsFeedbackText);
-            return IncomingSMEEnquiryCard.GetCard(Resource.ResultsFeedbackText, userActivityPayload.FeedbackUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     using Microsoft.Bot.Schema.Teams;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-    using Newtonsoft.Json;
 
     /// <summary>
     ///  This class process sending a notification card to SME team-
@@ -31,6 +30,54 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         }
 
         /// <summary>
+        /// Create a card that represents application feedback.
+        /// </summary>
+        /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
+        /// <param name="userAccountDetails">Details of the user submitting the feedback.</param>
+        /// <param name="userActivityPayload">Payload from the feedback submission.</param>
+        /// <returns>The card as an attachment</returns>
+        public static Attachment CreateAppFeedbackCard(
+            string incomingTitleValue,
+            TeamsChannelAccount userAccountDetails,
+            UserActivity userActivityPayload)
+        {
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.AppFeedbackText);
+            return GetCard(Resource.AppFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
+        }
+
+        /// <summary>
+        /// Create a card that represents result feedback.
+        /// </summary>
+        /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
+        /// <param name="userAccountDetails">Details of the user submitting the feedback.</param>
+        /// <param name="userActivityPayload">Payload from the feedback submission.</param>
+        /// <returns>The card as an attachment</returns>
+        public static Attachment CreateResultFeedbackCard(
+            string incomingTitleValue,
+            TeamsChannelAccount userAccountDetails,
+            UserActivity userActivityPayload)
+        {
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.ResultsFeedbackText);
+            return GetCard(Resource.ResultsFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
+        }
+
+        /// <summary>
+        /// Create a card that represents a ticket.
+        /// </summary>
+        /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
+        /// <param name="userAccountDetails">Details of the user submitting the ticket.</param>
+        /// <param name="userActivityPayload">Payload from the ticket submission.</param>
+        /// <returns>The card as an attachment</returns>
+        public static Attachment CreateTicketCard(
+            string incomingTitleValue,
+            TeamsChannelAccount userAccountDetails,
+            UserActivity userActivityPayload)
+        {
+            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, userAccountDetails.Name, Resource.QuestionForExpertText);
+            return GetCard(Resource.QuestionForExpertText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload, true);
+        }
+
+        /// <summary>
         /// This method will construct the adaptive card as an Attachment using JSON template.
         /// </summary>
         /// <param name="incomingTitleText">Title of the user activity-for feedback or ask an expert.</param>
@@ -40,7 +87,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <param name="userActivityPayload">User activity type:posting a feedback or asking a question to the expert.</param>
         /// <param name="isStatusAvailable">Flag value for status button- required only for ask an expert scenarios.</param>
         /// <returns>The card JSON string.</returns>
-        public static Attachment GetCard(
+        private static Attachment GetCard(
             string incomingTitleText,
             string incomingTitleValue,
             string incomingSubtitleText,
@@ -48,6 +95,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             UserActivity userActivityPayload,
             bool isStatusAvailable = false)
         {
+            // TODO: This should be cleaned up when we re-do the way that we construct the cards
             var incomingQuestionText = GetQuestionText(userActivityPayload);
             var incomingAnswerText = string.IsNullOrEmpty(userActivityPayload.SmeAnswer) ? Resource.NotApplicable : userActivityPayload.SmeAnswer;
             var userQuestion = string.IsNullOrEmpty(userActivityPayload.UserQuestion) ? Resource.NotApplicable : userActivityPayload.UserQuestion;
