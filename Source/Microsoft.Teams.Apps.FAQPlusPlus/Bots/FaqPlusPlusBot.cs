@@ -91,43 +91,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                this.telemetryClient.TrackTrace("Starting Message Activity");
+                var message = turnContext.Activity;
+
+                this.telemetryClient.TrackTrace($"Received message activity");
+                this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversationType: {message.Conversation?.ConversationType}, replyToId: {message.ReplyToId}");
 
                 await this.DisplayTypingIndicator(turnContext);
 
-                // when conversation is from Teams channel
-                if (turnContext.Activity.Conversation.ConversationType == "channel")
+                switch (message.Conversation.ConversationType)
                 {
-                    string activityText = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
-                    this.telemetryClient.TrackTrace($"User entered text = {activityText}");
-                    if (activityText == TeamTour)
-                    {
-                        this.telemetryClient.TrackTrace("Calling TeamTour Card");
-                        var teamtourCardCarouselAttachment = await Task.Run(() => this.CreateTeamTourCardCarouselAttachment());
-                        await turnContext.SendActivityAsync(MessageFactory.Carousel(teamtourCardCarouselAttachment));
-                    }
-                    else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0)
-                    {
-                        // To do:
-                        // await this.SendCardsUsrAsync(turnContext, cancellationToken);
-                    }
-                    else
-                    {
-                        var unrecognizedTeamInputCard = UnrecognizedTeamInput.GetCard();
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedTeamInputCard));
-                    }
-                }
-                else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0 && !string.IsNullOrEmpty(turnContext.Activity.Text))
-                {
-                    await this.SendCardsToSMEAsync(turnContext, cancellationToken);
-                }
-                else if (!string.IsNullOrEmpty(turnContext.Activity.Text))
-                {
-                    await this.SendCardsAsync(turnContext, cancellationToken);
+                    case "personal":
+                        await this.OnMessageActivityInPersonalChatAsync(message, turnContext, cancellationToken);
+                        break;
+
+                    case "channel":
+                        await this.OnMessageActivityInChannelAsync(message, turnContext, cancellationToken);
+                        break;
+
+                    default:
+                        this.telemetryClient.TrackTrace($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
+                        break;
                 }
             }
             catch (Exception ex)
             {
+                this.telemetryClient.TrackTrace($"Error processing message: {ex.Message}", SeverityLevel.Error);
                 this.telemetryClient.TrackException(ex);
                 throw;
             }
@@ -200,6 +188,42 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var botDisplayName = turnContext.Activity.Recipient.Name;
                 var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(botDisplayName, teamDetails.Team.Name);
                 await this.NotifyTeam(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
+            }
+        }
+
+        // Handles message activity in 1:1 chat
+        private async Task OnMessageActivityInPersonalChatAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            if (message.Value != null && ((JObject)message.Value).Count != 0 && !string.IsNullOrEmpty(message.Text))
+            {
+                await this.SendCardsToSMEAsync(turnContext, cancellationToken);
+            }
+            else if (!string.IsNullOrEmpty(message.Text))
+            {
+                await this.SendCardsAsync(turnContext, cancellationToken);
+            }
+        }
+
+        // Handles message activity in channel
+        private async Task OnMessageActivityInChannelAsync(IMessageActivity activity, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            string activityText = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
+
+            if (activityText == TeamTour)
+            {
+                this.telemetryClient.TrackTrace("Calling TeamTour Card");
+                var teamtourCardCarouselAttachment = await Task.Run(() => this.CreateTeamTourCardCarouselAttachment());
+                await turnContext.SendActivityAsync(MessageFactory.Carousel(teamtourCardCarouselAttachment));
+            }
+            else if (turnContext.Activity.Value != null && ((JObject)turnContext.Activity.Value).Count != 0)
+            {
+                // To do:
+                // await this.SendCardsUsrAsync(turnContext, cancellationToken);
+            }
+            else
+            {
+                var unrecognizedTeamInputCard = UnrecognizedTeamInput.GetCard();
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedTeamInputCard));
             }
         }
 
