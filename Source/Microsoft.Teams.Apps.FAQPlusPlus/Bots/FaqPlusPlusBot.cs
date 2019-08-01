@@ -49,15 +49,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="telemetryClient"> Telemetry Client.</param>
         /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="configuration">Configuration.</param>
-        /// <param name="client">Http Client.</param>
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         /// <param name="messageExtension">Messaging extension instance</param>
+        [System.Obsolete("FaqPlusPlusBot")]
         public FaqPlusPlusBot(
-            TelemetryClient telemetryClient,
-            IConfigurationProvider configurationProvider,
-            IConfiguration configuration,
-            IQnAMakerFactory qnaMakerFactory,
-            MessagingExtension messageExtension)
+        TelemetryClient telemetryClient,
+        IConfigurationProvider configurationProvider,
+        IConfiguration configuration,
+        IQnAMakerFactory qnaMakerFactory,
+        MessagingExtension messageExtension)
         {
             this.telemetryClient = telemetryClient;
             this.configurationProvider = configurationProvider;
@@ -114,7 +114,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return new List<Attachment>()
             {
                 TourCarousel.GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, this.configuration["AppBaseUri"] + "/content/Alert.png"),
-                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.configuration["AppBaseUri"] + "/content/UserChat.png"),
+                TourCarousel.GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, this.configuration["AppBaseUri"] + "/content/Userchat.png"),
                 TourCarousel.GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, this.configuration["AppBaseUri"] + "/content/Ticket.png"),
             };
         }
@@ -127,9 +127,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             return new List<Attachment>()
             {
-                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.configuration["AppBaseUri"] + "/content/QnaMaker.png"),
-                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/AskAnExpert.png"),
-                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/ShareFeedback.png"),
+                TourCarousel.GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, this.configuration["AppBaseUri"] + "/content/Qnamaker.png"),
+                TourCarousel.GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, this.configuration["AppBaseUri"] + "/content/Askanexpert.png"),
+                TourCarousel.GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, this.configuration["AppBaseUri"] + "/content/Shareappfeedback.png"),
             };
         }
 
@@ -146,11 +146,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var response = await qnaMaker.GetAnswersAsync(turnContext, options);
             if (response != null && response.Length > 0)
             {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer)));
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(response[0].Questions[0], response[0].Answer, turnContext.Activity.Text)));
             }
             else
             {
-                await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(turnContext.Activity.Text)));
+                var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
+                var userWelcomecardAttachment = await WelcomeCard.GetCard(welcomeText);
+                //await context.SendActivityAsync(MessageFactory.Text("Hey, I don't understand what you're saying, would you like to take a tour"), cancellationToken);
+                await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomecardAttachment));
+                //await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(turnContext.Activity.Text)));
             }
         }
 
@@ -158,40 +162,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Sends the message to SME team upon collecting feedback or question from the user.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="configurationProvider">Configuration Provider.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Notification to SME team channel.<see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, IConfigurationProvider configurationProvider, CancellationToken cancellationToken)
+        public async Task BroadcastTeamMessage(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             var payload = ((JObject)turnContext.Activity.Value).ToObject<UserActivity>();
             var channelAccountDetails = this.GetTeamsChannelAccountDetails(turnContext, cancellationToken);
-            var fullName = turnContext.Activity.Recipient.Name;
+            var fullName = turnContext.Activity.From.Name;
             Attachment teamCardAttachment = null;
             string activityType = string.IsNullOrEmpty(turnContext.Activity.Text) ? string.Empty : turnContext.Activity.Text.Trim().ToLower();
             switch (activityType)
             {
                 case AppFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("App Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.AppFeedback);
+                    teamCardAttachment = this.GetAppFeedbackAttachment(channelAccountDetails, payload, fullName);
                     break;
 
                 case QuestionForExpert:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Question For Expert", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.QuestionForExpert);
+                    teamCardAttachment = this.GetQuestionForExpertAttachment(channelAccountDetails, payload, fullName);
                     break;
 
                 case ResultsFeedback:
-                    teamCardAttachment = IncomingSMEEnquiryCard.GetCard("Results Feedback", fullName, channelAccountDetails.GivenName, channelAccountDetails.Email, payload.ResultsFeedback, payload.SMEQuestion, payload.SMEAnswer);
+                    teamCardAttachment = this.GetResultsFeedbackAttachment(channelAccountDetails, payload, fullName);
                     break;
 
                 default:
                     break;
             }
 
-            await this.DisplayTypingIndicator(turnContext);
-            await this.NotifyTeam(turnContext, teamCardAttachment, this.configuration["ChannelId"], cancellationToken);
-
-            if (payload.QuestionForExpert != null)
+            var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
+            await this.NotifyTeam(turnContext, teamCardAttachment, channelId, cancellationToken);
+            if (!string.IsNullOrEmpty(payload.QuestionUserTitleText))
             {
-                await this.UpdateFeedbackActivity(turnContext, ConfirmationCard.GetCard(), cancellationToken);
+                await this.UpdateFeedbackActivity(turnContext, NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText), cancellationToken);
             }
             else
             {
@@ -246,6 +248,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             try
             {
                 this.telemetryClient.TrackTrace("Starting Message Activity");
+
+                await this.DisplayTypingIndicator(turnContext);
 
                 // when conversation is from Teams channel
                 if (turnContext.Activity.Conversation.ConversationType == "channel")
@@ -403,9 +407,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 await this.BroadcastTeamMessage(
                        turnContext,
-                       this.configurationProvider,
                        cancellationToken);
             }
+        }
+
+        private Attachment GetAppFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
+        {
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, fullName, Resource.AppFeedbackText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.AppFeedbackText, userActivityPayload.FeedbackUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
+        }
+
+        private Attachment GetQuestionForExpertAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
+        {
+            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, fullName, Resource.QuestionForExpertText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.QuestionForExpertText, userActivityPayload.QuestionUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload, true);
+        }
+
+        private Attachment GetResultsFeedbackAttachment(TeamsChannelAccount channelAccountDetails, UserActivity userActivityPayload, string fullName)
+        {
+            var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, fullName, Resource.ResultsFeedbackText);
+            return IncomingSMEEnquiryCard.GetCard(Resource.ResultsFeedbackText, userActivityPayload.FeedbackUserTitleText, incomingSubtitleText, channelAccountDetails, userActivityPayload);
         }
 
         /// <summary>
@@ -452,7 +473,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             this.telemetryClient.TrackTrace("Calling QnA Maker Service");
                             var kbID = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
 
-                            // ToDo: Validate Null condition when KB is not available.
                             if (!string.IsNullOrEmpty(kbID))
                             {
                                 await this.GetAnswersAsync(kbID, context);

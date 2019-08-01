@@ -4,8 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods
 {
-    using System.Collections.Generic;
-    using System.IO;
+    using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -16,25 +15,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods
     public static class CardHelper
     {
         /// <summary>
-        /// This method constructs the Json replacing the values using Resx files.
-        /// </summary>
-        /// <param name="cardBody">Sends the Adaptive card body as Json String.</param>
-        /// <param name="variablesToValues">.</param>
-        /// <returns>Card attachment as Json string.</returns>
-        public static string GenerateCardBody(string cardBody, Dictionary<string, string> variablesToValues)
-        {
-            foreach (var kvp in variablesToValues)
-            {
-                cardBody = cardBody.Replace($"%{kvp.Key}%", kvp.Value);
-            }
-
-            return cardBody;
-        }
-
-        /// <summary>
         /// This method creates the card attachment using the Json.
         /// </summary>
-        /// <param name="cardBody">Sends the Adaptive card body as Json String.</param>
+        /// <param name="cardBody">Sends the adaptive card body as Json string.</param>
         /// <returns>Card attachment as Json string.</returns>
         public static Attachment GenerateCardAttachment(string cardBody)
         {
@@ -42,6 +25,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods
             {
                 ContentType = "application/vnd.microsoft.card.adaptive",
                 Content = JsonConvert.DeserializeObject<JObject>(cardBody),
+            };
+        }
+
+        public static AdaptiveFact GetAdaptiveFact(string title, string value)
+        {
+            return new AdaptiveFact()
+            {
+                Title = title,
+                Value = value
+            };
+        }
+
+        public static AdaptiveChoice GetChoiceSet(string title, string value)
+        {
+            return new AdaptiveChoice()
+            {
+                Title = title,
+                Value = value
             };
         }
     }

@@ -7,6 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
     using System.Threading;
     using Microsoft.Bot.Builder;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -23,13 +24,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.Validations
         public static bool Validate(ITurnContext turnContext, CancellationToken cancellationToken)
         {
             var obj = JsonConvert.DeserializeObject<UserActivity>(turnContext.Activity.Value.ToString());
-            obj.AppFeedback = obj.AppFeedback == null ? string.Empty : obj.AppFeedback;
-            obj.QuestionForExpert = obj.QuestionForExpert == null ? string.Empty : obj.QuestionForExpert;
-            obj.ResultsFeedback = obj.ResultsFeedback == null ? string.Empty : obj.ResultsFeedback;
+            obj.AppFeedback = obj.AppFeedback ?? string.Empty;
+            obj.QuestionForExpert = obj.QuestionForExpert ?? string.Empty;
+            obj.QuestionUserTitleText = obj.QuestionUserTitleText ?? string.Empty;
+            obj.FeedbackUserTitleText = obj.FeedbackUserTitleText ?? string.Empty;
+            obj.ResultsFeedback = obj.ResultsFeedback ?? string.Empty;
 
-            if (obj.AppFeedback == string.Empty && obj.QuestionForExpert == string.Empty && obj.ResultsFeedback == string.Empty)
+            if (obj.QuestionUserTitleText == string.Empty && obj.FeedbackUserTitleText == string.Empty)
             {
-                turnContext.SendActivityAsync(MessageFactory.Text("All Fields are Mandatory"), cancellationToken);
+                turnContext.SendActivityAsync(MessageFactory.Text(Resource.MandatoryFieldText), cancellationToken);
                 return false;
             }
 

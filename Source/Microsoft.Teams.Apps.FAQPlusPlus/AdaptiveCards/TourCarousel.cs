@@ -4,26 +4,15 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods;
-
+    
     /// <summary>
     ///  This class process Tour Carousel feature : Common Method for user tour and team tour.
     /// </summary>
     public class TourCarousel
     {
-        private static readonly string CardTemplate;
-
-        static TourCarousel()
-        {
-            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "TourCarousel.json");
-            CardTemplate = File.ReadAllText(cardJsonFilePath);
-        }
-
         /// <summary>
         /// This method will construct the adaptive card as an Attachment using JSON template.
         /// </summary>
@@ -33,14 +22,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>Card attachment as Json string.</returns>
         public static Attachment GetCard(string cardTitleText, string cardContentText, string carouselImage)
         {
-            var variablesToValues = new Dictionary<string, string>()
+            AdaptiveCard tourCarouselCard = new AdaptiveCard("1.0");
+            tourCarouselCard.Body.Add(new AdaptiveTextBlock()
             {
-                { "cardTitleText", cardTitleText },
-                { "cardContentText", cardContentText },
-                { "carouselImage", carouselImage },
-            };
+                Weight = AdaptiveTextWeight.Bolder,
+                Text = cardTitleText,
+                Wrap = true
+            });
 
-            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+            tourCarouselCard.Body.Add(new AdaptiveTextBlock()
+            {
+                Text = cardContentText,
+                Wrap = true
+            });
+
+            tourCarouselCard.Body.Add(new AdaptiveImage()
+            {
+               HorizontalAlignment = AdaptiveHorizontalAlignment.Center,
+                Url = new Uri(carouselImage),
+               Size = AdaptiveImageSize.Large
+            });
+
+            return CardHelper.GenerateCardAttachment(tourCarouselCard.ToJson());
         }
     }
 }

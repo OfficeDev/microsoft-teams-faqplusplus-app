@@ -4,8 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 {
-    using System.Collections.Generic;
-    using System.IO;
+    using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -14,13 +13,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     /// </summary>
     public static class WelcomeTeamCard
     {
-        private static readonly string CardTemplate;
-
-        static WelcomeTeamCard()
-        {
-            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "WelcomeTeamCard.json");
-            CardTemplate = File.ReadAllText(cardJsonFilePath);
-        }
 
         /// <summary>
         /// This method will construct the adaptive card as an Attachment using JSON template.
@@ -32,15 +24,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         {
             var welcomeTeamCardTitleText = string.Format(Resource.WelcomeTeamCardTitleText, teamName);
             var welcomeTeamCardContent = string.Format(Resource.WelcomeTeamCardContent, botDisplayName, teamName);
-            var takeATeamTourButtonText = Resource.TakeATeamTourButtonText;
-            var variablesToValues = new Dictionary<string, string>()
+            AdaptiveCard teamWelcomeCard = new AdaptiveCard("1.0");
+            teamWelcomeCard.Body.Add(new AdaptiveTextBlock()
             {
-                { "welcomeTeamCardTitleText", welcomeTeamCardTitleText },
-                { "welcomeTeamCardContent", welcomeTeamCardContent },
-                { "takeATeamTourButtonText", takeATeamTourButtonText },
-            };
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Medium,
+                Text = welcomeTeamCardTitleText,
+                Wrap = true
+            });
 
-            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+            teamWelcomeCard.Body.Add(new AdaptiveTextBlock()
+            {
+                Text = welcomeTeamCardContent,
+                Wrap = true
+            });
+
+            // Team- take a tour submit action.
+            teamWelcomeCard.Actions.Add(new AdaptiveSubmitAction()
+            {
+                Title = Resource.TakeATeamTourButtonText,
+                Data = Newtonsoft.Json.Linq.JObject.FromObject(
+                     new
+                     {
+                         msteams = new
+                         {
+                             type = "messageBack",
+                             displayText = Resource.TakeATeamTourButtonText,
+                             text = "team tour"
+                         }
+                     })
+            });
+
+            return CardHelper.GenerateCardAttachment(teamWelcomeCard.ToJson());
         }
     }
 }

@@ -7,21 +7,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    ///  This class handles unrecognized input sent by the team memeber-sending random text to bot.
+    ///  This class handles unrecognized input sent by the team member-sending random text to bot.
     /// </summary>
     public class UnrecognizedTeamInput
     {
-        private static readonly string CardTemplate;
-
-        static UnrecognizedTeamInput()
-        {
-            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "UnrecognizedTeamInput.json");
-            CardTemplate = File.ReadAllText(cardJsonFilePath);
-        }
 
         /// <summary>
         /// This method will construct the adaptive card as an Attachment using JSON template.
@@ -29,15 +23,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <returns>Card attachment as Json string.</returns>
         public static Attachment GetCard()
         {
-            var teamcustomMessage = Resource.TeamCustomMessage;
-            var takeATeamTourButtonText = Resource.TakeATeamTourButtonText;
-            var variablesToValues = new Dictionary<string, string>()
+            AdaptiveCard unrecognizedTeamInputCard = new AdaptiveCard("1.0");
+            unrecognizedTeamInputCard.Body.Add(new AdaptiveTextBlock()
             {
-                { "teamCustomMessage", teamcustomMessage },
-                { "takeATeamTourButtonText", takeATeamTourButtonText },
-            };
+                Text = Resource.TeamCustomMessage,
+                Wrap = true
+            });
 
-            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+            // Team tour submit button
+            unrecognizedTeamInputCard.Actions.Add(new AdaptiveSubmitAction()
+            {
+                Title = Resource.TakeATeamTourButtonText,
+                Data = Newtonsoft.Json.Linq.JObject.FromObject(
+                     new
+                     {
+                         msteams = new
+                         {
+                             type = "messageBack",
+                             displayText = Resource.TakeATeamTourButtonText,
+                             text = "team tour"
+                         }
+                     })
+            });
+
+            return CardHelper.GenerateCardAttachment(unrecognizedTeamInputCard.ToJson());
         }
     }
 }

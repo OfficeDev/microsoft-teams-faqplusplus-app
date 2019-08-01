@@ -9,6 +9,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -18,8 +19,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     /// </summary>
     public class IncomingSMEEnquiryCard
     {
+        private const string DateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
+        private const string Ellipsis = "...";
+
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the adaptive card that is sent to the Sme team.
         /// </summary>
         /// <param name="incomingTitleText">Title of the user activity-for feedback or ask an expert.</param>
         /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
@@ -43,12 +47,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             var chatTextButton = string.Format(Resource.ChatTextButton, channelAccountDetails.GivenName);
             if (incomingAnswerText.Length > 500)
             {
-                incomingAnswerText = incomingAnswerText.Substring(0, 500) + "...";
+                incomingAnswerText = incomingAnswerText.Substring(0, 500) + Ellipsis;
             }
 
-            var currentDateTime = DateTime.UtcNow.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ");
+            var currentDateTime = DateTime.UtcNow.ToString(DateFormat);
 
-            AdaptiveCard incomingSmeCard = new AdaptiveCard();
+            // Constructing adaptive card that is sent to Sme team.
+            AdaptiveCard incomingSmeCard = new AdaptiveCard("1.0");
+
             incomingSmeCard.Body.Add(new AdaptiveTextBlock()
             {
                 Weight = AdaptiveTextWeight.Bolder,
@@ -56,28 +62,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 Color = AdaptiveTextColor.Attention,
                 Size = AdaptiveTextSize.Medium
             });
+
             incomingSmeCard.Body.Add(new AdaptiveTextBlock()
             {
                 Text = incomingSubtitleText,
                 Wrap = true
             });
+
             incomingSmeCard.Actions.Add(new AdaptiveOpenUrlAction()
             {
                 Title = chatTextButton,
                 UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={channelAccountDetails.Email}"
             });
-            var factSetList = new List<AdaptiveFact>()
-                {
-                    GetAdaptiveFact(Resource.StatusFactTitle, Resource.OpenStatusValue),
-                    GetAdaptiveFact(Resource.TitleText, incomingTitleValue),
-                    GetAdaptiveFact(Resource.DescriptionText, incomingQuestionText),
-                    GetAdaptiveFact(Resource.KBEntryText, incomingAnswerText),
-                    GetAdaptiveFact(Resource.QuestionText, userQuestion),
-                    GetAdaptiveFact(Resource.DateCreatedDisplayFactTitle, "{{DATE(" + currentDateTime + ", SHORT)}} {{TIME(" + currentDateTime + ")}}"),
-                };
+
+            // Calling GetFactSetList.
+            var factSetList = GetFactSetList(incomingTitleValue, incomingQuestionText, incomingAnswerText, userQuestion, currentDateTime);
+
+            // Sme card which has both change status button and chat with person button.
             if (isStatusAvailable)
             {
-                factSetList.Add(GetAdaptiveFact(Resource.ClosedFactTitle, Resource.NotApplicable));
+                factSetList.Add(CardHelper.GetAdaptiveFact(Resource.ClosedFactTitle, Resource.NotApplicable));
+
                 AdaptiveCard showCard = new AdaptiveCard();
                 showCard.Title = Resource.ChangeStatusButtonText;
                 showCard.Body.Add(new AdaptiveChoiceSetInput()
@@ -86,21 +91,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                     Style = AdaptiveChoiceInputStyle.Compact,
                     IsMultiSelect = false,
                     Value = "1",
-                    Choices = new List<AdaptiveChoice>()
-                   {
-                       GetChoiceSet(Resource.AssignStatusText, "1"),
-                       GetChoiceSet(Resource.CloseStatusText, "2")
-                   }
+                    Choices = GetChoiceSetList()
                 });
+
                 showCard.Actions.Add(new AdaptiveSubmitAction()
                 {
                     Title = Resource.SubmitButtonText
                 });
+
                 incomingSmeCard.Actions.Add(new AdaptiveShowCardAction()
                 {
-                    Title = Resource.ChangeStatusButtonText,
+                   // Title = Resource.ChangeStatusButtonText,
                     Card = showCard
                 });
+
                 incomingSmeCard.Body.Add(new AdaptiveFactSet() { Facts = factSetList });
                 return CardHelper.GenerateCardAttachment(incomingSmeCard.ToJson());
             }
@@ -109,22 +113,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             return CardHelper.GenerateCardAttachment(incomingSmeCard.ToJson());
         }
 
-        private static AdaptiveFact GetAdaptiveFact(string title, string value)
+        // Method that returns the Choice set used for change status show card on Sme notification card.
+        private static List<AdaptiveChoice> GetChoiceSetList()
         {
-            return new AdaptiveFact()
-            {
-                Title = title,
-                Value = value
-            };
+            return new List<AdaptiveChoice>()
+                   {
+                        CardHelper.GetChoiceSet(Resource.AssignStatusText, "1"),
+                       CardHelper.GetChoiceSet(Resource.CloseStatusText, "2")
+                   };
         }
 
-        private static AdaptiveChoice GetChoiceSet(string title, string value)
+        // Method that returns the Fact set used in Sme notification card.
+        private static List<AdaptiveFact> GetFactSetList(string incomingTitleValue, string incomingQuestionText, string incomingAnswerText, string userQuestion, string currentDateTime)
         {
-            return new AdaptiveChoice()
-            {
-                Title = title,
-                Value = value
-            };
+            return new List<AdaptiveFact>()
+                {
+                    CardHelper.GetAdaptiveFact(Resource.StatusFactTitle, Resource.OpenStatusValue),
+                    CardHelper.GetAdaptiveFact(Resource.TitleText, incomingTitleValue),
+                    CardHelper.GetAdaptiveFact(Resource.DescriptionText, incomingQuestionText),
+                    CardHelper.GetAdaptiveFact(Resource.KBEntryText, incomingAnswerText),
+                    CardHelper.GetAdaptiveFact(Resource.QuestionText, userQuestion),
+                    CardHelper.GetAdaptiveFact(Resource.DateCreatedDisplayFactTitle, "{{DATE(" + currentDateTime + ", SHORT)}} at {{TIME(" + currentDateTime + ")}}"),
+                };
         }
 
         private static string GetQuestionText(UserActivity userActivityPayload)

@@ -5,7 +5,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 {
     using System.Collections.Generic;
     using System.IO;
+    using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -13,28 +15,83 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     /// </summary>
     public class AskAnExpertCard
     {
-        private static readonly string CardTemplate;
-
-        static AskAnExpertCard()
-        {
-            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "AskAnExpertCard.json");
-            CardTemplate = File.ReadAllText(cardJsonFilePath);
-        }
-
         /// <summary>
         /// This method will construct the adaptive card as an Attachment using JSON template.
         /// </summary>
         /// <returns>Ask an Expert as an Attachment.</returns>
         public static Attachment GetCard()
         {
-            var variablesToValues = new Dictionary<string, string>()
+            AdaptiveCard askAnExpertCard = new AdaptiveCard("1.0");
+            askAnExpertCard.Body.Add(new AdaptiveTextBlock()
             {
-                { "cardHeader", Resource.AskAnExpertText1 },
-                { "subHeader", Resource.AskAnExpertPlaceholderText },
-                { "descriptionPlaceholder", Resource.AskAnExpertPlaceholderText },
-                { "askanExpertButtonText", Resource.AskAnExpertButtonText },
-            };
-            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Medium,
+                Text = Resource.AskAnExpertText1,
+                Wrap = true
+            });
+
+            askAnExpertCard.Body.Add(new AdaptiveTextBlock()
+            {
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Medium,
+                Text = Resource.AskAnExpertPlaceholderText,
+                Wrap = true
+            });
+
+            askAnExpertCard.Body.Add(new AdaptiveTextBlock()
+            {
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Medium,
+                Text = Resource.TitleText,
+                Wrap = true
+            });
+
+            askAnExpertCard.Body.Add(new AdaptiveTextBlock()
+            {
+                Weight = AdaptiveTextWeight.Bolder,
+                Size = AdaptiveTextSize.Medium,
+                Text = Resource.MandatoryFieldText,
+                Color = AdaptiveTextColor.Attention,
+                Spacing = AdaptiveSpacing.Small,
+                Wrap = true
+            });
+
+            askAnExpertCard.Body.Add(new AdaptiveTextInput()
+            {
+                Id = "questionUserTitleText",
+                Placeholder = Resource.ShowCardTitleText,
+                IsMultiline = false
+            });
+
+            askAnExpertCard.Body.Add(new AdaptiveTextBlock()
+            {
+                Weight = AdaptiveTextWeight.Bolder,
+                Text = Resource.DescriptionText,
+                Wrap = true
+            });
+
+            askAnExpertCard.Body.Add(new AdaptiveTextInput()
+            {
+                Id = "questionForExpert",
+                Placeholder = Resource.AskAnExpertPlaceholderText,
+                IsMultiline = true
+            });
+
+            askAnExpertCard.Actions.Add(new AdaptiveSubmitAction()
+            {
+                Title = Resource.AskAnExpertButtonText,
+                Data = Newtonsoft.Json.Linq.JObject.FromObject(
+                new
+                {
+                    msteams = new
+                    {
+                        type = "messageBack",
+                        displayText = Resource.AskAnExpertDisplayText,
+                        text = "QuestionForExpert"
+                    }
+                })
+            });
+            return CardHelper.GenerateCardAttachment(askAnExpertCard.ToJson());
         }
     }
 }

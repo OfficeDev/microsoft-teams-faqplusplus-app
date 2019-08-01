@@ -4,8 +4,6 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 {
-    using System.Collections.Generic;
-    using System.IO;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -22,7 +20,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         [System.Obsolete]
         public static Attachment GetCard()
         {
-            AdaptiveCard thankYouCard = new AdaptiveCard();
+            AdaptiveCard thankYouCard = new AdaptiveCard("1.0");
 
             thankYouCard.Body.Add(new AdaptiveTextBlock()
             {
