@@ -13,13 +13,6 @@
           "color": "Attention"
         },
         {
-          "type": "Image",
-          "horizontalAlignment": "Center",
-          "spacing": "small",
-          "url": "%cardImageUrl%",
-          "size": "large"
-        },
-        {
           "type": "TextBlock",
           "text": "%thankYouAdaptiveCardContent%",
           "spacing": "Medium",

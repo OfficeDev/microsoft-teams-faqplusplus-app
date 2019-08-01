@@ -9,18 +9,36 @@
           "size": "medium",
           "weight": "bolder",
           "text": "%cardHeader%"
-        }
-      ]
-    },
-    {
-      "type": "Container",
-      "items": [
+        },
         {
           "type": "TextBlock",
           "text": "%subHeader%",
           "wrap": true,
-          "maxLines": 3,
-          "separator": true
+          "maxLines": 3
+        },
+        {
+          "type": "TextBlock",
+          "weight": "bolder",
+          "text": "%titleText%",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "weight": "default",
+          "text": "%mandatoryFieldText%",
+          "wrap": true,
+          "color": "Attention"
+        },
+        {
+          "type": "Input.Text",
+          "placeholder": "%showcardTitleText%",
+          "id": "questionUserTitleText"
+        },
+        {
+          "type": "TextBlock",
+          "weight": "bolder",
+          "text": "%descriptionText%",
+          "wrap": true
         },
         {
           "type": "Input.Text",
@@ -34,11 +52,11 @@
   "actions": [
     {
       "type": "Action.Submit",
-      "title": "%askanExpertButtonText%",
+      "title": "%askAnExpertButtonText%",
       "data": {
         "msteams": {
           "type": "messageBack",
-          "displayText": "QuestionForExpert",
+          "displayText": "%askAnExpertDisplayText%",
           "text": "QuestionForExpert"
         }
       }

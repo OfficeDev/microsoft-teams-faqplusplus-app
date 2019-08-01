@@ -15,7 +15,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     public static class CardHelper
     {
         /// <summary>
-        /// This method constructs the Json replacing the values using Resx files.
+        /// This method constructs the Json replacing the values using resource file.
         /// </summary>
         /// <param name="cardBody">Sends the Adaptive card body as Json String.</param>
         /// <param name="variablesToValues">.</param>
@@ -33,7 +33,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <summary>
         /// This method creates the card attachment using the Json.
         /// </summary>
-        /// <param name="cardBody">Sends the Adaptive card body as Json String.</param>
+        /// <param name="cardBody">Sends the adaptive card body as Json string.</param>
         /// <returns>Card attachment as Json string.</returns>
         public static Attachment GenerateCardAttachment(string cardBody)
         {

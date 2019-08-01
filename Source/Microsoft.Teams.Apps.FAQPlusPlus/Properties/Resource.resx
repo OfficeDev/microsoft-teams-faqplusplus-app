@@ -117,164 +117,61 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AskAnExpertFunctionText" xml:space="preserve">
-    <value>You can always ask me to connect to an expert, an expert will connect with you:\n Ask an Expert.</value>
-    <comment>Letting the user to know about Ask an Expert service.</comment>
-  </data>
   <data name="AskAnExpertPlaceholderText" xml:space="preserve">
     <value>Type your detailed question and supporting details here.</value>
-    <comment>Ask an Expert placeholder text</comment>
+    <comment>Ask an expert placeholder text.</comment>
   </data>
   <data name="AskAnExpertText1" xml:space="preserve">
-    <value>Ask An Expert</value>
-    <comment>Title of the Ask An Expert Card.</comment>
+    <value>Ask an expert</value>
+    <comment>Title of the ask an expert card.</comment>
   </data>
   <data name="AskAnExpertText2" xml:space="preserve">
-    <value>We have our experts to assist you better  on any of your questions. You can always connect to our Experts.</value>
-    <comment>Helps the user in understandig, there is an expert team to connect to.</comment>
-  </data>
-  <data name="BotName" xml:space="preserve">
-    <value>FAQ Bot</value>
-    <comment>Name of the BOT</comment>
-  </data>
-  <data name="BulletedList" xml:space="preserve">
-    <value>- 401k\r- Travel Benifits\r-  Leave Policy\r- Health Benifits</value>
-    <comment>Bullet List of Available Bot Services</comment>
-  </data>
-  <data name="BulletedQuestionText" xml:space="preserve">
-    <value>- May I know my 401k policy?\n- May I know the Travel Policy of the org?\n-  What about the Leave Policy?\n- What are the Health benefits?</value>
-    <comment>Possible questions to be asked by the user to the bot.</comment>
-  </data>
-  <data name="CollectFeedback" xml:space="preserve">
-    <value>Answer the questions suggesting how we can improve our services or just leave the comments.</value>
-    <comment>Providing the user with set of questions or comment box  to collect feedback.</comment>
+    <value>We have our experts to assist you better on any of your questions. You can always connect to our Experts.</value>
+    <comment>Helps the user in understanding there is an expert team to connect to.</comment>
   </data>
   <data name="FeedbackText1" xml:space="preserve">
-    <value>We would love to hear a feedback from you on how we have performed today.</value>
-    <comment>Text suggests that user is invited to share his feedback on his expereince using bot.</comment>
-  </data>
-  <data name="FeedbackText2" xml:space="preserve">
-    <value>If your experience is unhappy give us the details you have for your question,like your assigned ticket #, one of our experts will connect with you.</value>
-    <comment>Asking user for details of his ticket in the event of bad experience or unresolved issues.</comment>
+    <value>We would love to hear a feedback from you on how we are performing.</value>
+    <comment>Text suggests that user is invited to share his feedback on his experience using bot.</comment>
   </data>
   <data name="FunctionCardText1" xml:space="preserve">
-    <value>Ask A Question!</value>
+    <value>Ask a question!</value>
     <comment>Explains what bot does and possible questions.</comment>
   </data>
   <data name="FunctionCardText2" xml:space="preserve">
     <value>I am your QnA bot, you can ask me a question and I will answer you back if I know the answer.</value>
-    <comment>Suggests the User to ask Question</comment>
+    <comment>Suggests the user to ask question.</comment>
   </data>
-  <data name="FunctionTopicsText" xml:space="preserve">
-    <value>Ask me questions  like:</value>
-    <comment>Title Text for the Questions to be asked.</comment>
-  </data>
-  <data name="MessageText1" xml:space="preserve">
-    <value>Here is what I can help you with:</value>
-    <comment>MessageLine</comment>
-  </data>
-  <data name="MessageText2" xml:space="preserve">
-    <value>If you are curious about what I can do, just type @FAQBot and I will present the list of commands that I can understand.</value>
-    <comment>Message Line to know more about the Bot Functionalities</comment>
-  </data>
-  <data name="SendDisplayText" xml:space="preserve">
-    <value>Send</value>
-    <comment>Send button text</comment>
-  </data>
-  <data name="ShareFeedbackTitleText" xml:space="preserve">
-    <value>Share Feedback</value>
-    <comment>Title for Feedback card</comment>
-  </data>
-  <data name="TakeATourButtonText" xml:space="preserve">
-    <value>Take a tour</value>
-    <comment>Action Button which gives Tour for Bot Functionalities.</comment>
-  </data>
-  <data name="WelcomeText1" xml:space="preserve">
-    <value>Hi there!</value>
-    <comment>Greeting Text of Adaptive Card</comment>
-  </data>
-  <data name="WelcomeText2" xml:space="preserve">
-    <value>Hello!   \nI am Sophia I am your friendly HR BOT. I am here to help you with your HR realted topics.</value>
-    <comment>Explains What Bot it is.</comment>
-  </data>
-  <data name="DateText" xml:space="preserve">
-    <value>Date: </value>
+  <data name="ShareFeedbackButtonText" xml:space="preserve">
+    <value>Share feedback</value>
+    <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
     <value>Description: </value>
-  </data>
-  <data name="EmailPlaceholderText" xml:space="preserve">
-    <value>{0}</value>
+    <comment>Description text is the label of description text box.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
-    <value>Type your detailed feedback and supporting details here.</value>
+    <value>Enter your feedback and supporting details here.</value>
+    <comment>Placeholder label where the user enters feedback in the text box.</comment>
   </data>
   <data name="FeedbackHeaderText" xml:space="preserve">
-    <value>Feedback</value>
-  </data>
-  <data name="LastTenRequestsText" xml:space="preserve">
-    <value>Following are your last 10 requests:</value>
-  </data>
-  <data name="NamePlaceholderText" xml:space="preserve">
-    <value>{0}</value>
-  </data>
-  <data name="AnswerLineText" xml:space="preserve">
-    <value>Here is what I found : {0}</value>
-    <comment>Answer from the Bot</comment>
+    <value>Share app feedback</value>
+    <comment>Share feedback card title text- bot menu command.</comment>
   </data>
   <data name="QuestionLineText" xml:space="preserve">
-    <value>Your Request : {0}</value>
-    <comment>Shows user Requested Question</comment>
+    <value>Here is what I have found for your request</value>
+    <comment>Shows user requested question.</comment>
   </data>
-  <data name="RequestText" xml:space="preserve">
-    <value>Request #</value>
-  </data>
-  <data name="StatusText" xml:space="preserve">
+  <data name="StatusFactTitle" xml:space="preserve">
     <value>Status: </value>
+    <comment>Status one of the available fact set in notification cards.</comment>
   </data>
   <data name="AskAnExpertButtonText" xml:space="preserve">
-    <value>Ask An Expert</value>
-    <comment>Action Button which invokes ask an expert show card.</comment>
-  </data>
-  <data name="ChatWithRequestor" xml:space="preserve">
-    <value>Your Chat Requested User is {0} :</value>
-  </data>
-  <data name="CompletedDate" xml:space="preserve">
-    <value>Your Completed Date is {0} :</value>
-  </data>
-  <data name="CreatedDate" xml:space="preserve">
-    <value>Your Created Date is {0}:</value>
-  </data>
-  <data name="IncomingAskAnExpertSMECardHeader" xml:space="preserve">
-    <value>Your Expert Cardheader is {0} :</value>
-  </data>
-  <data name="IncomingFeedbackSMECardHeader" xml:space="preserve">
-    <value>Your Feedback Cardheader is {0} :</value>
-  </data>
-  <data name="NotAssigned" xml:space="preserve">
-    <value>assigned value is</value>
-  </data>
-  <data name="RequestIdText" xml:space="preserve">
-    <value>Requested Id Text is {0} :</value>
-  </data>
-  <data name="IncomingAppFeedbackDetailsText" xml:space="preserve">
-    <value>Details: {0}</value>
-    <comment>The exact details for the incoming app feedback. The placeholder {0} represents the detailed feedback which the user has provided.</comment>
-  </data>
-  <data name="IncomingFeedbackSubHeaderText" xml:space="preserve">
-    <value>{0} shares {1}. The details are as follows:</value>
-    <comment>The subheader for the incoming app feedback adaptive card. The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
-  </data>
-  <data name="IncomingAppFeedbackSubjectLine" xml:space="preserve">
-    <value>Subject: {0}</value>
-    <comment>The subject line for the incoming app feedback adaptive card - and the placeholder {0} represents the exact feedback type</comment>
-  </data>
-  <data name="SendButtonText" xml:space="preserve">
-    <value>App Feedback</value>
+    <value>Ask an expert</value>
+    <comment>Action button which invokes ask an expert show card.</comment>
   </data>
   <data name="ThankYouAdaptiveCardContent" xml:space="preserve">
-    <value>Your feedback has been captured and forwarded over to the team. Someone will get back to you in some time.</value>
-    <comment>The content for the thank you adaptive card which is shown whenever there is feedback captured about the app or about a response.</comment>
+    <value>Thank you for your feedback.\n\n You are helping me become more helpful. I will share it with experts.</value>
+    <comment>The content for the thank you adaptive card which is shown whenever user submits feedback on the app or on a response that is generated by QnA service.</comment>
   </data>
   <data name="ThankYouAdaptiveCardTitleText" xml:space="preserve">
     <value>Thank you!</value>
@@ -282,95 +179,151 @@
   </data>
   <data name="ChatTextButton" xml:space="preserve">
     <value>Chat with {0}</value>
-    <comment>Ability to chat directy with end user from SME channel.</comment>
+    <comment>Ability to chat directly with end user from SME channel.</comment>
   </data>
-  <data name="ShareAppFeedbackButtonText" xml:space="preserve">
-    <value>Share App Feedback</value>
-    <comment>App Feedback Submit Button Title</comment>
+  <data name="NotificationAdaptiveCardContent" xml:space="preserve">
+    <value>Your question has been shared with the SME team. They will directly send you a chat message. </value>
+    <comment>Confirmation message to the user upon asking question to the expert.</comment>
   </data>
-  <data name="ConfirmationAdaptiveCardContent" xml:space="preserve">
-    <value>Your Question has been posted to our expert team.Someone from the team will get back to you in some time.</value>
-    <comment>Confirmation Message to the user upon asking question to the expert.</comment>
-  </data>
-  <data name="ConfirmationCardTitleText" xml:space="preserve">
-    <value>Confirmation!</value>
+  <data name="NotificationCardTitleText" xml:space="preserve">
+    <value>Notification</value>
     <comment>Confirmation Card Header Text.</comment>
   </data>
   <data name="TeamChatHeaderText" xml:space="preserve">
-    <value>Initiate Chat with Users</value>
-    <comment>Team carousel  Chat Card Header-  Title of the chat card.</comment>
+    <value>Initiate chat with users</value>
+    <comment>Team carousel chat card header-title of the chat card.</comment>
   </data>
   <data name="TeamChatCardContent" xml:space="preserve">
     <value>As an SME, you can initiate chat directly with the end user, by clicking on chat button.</value>
-    <comment>Team carousel Chat Card content-  SME team members can chat directly with the end users.</comment>
+    <comment>Team carousel chat card content- SME team members can chat directly with the end users.</comment>
   </data>
   <data name="TeamFunctionCardHeaderText" xml:space="preserve">
-    <value>Notification from the Users</value>
-    <comment>Team carousel Function Card content- Title of the chat card.</comment>
+    <value>Notification from the users</value>
+    <comment>Team carousel function card content- title of the chat card.</comment>
   </data>
   <data name="TeamFunctionCardContent" xml:space="preserve">
-    <value>SME channel receives feedback  from the users on the app performance or can ask a question  to the SME channel.</value>
-    <comment>Team carousel Function card content- Team can take the question from the end users through bot.</comment>
+    <value>SME channel receives feedback from the users on the app performance or can ask a question to the SME channel.</value>
+    <comment>Team carousel function card content- team can take the question from the end users through bot.</comment>
   </data>
   <data name="TeamQueryHeaderText" xml:space="preserve">
-    <value>Ticket System</value>
-    <comment>Title of the Query Carousel Card- Ticket system.</comment>
+    <value>Ticket system</value>
+    <comment>Title of the query carousel card- ticket system.</comment>
   </data>
   <data name="TeamQueryCardContent" xml:space="preserve">
-    <value>You can Keep track of the user requests using the status assigned or closed.</value>
-    <comment>Team carousel Query card content- Team can keep track of the user request.</comment>
+    <value>You can keep track of the user requests using the status assigned or closed.</value>
+    <comment>Team carousel query card content- team can keep track of the user request.</comment>
   </data>
   <data name="TakeATeamTourButtonText" xml:space="preserve">
-    <value>Team Tour</value>
-    <comment>Action Button which gives Tour for the team about Bot Functionalities.</comment>
+    <value>Team tour</value>
+    <comment>Action button which gives tour for the team on bot Functionalities.</comment>
   </data>
   <data name="WelcomeTeamCardTitleText" xml:space="preserve">
     <value>Hello {0} !</value>
-    <comment>Introduces Welcome, with team name in the placeholder {0}</comment>
+    <comment>Introduces Welcome, with team name where placeholder {0} holds the name of the team bot is being added to.</comment>
   </data>
   <data name="WelcomeTeamCardContent" xml:space="preserve">
-    <value>Hi! I am {0}, thank you for having me in your SME team!.I am a  friendly HR bot can be used by  any team or individual within the org. As an SME, you and your team memebers can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using staus fields like open assign and close.</value>
-    <comment>Welcome Message when bot is added to a new team.</comment>
+    <value>Hi! I am {0}, thank you for having me in your SME team!. I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using status fields like open assign and close.</value>
+    <comment>Welcome message when bot is added to a new team.</comment>
   </data>
   <data name="CustomMessage" xml:space="preserve">
-    <value>I didn't find anything. Do you want me to ask an expert.</value>
+    <value>I didn't find anything apt for your request. \n\n Do you want me to ask an expert?</value>
+    <comment>Message when user asks random question to the bot.</comment>
   </data>
-  <data name="ResultAnswerText" xml:space="preserve">
-    <value>{0}</value>
-    <comment>Pre-filled Answer Text</comment>
-  </data>
-  <data name="ResultQuestionText" xml:space="preserve">
-    <value>Question: {0}</value>
-    <comment>Pre-filled Question Text</comment>
+  <data name="QuestionText" xml:space="preserve">
+    <value>Question asked:</value>
+    <comment>Pre-filled question text.</comment>
   </data>
   <data name="SubmitButtonText" xml:space="preserve">
     <value>Submit</value>
+    <comment>Button to submit user activity.</comment>
   </data>
   <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
-    <value>{0} has asked a question, it's important to take a look at their inquiry!</value>
+    <value>**{0}** is requesting support. Details are as follows:</value>
+    <comment>Text says that user is asking a question to the expert, placeholder holds the name of the person.</comment>
   </data>
   <data name="Resultsfeedbackdetails" xml:space="preserve">
-    <value>Enter Feedback for above Result</value>
+    <value>Enter feedback for above result</value>
+    <comment>Label for share feedback show card where user enters feedback on the displayed results in QnA response card.</comment>
   </data>
   <data name="TeamCustomMessage" xml:space="preserve">
-    <value>Hi SME Team, you are supposed to take questions from the user. If you want to ask me a question, please install me in your personal scope.To know better about me please  do Team Tour.</value>
-    <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to isntall the bot in personal scope.</comment>
+    <value>Hi SME Team, you are supposed to take questions from the user. If you want to ask me a question, please install me in your personal scope. To know better about me please do team tour.</value>
+    <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
   </data>
   <data name="AssignStatusText" xml:space="preserve">
     <value>Assign</value>
-    <comment>Staus of the user Ticket- Assign</comment>
+    <comment>Status of the user ticket- assign</comment>
   </data>
   <data name="CloseStatusText" xml:space="preserve">
     <value>Close</value>
-    <comment>Staus of the user Ticket- Close</comment>
+    <comment>Status of the user Ticket- Close.</comment>
   </data>
-  <data name="OpenStatusText" xml:space="preserve">
+  <data name="ChangeStatusButtonText" xml:space="preserve">
+    <value>Change status</value>
+    <comment>Text on change status button.</comment>
+  </data>
+  <data name="ResponseHeaderText" xml:space="preserve">
+    <value>Here is what I found:</value>
+    <comment>Response header-letting the user know that a response is generated to their request from QnA maker.</comment>
+  </data>
+  <data name="ClosedFactTitle" xml:space="preserve">
+    <value>Closed: </value>
+    <comment>Closed fact title is one of the available fact set.</comment>
+  </data>
+  <data name="DateCreatedDisplayFactTitle" xml:space="preserve">
+    <value>Created: </value>
+    <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
+  </data>
+  <data name="ShowCardTitleText" xml:space="preserve">
+    <value>Enter short title here</value>
+    <comment>Label text where users enters title for his question or feedback. </comment>
+  </data>
+  <data name="TitleText" xml:space="preserve">
+    <value>Title: </value>
+    <comment>Title: title where user enters title for their request.</comment>
+  </data>
+  <data name="KBEntryText" xml:space="preserve">
+    <value>Knowledge base entry:</value>
+    <comment>Answer from the QnA maker.</comment>
+  </data>
+  <data name="AppFeedbackText" xml:space="preserve">
+    <value>App feedback</value>
+    <comment>This text is used as title for app feedback type card.</comment>
+  </data>
+  <data name="MandatoryFieldText" xml:space="preserve">
+    <value>Title field is mandatory.</value>
+    <comment>Text that suggest users to fill mandatory fields.</comment>
+  </data>
+  <data name="QuestionForExpertText" xml:space="preserve">
+    <value>Question for expert</value>
+    <comment>This text is used as title for question for expert type card.</comment>
+  </data>
+  <data name="ResultsFeedbackText" xml:space="preserve">
+    <value>Results feedback</value>
+    <comment>This text is used as title for results feedback card.</comment>
+  </data>
+  <data name="IncomingFeedbackSubHeaderText" xml:space="preserve">
+    <value>**{0}** is sharing feedback. Details as follows:</value>
+    <comment>The sub header for the incoming app feedback adaptive card. The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
+  </data>
+  <data name="ShareFeedbackTitleText" xml:space="preserve">
+    <value>Share feedback</value>
+    <comment>Title text of share feedback user carousel card.</comment>
+  </data>
+  <data name="AskAnExpertDisplayText" xml:space="preserve">
+    <value>Ask an expert</value>
+    <comment>Ask an expert display text: text sent to the bot when ask an expert button is clicked.</comment>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>N/A</value>
+    <comment>Not applicable is used in scenarios like- ask an expert or share app feedback bot menu command where there is no question and answer from QnA service and to reflect the same in respective fields N/A is used.</comment>
+  </data>
+  <data name="ShareFeedbackDisplayText" xml:space="preserve">
+    <value>Share feedback</value>
+    <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
+  </data>
+  <data name="OpenStatusValue" xml:space="preserve">
     <value>Open</value>
-    <comment>Staus of the user Ticket- Open</comment>
-  </data>
-  <data name="StatusShowCardHeader" xml:space="preserve">
-    <value>Status</value>
-    <comment>Title of the show card drop down menu: Status</comment>
+    <comment>Status value is open which is used in notification cards to both SME team and user.</comment>
   </data>
   <data name="SMEAssignedStatus" xml:space="preserve">
     <value>The request is now assigned. Assigned by {0}.</value>
