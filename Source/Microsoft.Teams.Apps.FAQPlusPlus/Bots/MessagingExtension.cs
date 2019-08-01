@@ -18,13 +18,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Newtonsoft.Json;
 
     /// <summary>
-    ///  This Class will be invoked by message extenion bot and will return result which will
-    ///  be used for populating message extension
+    ///  Implements the logic of the messaging extension for FAQ++
     /// </summary>
     public class MessagingExtension
     {
         private const int TextTrimLengthForThumbnailCard = 45;
-        private const string ManifestExtensionParameter = "searchText"; // searchText is the parameter name in the manifest file
+        private const string ManifestExtensionParameter = "searchText";        // parameter name in the manifest file
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
 
@@ -43,7 +42,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Based on type of activity return the search results or error result.
         /// </summary>
         /// <param name="turnContext">turnContext for messaging extension.</param>
-        /// <returns><see cref="Task"/> returns invokeresponse which will be used for providing the search result.</returns>
+        /// <returns><see cref="Task"/> that returns an <see cref="InvokeResponse"/> with search results, or null to ignore the activity.</returns>
         public async Task<InvokeResponse> HandleMessagingExtensionQueryAsync(ITurnContext<IInvokeActivity> turnContext)
         {
             try
@@ -57,7 +56,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         Body = new MessagingExtensionResponse
                         {
-                            ComposeExtension = await this.GetSearchResultAsync(searchQuery, turnContext.Activity.From.Name,  messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
+                            ComposeExtension = await this.GetSearchResultAsync(searchQuery,  messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
                         },
                         Status = 200,
                     };
@@ -80,12 +79,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Get the results from Azure search service and populate the result (card + preview).
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
-        /// <param name="requesterName">name of the requester requesting for results.</param>
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
         /// <param name="count">count for pagination.</param>
         /// <param name="skip">skip for pagination.</param>
         /// <returns><see cref="Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string requesterName, string commandId, int? count, int? skip)
+        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? count, int? skip)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -117,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             foreach (var searchResult in searchServiceResults)
             {
-                var formattedResultTextList = this.FormatSubTextForThumbnailCard(searchResult, requesterName);
+                var formattedResultTextList = this.FormatSubTextForThumbnailCard(searchResult);
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
                     Title = searchResult.Title,
@@ -135,13 +133,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// This will format the text according to the card type which needs to be displayed in messaging extension.
         /// </summary>
         /// <param name="searchResult">searchResult from Azure search service.</param>
-        /// <param name="requesterName">name of the requester requesting for results.</param>
         /// <returns>returns string which will be displayed in messaging extension thumbnail card.</returns>
-        private string FormatSubTextForThumbnailCard(TicketEntity searchResult, string requesterName)
+        private string FormatSubTextForThumbnailCard(TicketEntity searchResult)
         {
             StringBuilder resultSubText = new StringBuilder();
             resultSubText.Append("<div>");
-            string thumbNailCardSecondLineText = this.GetDateAndTicketStatus(searchResult, requesterName);
+            string thumbNailCardSecondLineText = this.GetDateAndTicketStatus(searchResult);
             resultSubText.Append(this.TrimExceedingTextLength(thumbNailCardSecondLineText));
             resultSubText.Append("</div>");
 
@@ -176,9 +173,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// This will get date and ticket status to be dispalyed in second line of thumbnail card in messaging extension.
         /// </summary>
         /// <param name="searchResult">searchResult from Azure search service.</param>
-        /// <param name="requesterName">name of the requester requesting for results.</param>
         /// <returns>returns string which will be used in messaging extension.</returns>
-        private string GetDateAndTicketStatus(TicketEntity searchResult, string requesterName)
+        private string GetDateAndTicketStatus(TicketEntity searchResult)
         {
             StringBuilder dateAndStatus = new StringBuilder();
             if (searchResult.Status == (int)TicketState.Open && string.IsNullOrEmpty(searchResult.AssignedToName))
@@ -189,15 +185,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 }
 
                 dateAndStatus.Append(" | ");
-
-                if (searchResult.LastModifiedByName.Equals(requesterName))
-                {
-                    dateAndStatus.Append("Open");
-                }
-                else
-                {
-                    dateAndStatus.Append("Opened by " + searchResult.LastModifiedByName);
-                }
+                dateAndStatus.Append("Open");
             }
             else if (searchResult.Status == (int)TicketState.Open && !string.IsNullOrEmpty(searchResult.AssignedToName))
             {
