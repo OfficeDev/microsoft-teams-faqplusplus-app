@@ -321,7 +321,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 await this.SendCardToTeamAsync(turnContext, smeTeamCard, channelId, cancellationToken);
             }
 
-            // Send acknowledgement to the user
+            // Send acknowledgment to the user
             if (userCard != null)
             {
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(userCard), cancellationToken);
