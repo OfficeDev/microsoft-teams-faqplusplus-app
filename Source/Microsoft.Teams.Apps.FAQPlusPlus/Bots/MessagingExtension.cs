@@ -6,8 +6,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using System;
     using System.Collections.Generic;
     using System.Globalization;
-    using System.Text;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
@@ -70,10 +70,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return response;
                 }
             }
-            catch (Exception error)
+            catch (Exception ex)
             {
-                this.telemetryClient.TrackTrace($"Failed to compose a list for messaging extension: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
-                this.telemetryClient.TrackException(error);
+                this.telemetryClient.TrackTrace($"Failed to handle the ME command {turnContext.Activity.Name}: {ex.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(ex);
                 throw;
             }
         }
@@ -118,11 +118,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             foreach (var ticket in searchServiceResults)
             {
-                var formattedResultTextList = this.FormatSubTextForThumbnailCard(ticket);
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
                     Title = ticket.Title,
-                    Text = formattedResultTextList
+                    Text = this.GetPreviewCardText(ticket),
                 };
 
                 var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
@@ -132,101 +131,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return composeExtensionResult;
         }
 
-        /// <summary>
-        /// This will format the text according to the card type which needs to be displayed in messaging extension.
-        /// </summary>
-        /// <param name="ticket">Ticket to display.</param>
-        /// <returns>string which will be displayed in messaging extension thumbnail card.</returns>
-        private string FormatSubTextForThumbnailCard(TicketEntity ticket)
+        // Get the text for the preview card for the result
+        private string GetPreviewCardText(TicketEntity ticket)
         {
-            StringBuilder resultSubText = new StringBuilder();
-            resultSubText.Append("<div>");
-            string thumbNailCardSecondLineText = this.GetDateAndTicketStatus(ticket);
-            resultSubText.Append(this.TrimExceedingTextLength(thumbNailCardSecondLineText));
-            resultSubText.Append("</div>");
-
-            resultSubText.Append("<div>");
-            if (!string.IsNullOrEmpty(ticket.RequesterName))
-            {
-                resultSubText.Append(this.TrimExceedingTextLength(ticket.RequesterName));
-            }
-
-            resultSubText.Append("</div>");
-
-            return resultSubText.ToString();
+            var text = $@"
+<div>
+  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.DateCreated.ToShortDateString())} | {HttpUtility.HtmlEncode(this.GetDisplayStatus(ticket))}</div>
+  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.RequesterName)}</div>
+</div>";
+            return text.Trim();
         }
 
-        /// <summary>
-        /// This will check if trim is required based on text length and if its required then
-        /// trim the text which needs to be displayed in thumbnail card.
-        /// </summary>
-        /// <param name="cardText">the string which needs to be trimmed</param>
-        /// <returns>string which will be displayed in messaging extension thumbnail card.</returns>
-        private string TrimExceedingTextLength(string cardText)
+        // Construct the string to display for the status of the ticket
+        private string GetDisplayStatus(TicketEntity ticket)
         {
-            if (cardText.Length > TextTrimLengthForThumbnailCard)
+            switch (ticket.Status)
             {
-                cardText = cardText.Substring(0, TextTrimLengthForThumbnailCard) + "...";
-            }
+                case (int)TicketState.Open:
+                    return string.IsNullOrEmpty(ticket.AssignedToName) ?
+                        Resource.OpenStatusValue :
+                        string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName);
 
-            return cardText;
+                case (int)TicketState.Closed:
+                    return string.Format(CultureInfo.CurrentCulture, Resource.ClosedByStatusValue, ticket.LastModifiedByName);
+
+                default:
+                    this.telemetryClient.TrackTrace($"Unknown ticket status {ticket.Status}", ApplicationInsights.DataContracts.SeverityLevel.Warning);
+                    return string.Empty;
+            }
         }
 
-        /// <summary>
-        /// This will get date and ticket status to be dispalyed in second line of thumbnail card in messaging extension.
-        /// </summary>
-        /// <param name="ticket">Ticket to display.</param>
-        /// <returns>string which will be used in messaging extension.</returns>
-        private string GetDateAndTicketStatus(TicketEntity ticket)
-        {
-            StringBuilder dateAndStatus = new StringBuilder();
-            if (ticket.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticket.AssignedToName))
-            {
-                if (ticket.DateCreated != null)
-                {
-                    dateAndStatus.Append(ticket.DateCreated);
-                }
-
-                dateAndStatus.Append(" | ");
-                dateAndStatus.Append(Resource.OpenStatusValue);
-            }
-            else if (ticket.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticket.AssignedToName))
-            {
-                if (ticket.DateAssigned != null)
-                {
-                    dateAndStatus.Append(ticket.DateAssigned);
-                }
-
-                dateAndStatus.Append(" | ");
-
-                if (!string.IsNullOrEmpty(ticket.AssignedToName))
-                {
-                    dateAndStatus.Append(string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName));
-                }
-            }
-            else
-            {
-                if (ticket.DateClosed != null)
-                {
-                    dateAndStatus.Append(ticket.DateClosed);
-                }
-
-                dateAndStatus.Append(" | ");
-
-                if (!string.IsNullOrEmpty(ticket.AssignedToName))
-                {
-                    dateAndStatus.Append(string.Format(CultureInfo.CurrentCulture, Resource.CloseStatusText, ticket.LastModifiedByName));
-                }
-            }
-
-            return dateAndStatus.ToString();
-        }
-
-        /// <summary>
-        /// Returns query which the user has typed in message extension search.
-        /// </summary>
-        /// <param name="query">query typed by user in message extension.</param>
-        /// <returns> returns user typed query.</returns>
+        // Get the value of the searchText parameter in the ME query
         private string GetSearchQueryString(MessagingExtensionQuery query)
         {
             string messageExtensionInputText = string.Empty;
