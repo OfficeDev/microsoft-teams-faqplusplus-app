@@ -290,27 +290,30 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             Attachment smeTeamCard = null;      // Notification to SME team
             Attachment userCard = null;         // Acknowledgement to the user
+            TicketEntity newTicket = null;         // New ticket
 
-            var channelAccountDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+            var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
 
             switch (message.Text)
             {
                 case QuestionForExpert:
-                    // TODO: Create the ticket
                     this.telemetryClient.TrackTrace($"Received question for expert");
-                    smeTeamCard = IncomingSMEEnquiryCard.CreateTicketCard(payload.QuestionUserTitleText, channelAccountDetails, payload);
+
+                    newTicket = await this.CreateTicketAsync(message, payload, userDetails);
+
+                    smeTeamCard = IncomingSMEEnquiryCard.CreateTicketCard(payload.QuestionUserTitleText, userDetails, payload);
                     userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
                     break;
 
                 case AppFeedback:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
-                    smeTeamCard = IncomingSMEEnquiryCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, channelAccountDetails, payload);
+                    smeTeamCard = IncomingSMEEnquiryCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload);
                     userCard = ThankYouAdaptiveCard.GetCard();
                     break;
 
                 case ResultsFeedback:
                     this.telemetryClient.TrackTrace($"Received feedback about an answer");
-                    smeTeamCard = IncomingSMEEnquiryCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, channelAccountDetails, payload);
+                    smeTeamCard = IncomingSMEEnquiryCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload);
                     userCard = ThankYouAdaptiveCard.GetCard();
                     break;
 
@@ -323,7 +326,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             if (smeTeamCard != null)
             {
                 var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
-                await this.SendCardToTeamAsync(turnContext, smeTeamCard, channelId, cancellationToken);
+                var resourceResponse = await this.SendCardToTeamAsync(turnContext, smeTeamCard, channelId, cancellationToken);
+
+                // If a ticket was created, update the ticket with the conversation info
+                if (newTicket != null)
+                {
+                    newTicket.SmeCardActivityId = resourceResponse.ActivityId;
+                    newTicket.SmeThreadConversationId = resourceResponse.Id;
+                    await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(newTicket);
+                }
             }
 
             // Send acknowledgment to the user
@@ -467,59 +478,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return await tcs.Task;
         }
 
-        /// <summary>
-        /// Notification to the SME team when user post a question or feedback to the SME team.
-        /// </summary>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="attachmentToSend">sends Adaptive card.</param>
-        /// <param name="teamId">Team Id to which the message is being sent.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Message to the SME Team.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task NotifyTeam(ITurnContext turnContext, Attachment attachmentToSend, string teamId, CancellationToken cancellationToken)
+        // Create a new ticket from the input
+        private async Task<TicketEntity> CreateTicketAsync(IMessageActivity message, UserActivity payload, TeamsChannelAccount member)
         {
-            try
+            TicketEntity ticketEntity = new TicketEntity
             {
-                var teamMessageActivity = new Activity()
-                {
-                    Type = ActivityTypes.Message,
-                    Conversation = new ConversationAccount()
-                    {
-                        Id = teamId,
-                    },
-                    Attachments = new List<Attachment>()
-                    {
-                        attachmentToSend,
-                    },
-                };
-
-                await ((BotFrameworkAdapter)turnContext.Adapter).SendActivitiesAsync(turnContext, new Activity[] { teamMessageActivity }, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                this.telemetryClient.TrackTrace($"There is a snag: {ex.Message}");
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Adds to the audit trail for the card that is coming in for the SME team.
-        /// </summary>
-        /// <param name="updateActivityMessage">The message to write in the SME team.</param>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A unit of execution.</returns>
-        private async Task UpdateAuditTrail(
-            string updateActivityMessage,
-            ITurnContext<IMessageActivity> turnContext,
-            CancellationToken cancellationToken)
-        {
-            var replyToCardActivity = new Activity()
-            {
-                Type = ActivityTypes.Message,
-                Text = updateActivityMessage,
+                TicketId = Guid.NewGuid().ToString(),
+                Status = (int)TicketState.Open,
+                DateCreated = DateTime.UtcNow,
+                Title = payload.QuestionUserTitleText,
+                Description = payload.QuestionForExpert,
+                RequesterName = member.Name,
+                RequesterUserPrincipalName = member.UserPrincipalName,
+                RequesterGivenName = member.GivenName,
+                RequesterConversationId = message.Conversation.Id,
+                LastModifiedByName = message.From.Name,
+                LastModifiedByObjectId = message.From.AadObjectId,
+                UserQuestion = payload.UserQuestion,
+                KnowledgeBaseAnswer = payload.SmeAnswer
             };
 
-            await turnContext.SendActivityAsync(replyToCardActivity, cancellationToken);
+            await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
+
+            return ticketEntity;
         }
 
         /// <summary>

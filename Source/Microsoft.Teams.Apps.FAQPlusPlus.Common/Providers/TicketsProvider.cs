@@ -4,7 +4,6 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
 {
     using System;
-    using System.Net;
     using System.Threading.Tasks;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Exceptions;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -35,14 +34,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// </summary>
         /// <param name="ticketEntity">ticketEntity.</param>
         /// <returns><see cref="Task"/> that represents configuration entity is saved or updated.</returns>
-        public async Task<bool> SaveOrUpdateTicketEntityAsync(TicketEntity ticketEntity)
+        public async Task SaveOrUpdateTicketEntityAsync(TicketEntity ticketEntity)
         {
             ticketEntity.PartitionKey = PartitionKey;
+            ticketEntity.RowKey = ticketEntity.TicketId;
             if (ticketEntity.Status == (int)TicketState.Closed ||
                 ticketEntity.Status == (int)TicketState.Open)
             {
-                var result = await this.StoreOrUpdateTicketEntityAsync(ticketEntity);
-                return result.HttpStatusCode == (int)HttpStatusCode.NoContent;
+                await this.StoreOrUpdateTicketEntityAsync(ticketEntity);
             }
             else
             {
@@ -54,9 +53,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         public async Task<TicketEntity> GetSavedTicketEntityDetailAsync(string rowKey)
         {
             await this.EnsureInitializedAsync();
-            TableResult searchResult = null;
+
             TableOperation searchOperation = TableOperation.Retrieve<TicketEntity>(PartitionKey, rowKey);
-            searchResult = await this.ticketCloudTable.ExecuteAsync(searchOperation);
+            var searchResult = await this.ticketCloudTable.ExecuteAsync(searchOperation);
 
             return (TicketEntity)searchResult.Result;
         }
@@ -70,7 +69,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         {
             await this.EnsureInitializedAsync();
             TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
-
             return await this.ticketCloudTable.ExecuteAsync(addOrUpdateOperation);
         }
 
