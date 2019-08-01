@@ -132,8 +132,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 var activity = turnContext.Activity;
 
-                this.telemetryClient.TrackTrace($"Received conversationUpdateActivity");
-                this.telemetryClient.TrackTrace($"conversationType: {activity.Conversation?.ConversationType}, membersAdded: {activity.MembersAdded?.Count()}, membersRemoved: {activity.MembersRemoved?.Count()}");
+                this.telemetryClient.TrackTrace($"Received conversationUpdate activity");
+                this.telemetryClient.TrackTrace($"conversationType: {activity.Conversation.ConversationType}, membersAdded: {activity.MembersAdded?.Count()}, membersRemoved: {activity.MembersRemoved?.Count()}");
 
                 if (activity.MembersAdded?.Count() > 0)
                 {
@@ -191,7 +191,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
                 var botDisplayName = turnContext.Activity.Recipient.Name;
                 var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(botDisplayName, teamDetails.Team.Name);
-                await this.SendMessageToTeamAsync(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
+                await this.SendCardToTeamAsync(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
             }
         }
 
@@ -286,7 +286,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment smeTeamCard = null;      // Notification to SME team
             Attachment userCard = null;         // Acknowledgement to the user
 
-            var channelAccountDetails = await this.GetPersonalChatUserAccountDetailsAsync(turnContext, cancellationToken);
+            var channelAccountDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
 
             switch (message.Text)
             {
@@ -318,7 +318,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             if (smeTeamCard != null)
             {
                 var channelId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
-                await this.SendMessageToTeamAsync(turnContext, smeTeamCard, channelId, cancellationToken);
+                await this.SendCardToTeamAsync(turnContext, smeTeamCard, channelId, cancellationToken);
             }
 
             // Send acknowledgement to the user
@@ -348,14 +348,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 var kbId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.KnowledgeBaseId);
                 if (string.IsNullOrEmpty(kbId))
                 {
-                    this.telemetryClient.TrackTrace("Knowledge base ID was not found in configuration", SeverityLevel.Warning);
+                    this.telemetryClient.TrackTrace("Knowledge base ID was not found in configuration table", SeverityLevel.Warning);
                     return null;
                 }
 
                 var endpointKey = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.QnAMakerEndpointKey);
                 if (string.IsNullOrEmpty(endpointKey))
                 {
-                    this.telemetryClient.TrackTrace("QnAMaker endpoint key was not found in configuration", SeverityLevel.Warning);
+                    this.telemetryClient.TrackTrace("QnAMaker endpoint key was not found in configuration table", SeverityLevel.Warning);
                     return null;
                 }
 
@@ -365,7 +365,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
             catch (Exception ex)
             {
-                // Per spec, treat errors getting a response from QnAMaker as if we got no results from QnAMaker
+                // Per spec, treat errors getting a response from QnAMaker as if we got no results
                 this.telemetryClient.TrackTrace($"Error getting answer from QnAMaker, will convert to no result: {ex.Message}");
                 this.telemetryClient.TrackException(ex);
                 return null;
@@ -373,9 +373,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// The method that gets invoked when activity is of type Invoke is received from bot.
+        /// Handle invoke activities received by the bot.
         /// </summary>
-        /// <param name="turnContext">The current turn of invoke activity.</param>
+        /// <param name="turnContext">The current turn/execution flow.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A unit of execution.</returns>
         private async Task OnInvokeActivityAsync(ITurnContext<IInvokeActivity> turnContext, CancellationToken cancellationToken)
@@ -399,12 +399,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// This methods gets the account details of the user in a 1:1 chat with the bot.
+        /// Get the account details of the user in a 1:1 chat with the bot.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns> Team channel account details.<see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task<TeamsChannelAccount> GetPersonalChatUserAccountDetailsAsync(
+        private async Task<TeamsChannelAccount> GetUserDetailsInPersonalChatAsync(
           ITurnContext<IMessageActivity> turnContext,
           CancellationToken cancellationToken)
         {
@@ -425,18 +425,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Notification to the SME team when bot post a question or feedback to the SME team.
+        /// Send the given attachment to the specified team.
         /// </summary>
         /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="attachmentToSend">sends Adaptive card.</param>
-        /// <param name="teamId">Team Id to which the message is being sent.</param>
+        /// <param name="cardToSend">The card to send.</param>
+        /// <param name="teamId">Team id to which the message is being sent.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns><see cref="Task"/> that resolves to a <see cref="ConversationResourceResponse"/></returns>
-        private async Task<ConversationResourceResponse> SendMessageToTeamAsync(ITurnContext turnContext, Attachment attachmentToSend, string teamId, CancellationToken cancellationToken)
+        private async Task<ConversationResourceResponse> SendCardToTeamAsync(ITurnContext turnContext, Attachment cardToSend, string teamId, CancellationToken cancellationToken)
         {
             var conversationParameters = new ConversationParameters
             {
-                Activity = (Activity)MessageFactory.Attachment(attachmentToSend),
+                Activity = (Activity)MessageFactory.Attachment(cardToSend),
                 ChannelData = new TeamsChannelData { Channel = new ChannelInfo(teamId) },
             };
 

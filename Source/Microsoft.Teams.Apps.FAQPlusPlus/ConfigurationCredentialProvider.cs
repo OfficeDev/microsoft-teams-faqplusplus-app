@@ -8,7 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
-    ///  This class handles bot configuration- Authorizes the bot
+    /// Implementation of <see cref="ICredentialProvider"/> that gets the app credentials from configuration.
     /// </summary>
     public class ConfigurationCredentialProvider : SimpleCredentialProvider
     {
@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// </summary>
         /// <param name="configuration">Configuration.</param>
         public ConfigurationCredentialProvider(IConfiguration configuration)
-                : base(configuration["MicrosoftAppId"], configuration["MicrosoftAppPassword"])
+            : base(configuration["MicrosoftAppId"], configuration["MicrosoftAppPassword"])
         {
         }
     }
