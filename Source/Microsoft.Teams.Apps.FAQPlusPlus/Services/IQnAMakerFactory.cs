@@ -15,7 +15,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         /// Gets the <see cref="QnAMaker"/> instance to use when querying the given knowledge base ID.
         /// </summary>
         /// <param name="knowledgeBaseId">The knowledge base ID</param>
+        /// <param name="endpointKey">The endpoint key</param>
         /// <returns>A QnAMaker instance</returns>
-        QnAMaker GetQnAMaker(string knowledgeBaseId);
+        QnAMaker GetQnAMaker(string knowledgeBaseId, string endpointKey);
     }
 }

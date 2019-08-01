@@ -19,16 +19,12 @@
         {
           "type": "TextBlock",
           "text": "%incomingSubtitleText%",
-          "wrap": true,
-          "value": "%dateCreatedValue%"
+          "wrap": true
         },
         {
           "type": "FactSet",
           "facts": [
-            {
-              "title": "%statusFactTitle%",
-              "value": "%openStatusValue%"
-            },
+
             {
               "title": "%titleText%",
               "value": "%userTitleValue%"
@@ -48,10 +44,6 @@
             {
               "title": "%dateCreatedDisplayFactTitle%",
               "value": "{{DATE(%dateCreatedValue%, SHORT)}} {{TIME(%dateCreatedValue%)}}"
-            },
-            {
-              "title": "%closedFactTitle%",
-              "value": "%notApplicable%"
             }
           ]
         }
@@ -63,42 +55,8 @@
       "type": "Action.OpenUrl",
       "title": "%chatTextButton%",
       "url": "https://teams.microsoft.com/l/chat/0/0?users=%personUpn%"
-    },
-    {
-      "type": "Action.ShowCard",
-      "title": "%changeStatusButtonText%",
-      "card": {
-        "type": "AdaptiveCard",
-        "style": "emphasis",
-        "body": [
-          {
-            "type": "Input.ChoiceSet",
-            "id": "statuscode",
-            "style": "compact",
-            "isMultiSelect": false,
-            "value": "1",
-            "choices": [
-              {
-                "title": "%assignStatusText%",
-                "value": "1"
-              },
-              {
-                "title": "%closeStatusText%",
-                "value": "2"
-              }
-            ]
-          }
-
-        ],
-        "actions": [
-          {
-            "type": "Action.Submit",
-            "title": "%submitButtonText%"
-          }
-        ],
-        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
-      }
     }
+
   ],
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
   "version": "1.0"

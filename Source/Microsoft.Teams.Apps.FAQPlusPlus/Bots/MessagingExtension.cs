@@ -18,13 +18,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Newtonsoft.Json;
 
     /// <summary>
-    ///  This Class will be invoked by message extenion bot and will return result which will
-    ///  be used for populating message extension
+    /// Implements the logic of the messaging extension for FAQ++
     /// </summary>
     public class MessagingExtension
     {
         private const int TextTrimLengthForThumbnailCard = 45;
-        private const string ManifestExtensionParameter = "searchText"; // searchText is the parameter name in the manifest file
+        private const string SearchTextParameterName = "searchText";        // parameter name in the manifest file
+
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
 
@@ -43,7 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Based on type of activity return the search results or error result.
         /// </summary>
         /// <param name="turnContext">turnContext for messaging extension.</param>
-        /// <returns><see cref="Task"/> returns invokeresponse which will be used for providing the search result.</returns>
+        /// <returns><see cref="Task"/> that returns an <see cref="InvokeResponse"/> with search results, or null to ignore the activity.</returns>
         public async Task<InvokeResponse> HandleMessagingExtensionQueryAsync(ITurnContext<IInvokeActivity> turnContext)
         {
             try
@@ -68,16 +68,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return response;
                 }
             }
-            catch (Exception error)
+            catch (Exception ex)
             {
-                this.telemetryClient.TrackTrace($"Failed to compose a list for messaging extension: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
-                this.telemetryClient.TrackException(error);
+                this.telemetryClient.TrackTrace($"Failed to handle for ME activity: {ex.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(ex);
                 throw;
             }
         }
 
         /// <summary>
-        /// Get the results from Azure search service and populate the preview as well as card.
+        /// Get the results from Azure search service and populate the result (card + preview).
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
         /// <param name="requesterName">name of the requester requesting for results.</param>
@@ -241,7 +241,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             string messageExtensionInputText = string.Empty;
             foreach (var parameter in query.Parameters)
             {
-                if (parameter.Name.Equals(ManifestExtensionParameter, StringComparison.OrdinalIgnoreCase))
+                if (parameter.Name.Equals(SearchTextParameterName, StringComparison.OrdinalIgnoreCase))
                 {
                     messageExtensionInputText = parameter.Value.ToString();
                     break;

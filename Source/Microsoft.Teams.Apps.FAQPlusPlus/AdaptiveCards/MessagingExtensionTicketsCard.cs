@@ -11,7 +11,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 
     public class MessagingExtensionTicketsCard
     {
-        private TicketEntity ticketModel;
+        private readonly TicketEntity ticketModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtensionTicketsCard"/> class.
@@ -28,7 +28,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>Returns the attachment that will be attached to messaging extension list.</returns>
         public Attachment ToAttachment()
         {
-            var card = new AdaptiveCard
+            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
                 Body = new List<AdaptiveElement>
                 {
