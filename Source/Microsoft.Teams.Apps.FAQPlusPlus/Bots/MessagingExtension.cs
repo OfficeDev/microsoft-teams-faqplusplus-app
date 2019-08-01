@@ -77,7 +77,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Get the results from Azure search service and populate the preview as well as card.
+        /// Get the results from Azure search service and populate the result (card + preview).
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
         /// <param name="requesterName">name of the requester requesting for results.</param>
