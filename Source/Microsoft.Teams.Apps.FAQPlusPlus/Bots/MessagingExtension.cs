@@ -17,13 +17,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Newtonsoft.Json;
 
     /// <summary>
-    ///  This Class will be invoked by m essage extenion bot and will return result which will
-    ///  be used for populating message extension
+    /// Implements the logic of the messaging extension for FAQ++
     /// </summary>
     public class MessagingExtension
     {
         private const int TextTrimLengthForCard = 10;
-        private const string ManifestExtensionParameter = "searchText"; // searchText is the parameter name in the manifest file
+        private const string SearchTextParameterName = "searchText";        // parameter name in the manifest file
+
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
 
@@ -42,7 +42,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Based on type of activity return the search results or error result.
         /// </summary>
         /// <param name="turnContext">turnContext for messaging extension.</param>
-        /// <returns><see cref="Task"/> returns invokeresponse which will be used for providing the search result.</returns>
+        /// <returns><see cref="Task"/> that returns an <see cref="InvokeResponse"/> with search results, or null to ignore the activity.</returns>
         public async Task<InvokeResponse> HandleMessagingExtensionQueryAsync(ITurnContext<IInvokeActivity> turnContext)
         {
             try
@@ -67,16 +67,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return response;
                 }
             }
-            catch (Exception error)
+            catch (Exception ex)
             {
-                this.telemetryClient.TrackTrace($"Failed to compose a list for messaging extension: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
-                this.telemetryClient.TrackException(error);
+                this.telemetryClient.TrackTrace($"Failed to handle for ME activity: {ex.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(ex);
                 throw;
             }
         }
 
         /// <summary>
-        /// Get the results from Azure search service and populate the preview as well as card.
+        /// Get the results from Azure search service and populate the result (card + preview).
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
@@ -136,27 +136,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// This will format the text according to the card type which needs to be displayed in messaging extension.
+        /// Format the text according to the card type which needs to be displayed.
         /// </summary>
-        /// <param name="searchResult">searchResult from Azure search service.</param>
+        /// <param name="ticket">Ticket data to display.</param>
         /// <param name="isPreview">to determine if the formatting is for preview or card.</param>
         /// <returns>returns string which will be used in messaging extension.</returns>
-        private string FormatSubTextForThumbnailCard(TicketEntity searchResult, bool isPreview)
+        private string FormatSubTextForThumbnailCard(TicketEntity ticket, bool isPreview)
         {
             StringBuilder resultSubText = new StringBuilder();
-            if (!string.IsNullOrEmpty(searchResult.Title))
+            if (!string.IsNullOrEmpty(ticket.Title))
             {
-                if (searchResult.Title.Length > TextTrimLengthForCard && isPreview)
+                if (ticket.Title.Length > TextTrimLengthForCard && isPreview)
                 {
-                    resultSubText.Append("Request: " + searchResult.Title.Substring(0, TextTrimLengthForCard) + "...");
+                    resultSubText.Append("Request: " + ticket.Title.Substring(0, TextTrimLengthForCard) + "...");
                 }
                 else
                 {
-                    resultSubText.Append("Request: " + searchResult.Title);
+                    resultSubText.Append("Request: " + ticket.Title);
                 }
             }
 
-            if (searchResult.Status == (int)TicketState.Open)
+            if (ticket.Status == (int)TicketState.Open)
             {
                 resultSubText.Append(" | " + TicketState.Open);
             }
@@ -165,9 +165,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 resultSubText.Append(" | " + TicketState.Closed);
             }
 
-            if (searchResult.DateCreated != null)
+            if (ticket.DateCreated != null)
             {
-                resultSubText.Append(" | " + searchResult.DateCreated);
+                resultSubText.Append(" | " + ticket.DateCreated);
             }
 
             return resultSubText.ToString();
@@ -183,7 +183,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             string messageExtensionInputText = string.Empty;
             foreach (var parameter in query.Parameters)
             {
-                if (parameter.Name.Equals(ManifestExtensionParameter, StringComparison.OrdinalIgnoreCase))
+                if (parameter.Name.Equals(SearchTextParameterName, StringComparison.OrdinalIgnoreCase))
                 {
                     messageExtensionInputText = parameter.Value.ToString();
                     break;
