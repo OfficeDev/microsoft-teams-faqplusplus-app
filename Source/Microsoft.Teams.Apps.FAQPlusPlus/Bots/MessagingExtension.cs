@@ -57,7 +57,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         Body = new MessagingExtensionResponse
                         {
-                            ComposeExtension = await this.GetSearchResultAsync(searchQuery, turnContext.Activity.From.Name,  messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
+                            ComposeExtension = await this.GetSearchResultAsync(searchQuery,  messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
                         },
                         Status = 200,
                     };
@@ -68,10 +68,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return response;
                 }
             }
-            catch (Exception ex)
+            catch (Exception error)
             {
-                this.telemetryClient.TrackTrace($"Failed to handle for ME activity: {ex.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
-                this.telemetryClient.TrackException(ex);
+                this.telemetryClient.TrackTrace($"Failed to compose a list for messaging extension: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(error);
                 throw;
             }
         }
@@ -80,12 +80,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Get the results from Azure search service and populate the result (card + preview).
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
-        /// <param name="requesterName">name of the requester requesting for results.</param>
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
         /// <param name="count">count for pagination.</param>
         /// <param name="skip">skip for pagination.</param>
         /// <returns><see cref="Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string requesterName, string commandId, int? count, int? skip)
+        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? count, int? skip)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -115,16 +114,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
             }
 
-            foreach (var searchResult in searchServiceResults)
+            foreach (var ticket in searchServiceResults)
             {
-                var formattedResultTextList = this.FormatSubTextForThumbnailCard(searchResult, requesterName);
+                var formattedResultTextList = this.FormatSubTextForThumbnailCard(ticket);
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
-                    Title = searchResult.Title,
+                    Title = ticket.Title,
                     Text = formattedResultTextList
                 };
 
-                var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(searchResult);
+                var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
                 composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment().ToMessagingExtensionAttachment(previewCard.ToAttachment()));
             }
 
@@ -134,21 +133,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <summary>
         /// This will format the text according to the card type which needs to be displayed in messaging extension.
         /// </summary>
-        /// <param name="searchResult">searchResult from Azure search service.</param>
-        /// <param name="requesterName">name of the requester requesting for results.</param>
-        /// <returns>returns string which will be displayed in messaging extension thumbnail card.</returns>
-        private string FormatSubTextForThumbnailCard(TicketEntity searchResult, string requesterName)
+        /// <param name="ticket">Ticket to display.</param>
+        /// <returns>string which will be displayed in messaging extension thumbnail card.</returns>
+        private string FormatSubTextForThumbnailCard(TicketEntity ticket)
         {
             StringBuilder resultSubText = new StringBuilder();
             resultSubText.Append("<div>");
-            string thumbNailCardSecondLineText = this.GetDateAndTicketStatus(searchResult, requesterName);
+            string thumbNailCardSecondLineText = this.GetDateAndTicketStatus(ticket);
             resultSubText.Append(this.TrimExceedingTextLength(thumbNailCardSecondLineText));
             resultSubText.Append("</div>");
 
             resultSubText.Append("<div>");
-            if (!string.IsNullOrEmpty(searchResult.RequesterName))
+            if (!string.IsNullOrEmpty(ticket.RequesterName))
             {
-                resultSubText.Append(this.TrimExceedingTextLength(searchResult.RequesterName));
+                resultSubText.Append(this.TrimExceedingTextLength(ticket.RequesterName));
             }
 
             resultSubText.Append("</div>");
@@ -160,71 +158,62 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// This will check if trim is required based on text length and if its required then
         /// trim the text which needs to be displayed in thumbnail card.
         /// </summary>
-        /// <param name="thumbNailCardText">the string which needs to be trimmed</param>
-        /// <returns>returns trimmd or not trimmed string which will be displayed in messaging extension thumbnail card.</returns>
-        private string TrimExceedingTextLength(string thumbNailCardText)
+        /// <param name="cardText">the string which needs to be trimmed</param>
+        /// <returns>string which will be displayed in messaging extension thumbnail card.</returns>
+        private string TrimExceedingTextLength(string cardText)
         {
-            if (thumbNailCardText.Length > TextTrimLengthForThumbnailCard)
+            if (cardText.Length > TextTrimLengthForThumbnailCard)
             {
-                thumbNailCardText = thumbNailCardText.Substring(0, TextTrimLengthForThumbnailCard) + "...";
+                cardText = cardText.Substring(0, TextTrimLengthForThumbnailCard) + "...";
             }
 
-            return thumbNailCardText;
+            return cardText;
         }
 
         /// <summary>
         /// This will get date and ticket status to be dispalyed in second line of thumbnail card in messaging extension.
         /// </summary>
-        /// <param name="searchResult">searchResult from Azure search service.</param>
-        /// <param name="requesterName">name of the requester requesting for results.</param>
-        /// <returns>returns string which will be used in messaging extension.</returns>
-        private string GetDateAndTicketStatus(TicketEntity searchResult, string requesterName)
+        /// <param name="ticket">Ticket to display.</param>
+        /// <returns>string which will be used in messaging extension.</returns>
+        private string GetDateAndTicketStatus(TicketEntity ticket)
         {
             StringBuilder dateAndStatus = new StringBuilder();
-            if (searchResult.Status == (int)TicketState.Open && string.IsNullOrEmpty(searchResult.AssignedToName))
+            if (ticket.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticket.AssignedToName))
             {
-                if (searchResult.DateCreated != null)
+                if (ticket.DateCreated != null)
                 {
-                    dateAndStatus.Append(searchResult.DateCreated);
+                    dateAndStatus.Append(ticket.DateCreated);
                 }
 
                 dateAndStatus.Append(" | ");
-
-                if (searchResult.LastModifiedByName.Equals(requesterName))
-                {
-                    dateAndStatus.Append("Open");
-                }
-                else
-                {
-                    dateAndStatus.Append("Opened by " + searchResult.LastModifiedByName);
-                }
+                dateAndStatus.Append("Open");
             }
-            else if (searchResult.Status == (int)TicketState.Open && !string.IsNullOrEmpty(searchResult.AssignedToName))
+            else if (ticket.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticket.AssignedToName))
             {
-                if (searchResult.DateAssigned != null)
+                if (ticket.DateAssigned != null)
                 {
-                    dateAndStatus.Append(searchResult.DateAssigned);
+                    dateAndStatus.Append(ticket.DateAssigned);
                 }
 
                 dateAndStatus.Append(" | ");
 
-                if (!string.IsNullOrEmpty(searchResult.AssignedToName))
+                if (!string.IsNullOrEmpty(ticket.AssignedToName))
                 {
-                    dateAndStatus.Append("Assigned to " + searchResult.AssignedToName);
+                    dateAndStatus.Append("Assigned to " + ticket.AssignedToName);
                 }
             }
             else
             {
-                if (searchResult.DateClosed != null)
+                if (ticket.DateClosed != null)
                 {
-                    dateAndStatus.Append(searchResult.DateClosed);
+                    dateAndStatus.Append(ticket.DateClosed);
                 }
 
                 dateAndStatus.Append(" | ");
 
-                if (!string.IsNullOrEmpty(searchResult.AssignedToName))
+                if (!string.IsNullOrEmpty(ticket.AssignedToName))
                 {
-                    dateAndStatus.Append("Closed by " + searchResult.LastModifiedByName);
+                    dateAndStatus.Append("Closed by " + ticket.LastModifiedByName);
                 }
             }
 
