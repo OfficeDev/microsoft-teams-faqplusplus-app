@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties
-{
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -20,623 +19,529 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resource
-    {
-
+    public class Resource {
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resource()
-        {
+        internal Resource() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager
-        {
-            get
-            {
-                if (object.ReferenceEquals(resourceMan, null))
-                {
+        public static global::System.Resources.ResourceManager ResourceManager {
+            get {
+                if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture
-        {
-            get
-            {
+        public static global::System.Globalization.CultureInfo Culture {
+            get {
                 return resourceCulture;
             }
-            set
-            {
+            set {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to App feedback.
         /// </summary>
-        public static string AppFeedbackText
-        {
-            get
-            {
+        public static string AppFeedbackText {
+            get {
                 return ResourceManager.GetString("AppFeedbackText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Ask an expert.
         /// </summary>
-        public static string AskAnExpertButtonText
-        {
-            get
-            {
+        public static string AskAnExpertButtonText {
+            get {
                 return ResourceManager.GetString("AskAnExpertButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Ask an expert.
         /// </summary>
-        public static string AskAnExpertDisplayText
-        {
-            get
-            {
+        public static string AskAnExpertDisplayText {
+            get {
                 return ResourceManager.GetString("AskAnExpertDisplayText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Type your detailed question and supporting details here..
         /// </summary>
-        public static string AskAnExpertPlaceholderText
-        {
-            get
-            {
+        public static string AskAnExpertPlaceholderText {
+            get {
                 return ResourceManager.GetString("AskAnExpertPlaceholderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Ask an expert.
         /// </summary>
-        public static string AskAnExpertText1
-        {
-            get
-            {
+        public static string AskAnExpertText1 {
+            get {
                 return ResourceManager.GetString("AskAnExpertText1", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to We have our experts to assist you better on any of your questions. You can always connect to our Experts..
         /// </summary>
-        public static string AskAnExpertText2
-        {
-            get
-            {
+        public static string AskAnExpertText2 {
+            get {
                 return ResourceManager.GetString("AskAnExpertText2", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assigned to {0}.
+        /// </summary>
+        public static string AssignedToStatusValue {
+            get {
+                return ResourceManager.GetString("AssignedToStatusValue", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Assign.
         /// </summary>
-        public static string AssignStatusText
-        {
-            get
-            {
+        public static string AssignStatusText {
+            get {
                 return ResourceManager.GetString("AssignStatusText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Change status.
         /// </summary>
-        public static string ChangeStatusButtonText
-        {
-            get
-            {
+        public static string ChangeStatusButtonText {
+            get {
                 return ResourceManager.GetString("ChangeStatusButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Chat with {0}.
         /// </summary>
-        public static string ChatTextButton
-        {
-            get
-            {
+        public static string ChatTextButton {
+            get {
                 return ResourceManager.GetString("ChatTextButton", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed by {0}.
+        /// </summary>
+        public static string ClosedByStatusValue {
+            get {
+                return ResourceManager.GetString("ClosedByStatusValue", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Closed: .
         /// </summary>
-        public static string ClosedFactTitle
-        {
-            get
-            {
+        public static string ClosedFactTitle {
+            get {
                 return ResourceManager.GetString("ClosedFactTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
-        public static string CloseStatusText
-        {
-            get
-            {
+        public static string CloseStatusText {
+            get {
                 return ResourceManager.GetString("CloseStatusText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to I didn&apos;t find anything apt for your request. \n\n Do you want me to ask an expert?.
         /// </summary>
-        public static string CustomMessage
-        {
-            get
-            {
+        public static string CustomMessage {
+            get {
                 return ResourceManager.GetString("CustomMessage", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Created: .
         /// </summary>
-        public static string DateCreatedDisplayFactTitle
-        {
-            get
-            {
+        public static string DateCreatedDisplayFactTitle {
+            get {
                 return ResourceManager.GetString("DateCreatedDisplayFactTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Description: .
         /// </summary>
-        public static string DescriptionText
-        {
-            get
-            {
+        public static string DescriptionText {
+            get {
                 return ResourceManager.GetString("DescriptionText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Enter your feedback and supporting details here..
         /// </summary>
-        public static string FeedbackDescriptionPlaceholderText
-        {
-            get
-            {
+        public static string FeedbackDescriptionPlaceholderText {
+            get {
                 return ResourceManager.GetString("FeedbackDescriptionPlaceholderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Share app feedback.
         /// </summary>
-        public static string FeedbackHeaderText
-        {
-            get
-            {
+        public static string FeedbackHeaderText {
+            get {
                 return ResourceManager.GetString("FeedbackHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to We would love to hear a feedback from you on how we are performing..
         /// </summary>
-        public static string FeedbackText1
-        {
-            get
-            {
+        public static string FeedbackText1 {
+            get {
                 return ResourceManager.GetString("FeedbackText1", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Ask a question!.
         /// </summary>
-        public static string FunctionCardText1
-        {
-            get
-            {
+        public static string FunctionCardText1 {
+            get {
                 return ResourceManager.GetString("FunctionCardText1", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to I am your QnA bot, you can ask me a question and I will answer you back if I know the answer..
         /// </summary>
-        public static string FunctionCardText2
-        {
-            get
-            {
+        public static string FunctionCardText2 {
+            get {
                 return ResourceManager.GetString("FunctionCardText2", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to **{0}** is sharing feedback. Details as follows:.
         /// </summary>
-        public static string IncomingFeedbackSubHeaderText
-        {
-            get
-            {
+        public static string IncomingFeedbackSubHeaderText {
+            get {
                 return ResourceManager.GetString("IncomingFeedbackSubHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Knowledge base entry:.
         /// </summary>
-        public static string KBEntryText
-        {
-            get
-            {
+        public static string KBEntryText {
+            get {
                 return ResourceManager.GetString("KBEntryText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Title field is mandatory..
         /// </summary>
-        public static string MandatoryFieldText
-        {
-            get
-            {
+        public static string MandatoryFieldText {
+            get {
                 return ResourceManager.GetString("MandatoryFieldText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
-        public static string NotApplicable
-        {
-            get
-            {
+        public static string NotApplicable {
+            get {
                 return ResourceManager.GetString("NotApplicable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Your question has been shared with the SME team. They will directly send you a chat message. .
         /// </summary>
-        public static string NotificationAdaptiveCardContent
-        {
-            get
-            {
+        public static string NotificationAdaptiveCardContent {
+            get {
                 return ResourceManager.GetString("NotificationAdaptiveCardContent", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Notification.
         /// </summary>
-        public static string NotificationCardTitleText
-        {
-            get
-            {
+        public static string NotificationCardTitleText {
+            get {
                 return ResourceManager.GetString("NotificationCardTitleText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
-        public static string OpenStatusValue
-        {
-            get
-            {
+        public static string OpenStatusValue {
+            get {
                 return ResourceManager.GetString("OpenStatusValue", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to **{0}** is requesting support. Details are as follows:.
         /// </summary>
-        public static string QuestionForExpertSubHeaderText
-        {
-            get
-            {
+        public static string QuestionForExpertSubHeaderText {
+            get {
                 return ResourceManager.GetString("QuestionForExpertSubHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Question for expert.
         /// </summary>
-        public static string QuestionForExpertText
-        {
-            get
-            {
+        public static string QuestionForExpertText {
+            get {
                 return ResourceManager.GetString("QuestionForExpertText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Here is what I have found for your request.
         /// </summary>
-        public static string QuestionLineText
-        {
-            get
-            {
+        public static string QuestionLineText {
+            get {
                 return ResourceManager.GetString("QuestionLineText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Question asked:.
         /// </summary>
-        public static string QuestionText
-        {
-            get
-            {
+        public static string QuestionText {
+            get {
                 return ResourceManager.GetString("QuestionText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Here is what I found:.
         /// </summary>
-        public static string ResponseHeaderText
-        {
-            get
-            {
+        public static string ResponseHeaderText {
+            get {
                 return ResourceManager.GetString("ResponseHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Enter feedback for above result.
         /// </summary>
-        public static string Resultsfeedbackdetails
-        {
-            get
-            {
+        public static string Resultsfeedbackdetails {
+            get {
                 return ResourceManager.GetString("Resultsfeedbackdetails", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Results feedback.
         /// </summary>
-        public static string ResultsFeedbackText
-        {
-            get
-            {
+        public static string ResultsFeedbackText {
+            get {
                 return ResourceManager.GetString("ResultsFeedbackText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Share feedback.
         /// </summary>
-        public static string ShareFeedbackButtonText
-        {
-            get
-            {
+        public static string ShareFeedbackButtonText {
+            get {
                 return ResourceManager.GetString("ShareFeedbackButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Share feedback.
         /// </summary>
-        public static string ShareFeedbackDisplayText
-        {
-            get
-            {
+        public static string ShareFeedbackDisplayText {
+            get {
                 return ResourceManager.GetString("ShareFeedbackDisplayText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Share feedback.
         /// </summary>
-        public static string ShareFeedbackTitleText
-        {
-            get
-            {
+        public static string ShareFeedbackTitleText {
+            get {
                 return ResourceManager.GetString("ShareFeedbackTitleText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Enter short title here.
         /// </summary>
-        public static string ShowCardTitleText
-        {
-            get
-            {
+        public static string ShowCardTitleText {
+            get {
                 return ResourceManager.GetString("ShowCardTitleText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Status: .
         /// </summary>
-        public static string StatusFactTitle
-        {
-            get
-            {
+        public static string StatusFactTitle {
+            get {
                 return ResourceManager.GetString("StatusFactTitle", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Submit.
         /// </summary>
-        public static string SubmitButtonText
-        {
-            get
-            {
+        public static string SubmitButtonText {
+            get {
                 return ResourceManager.GetString("SubmitButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Team tour.
         /// </summary>
-        public static string TakeATeamTourButtonText
-        {
-            get
-            {
+        public static string TakeATeamTourButtonText {
+            get {
                 return ResourceManager.GetString("TakeATeamTourButtonText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to As an SME, you can initiate chat directly with the end user, by clicking on chat button..
         /// </summary>
-        public static string TeamChatCardContent
-        {
-            get
-            {
+        public static string TeamChatCardContent {
+            get {
                 return ResourceManager.GetString("TeamChatCardContent", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Initiate chat with users.
         /// </summary>
-        public static string TeamChatHeaderText
-        {
-            get
-            {
+        public static string TeamChatHeaderText {
+            get {
                 return ResourceManager.GetString("TeamChatHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Hi SME Team, you are supposed to take questions from the user. If you want to ask me a question, please install me in your personal scope. To know better about me please do team tour..
         /// </summary>
-        public static string TeamCustomMessage
-        {
-            get
-            {
+        public static string TeamCustomMessage {
+            get {
                 return ResourceManager.GetString("TeamCustomMessage", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to SME channel receives feedback from the users on the app performance or can ask a question to the SME channel..
         /// </summary>
-        public static string TeamFunctionCardContent
-        {
-            get
-            {
+        public static string TeamFunctionCardContent {
+            get {
                 return ResourceManager.GetString("TeamFunctionCardContent", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Notification from the users.
         /// </summary>
-        public static string TeamFunctionCardHeaderText
-        {
-            get
-            {
+        public static string TeamFunctionCardHeaderText {
+            get {
                 return ResourceManager.GetString("TeamFunctionCardHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to You can keep track of the user requests using the status assigned or closed..
         /// </summary>
-        public static string TeamQueryCardContent
-        {
-            get
-            {
+        public static string TeamQueryCardContent {
+            get {
                 return ResourceManager.GetString("TeamQueryCardContent", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Ticket system.
         /// </summary>
-        public static string TeamQueryHeaderText
-        {
-            get
-            {
+        public static string TeamQueryHeaderText {
+            get {
                 return ResourceManager.GetString("TeamQueryHeaderText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Thank you for your feedback.\n\n You are helping me become more helpful. I will share it with experts..
         /// </summary>
-        public static string ThankYouAdaptiveCardContent
-        {
-            get
-            {
+        public static string ThankYouAdaptiveCardContent {
+            get {
                 return ResourceManager.GetString("ThankYouAdaptiveCardContent", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Thank you!.
         /// </summary>
-        public static string ThankYouAdaptiveCardTitleText
-        {
-            get
-            {
+        public static string ThankYouAdaptiveCardTitleText {
+            get {
                 return ResourceManager.GetString("ThankYouAdaptiveCardTitleText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Title: .
         /// </summary>
-        public static string TitleText
-        {
-            get
-            {
+        public static string TitleText {
+            get {
                 return ResourceManager.GetString("TitleText", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!. I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using status fields like open assign and close..
         /// </summary>
-        public static string WelcomeTeamCardContent
-        {
-            get
-            {
+        public static string WelcomeTeamCardContent {
+            get {
                 return ResourceManager.GetString("WelcomeTeamCardContent", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Hello {0} !.
         /// </summary>
-        public static string WelcomeTeamCardTitleText
-        {
-            get
-            {
+        public static string WelcomeTeamCardTitleText {
+            get {
                 return ResourceManager.GetString("WelcomeTeamCardTitleText", resourceCulture);
             }
         }

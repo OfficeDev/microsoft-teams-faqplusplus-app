@@ -5,6 +5,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.ApplicationInsights;
@@ -14,6 +15,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
     using Newtonsoft.Json;
 
@@ -186,7 +188,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 }
 
                 dateAndStatus.Append(" | ");
-                dateAndStatus.Append("Open");
+                dateAndStatus.Append(Resource.OpenStatusValue);
             }
             else if (ticket.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticket.AssignedToName))
             {
@@ -199,7 +201,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 if (!string.IsNullOrEmpty(ticket.AssignedToName))
                 {
-                    dateAndStatus.Append("Assigned to " + ticket.AssignedToName);
+                    dateAndStatus.Append(string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName));
                 }
             }
             else
@@ -213,7 +215,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 if (!string.IsNullOrEmpty(ticket.AssignedToName))
                 {
-                    dateAndStatus.Append("Closed by " + ticket.LastModifiedByName);
+                    dateAndStatus.Append(string.Format(CultureInfo.CurrentCulture, Resource.CloseStatusText, ticket.LastModifiedByName));
                 }
             }
 
