@@ -46,7 +46,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         }
 
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the tour card when user clicks on tour button both in personal and team scope.
         /// </summary>
         /// <param name="cardTitleText">Card Title Text.</param>
         /// <param name="cardContentText">Title of the Card.</param>

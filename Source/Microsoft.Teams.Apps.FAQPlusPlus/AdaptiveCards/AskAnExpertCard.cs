@@ -13,7 +13,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     public class AskAnExpertCard
     {
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the adaptive card for ask an expert bot menu.
         /// </summary>
         /// <returns>Ask an Expert as an Attachment.</returns>
         public static Attachment GetCard()

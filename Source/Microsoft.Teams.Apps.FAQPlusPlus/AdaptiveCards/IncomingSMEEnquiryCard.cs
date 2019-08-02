@@ -87,7 +87,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             UserActivity userActivityPayload,
             bool isStatusAvailable = false)
         {
-            var incomingQuestionText = GetQuestionText(userActivityPayload);
             var incomingAnswerText = string.IsNullOrEmpty(userActivityPayload.SmeAnswer) ? Resource.NotApplicable : userActivityPayload.SmeAnswer;
             var userQuestion = string.IsNullOrEmpty(userActivityPayload.UserQuestion) ? Resource.NotApplicable : userActivityPayload.UserQuestion;
             var chatTextButton = string.Format(Resource.ChatTextButton, channelAccountDetails.GivenName);
@@ -122,7 +121,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             });
 
             // Calling GetFactSetList.
-            var factSetList = GetFactSetList(incomingTitleValue, incomingQuestionText, incomingAnswerText, userQuestion, currentDateTime);
+            var factSetList = GetFactSetList(incomingTitleValue, GetQuestionText(userActivityPayload), incomingAnswerText, userQuestion, currentDateTime);
 
             // Sme card which has both change status button and chat with person button.
             if (isStatusAvailable)

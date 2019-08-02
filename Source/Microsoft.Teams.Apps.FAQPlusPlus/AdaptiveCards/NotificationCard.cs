@@ -11,14 +11,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    /// The class process Confirmation card-upon bot sending the user query to SME channel.
+    /// The class process Confirmation card-upon bot sending the user query to Sme channel.
     /// </summary>
     public class NotificationCard
     {
         private const string DateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
 
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the notification card that is sent to the user upon posting the request to Sme channel.
         /// </summary>
         /// <param name="question">Question asked by the user.</param>
         /// <param name="userTitleValue">Title text of user the activity.</param>

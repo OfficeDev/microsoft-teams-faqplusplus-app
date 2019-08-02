@@ -15,7 +15,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     public class ShareFeedbackCard
     {
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the share feedback adaptive card through bot menu.
         /// </summary>
         /// <returns>Feedback as an Attachment.</returns>
         public static Attachment GetCard()

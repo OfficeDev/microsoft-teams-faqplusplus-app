@@ -14,7 +14,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     public static class ResponseAdaptiveCard
     {
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the response card when user asks a question to Qna maker through bot.
         /// </summary>
         /// <param name="question">Actual question from the QnA maker service.</param>
         /// <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
@@ -103,7 +103,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             });
 
             // Share feedback show card.
-            AdaptiveCard shareFeedbackShowCard = new AdaptiveCard();
+            AdaptiveCard shareFeedbackShowCard = new AdaptiveCard("1.0");
             shareFeedbackShowCard.Title = Resource.ShareFeedbackButtonText;
 
             shareFeedbackShowCard.Body.Add(new AdaptiveTextBlock()
