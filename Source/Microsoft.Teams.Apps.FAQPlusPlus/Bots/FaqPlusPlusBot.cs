@@ -344,14 +344,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Handles adaptive card submit in channel
         private async Task OnAdaptiveCardSubmitInChannelAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            var payload = ((JObject)message.Value).ToObject<TicketDetails>();
+            var payload = ((JObject)message.Value).ToObject<ChangeTicketStatusPayload>();
 
             var ticket = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(payload.RowKey);
 
             // Update the tickets based on the payload
             switch (payload.Status)
             {
-                case "0": // Open
+                case ChangeTicketStatusPayload.ReopenAction:
                     ticket.Status = (int)TicketState.Open;
                     ticket.DateAssigned = null;
                     ticket.AssignedToName = null;
@@ -359,12 +359,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     ticket.DateClosed = null;
                     break;
 
-                case "1": // Close
+                case ChangeTicketStatusPayload.CloseAction:
                     ticket.Status = (int)TicketState.Closed;
                     ticket.DateClosed = DateTime.UtcNow;
                     break;
 
-                case "2": // Assign to self
+                case ChangeTicketStatusPayload.AssignToSelfAction:
                     ticket.Status = (int)TicketState.Open;
                     ticket.DateAssigned = DateTime.UtcNow;
                     ticket.AssignedToName = message.From.Name;
@@ -396,17 +396,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IMessageActivity userNotification = null;
             switch (payload.Status)
             {
-                case "0": // Open
+                case ChangeTicketStatusPayload.ReopenAction:
                     await turnContext.SendActivityAsync(string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name));
                     userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ReopenedTicketUserNotification));
                     break;
 
-                case "1": // Close
+                case ChangeTicketStatusPayload.CloseAction:
                     await turnContext.SendActivityAsync(string.Format(Resource.SMEClosedStatus, ticket.LastModifiedByName));
                     userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ClosedTicketUserNotification));
                     break;
 
-                case "2": // Assign to self
+                case ChangeTicketStatusPayload.AssignToSelfAction:
                     await turnContext.SendActivityAsync(string.Format(Resource.SMEAssignedStatus, ticket.AssignedToName));
                     userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.AssignedTicketUserNotification));
                     break;
@@ -569,109 +569,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
 
             return ticketEntity;
-        }
-
-        /// <summary>
-        /// Updates the SME activity card in place.
-        /// </summary>
-        /// <param name="ticket">The ticket for which the information should be shown.</param>
-        /// <param name="attachmentToSend">The card which will update the current card in the conversation.</param>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A unit of execution.</returns>
-        private async Task UpdateSMEEnquiryCard(
-           TicketEntity ticket,
-           Attachment attachmentToSend,
-           ITurnContext<IMessageActivity> turnContext,
-           CancellationToken cancellationToken)
-        {
-            var updateCardActivity = new Activity()
-            {
-                Id = ticket.SmeCardActivityId,
-                Conversation = new ConversationAccount()
-                {
-                    Id = ticket.SmeThreadConversationId,
-                },
-                Type = ActivityTypes.Message,
-                Attachments = new List<Attachment>
-                {
-                    attachmentToSend,
-                },
-            };
-
-            await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
-        }
-
-        /// <summary>
-        /// Method which will inform the user of the updates in the ticket.
-        /// </summary>
-        /// <param name="conversationId">The original conversationId that posted the request.</param>
-        /// <param name="messageToSend">The text to send back to the user (status update).</param>
-        /// <param name="turnContext">The current turn/execution flow.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>A unit of execution.</returns>
-        private async Task InformUserOfUpdates(
-            string conversationId,
-            string messageToSend,
-            ITurnContext<IMessageActivity> turnContext,
-            CancellationToken cancellationToken)
-        {
-            var userMessageActivity = new Activity()
-            {
-                Conversation = new ConversationAccount()
-                {
-                    Id = conversationId,
-                },
-                Type = ActivityTypes.Message,
-                Text = messageToSend,
-            };
-
-            await ((BotFrameworkAdapter)turnContext.Adapter).SendActivitiesAsync(turnContext, new Activity[] { userMessageActivity }, cancellationToken);
-        }
-
-        /// <summary>
-        /// Updates the newly created ticket record with the right information about the conversation.
-        /// </summary>
-        /// <param name="ticketId">The ticketId to update.</param>
-        /// <param name="activityId">The correct activityId.</param>
-        /// <param name="threadConversationId">The conversationId in the SME channel.</param>
-        /// <returns>A unit of execution.</returns>
-        private async Task UpdateConversationInfo(string ticketId, string activityId, string threadConversationId)
-        {
-            var tableResult = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(ticketId);
-            var ticketEntity = tableResult;
-            ticketEntity.SmeCardActivityId = activityId;
-            ticketEntity.SmeThreadConversationId = threadConversationId;
-            await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
-        }
-
-        /// <summary>
-        /// Gets the date/time for the current ticket.
-        /// </summary>
-        /// <param name="ticketDetails">The ticket details.</param>
-        /// <returns>A nullable object.</returns>
-        private DateTime? SetDateTime(TicketDetails ticketDetails)
-        {
-            if (ticketDetails.Status == "0")
-            {
-                return null;
-            }
-            else
-            {
-                return DateTime.UtcNow;
-            }
-        }
-
-        private DateTime? SetClosedDateTime(TicketDetails ticketDetails)
-        {
-            if (ticketDetails.Status == "1")
-            {
-                return DateTime.UtcNow;
-            }
-            else
-            {
-                return null;
-            }
         }
     }
 }
