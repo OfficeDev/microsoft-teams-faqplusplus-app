@@ -30,7 +30,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>Returns the attachment that will be sent in a message.</returns>
         public Attachment ToAttachment()
         {
-            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            var card = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
                 {
@@ -94,7 +94,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveShowCardAction
                     {
                         Title = "Change status",
-                        Card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+                        Card = new AdaptiveCard("1.0")
                         {
                             Body = new List<AdaptiveElement>
                             {

@@ -67,14 +67,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
         /// <param name="userAccountDetails">Details of the user submitting the ticket.</param>
         /// <param name="userActivityPayload">Payload from the ticket submission.</param>
+        /// <param name="ticketId">The ID of the corresponding ticket.</param>
         /// <returns>The card as an attachment</returns>
         public static Attachment CreateTicketCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            UserActivity userActivityPayload,
+            string ticketId)
         {
             var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, userAccountDetails.Name, Resource.QuestionForExpertText);
-            return GetCard(Resource.QuestionForExpertText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload, true);
+            return GetCard(Resource.QuestionForExpertText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload, true, ticketId);
         }
 
         /// <summary>
@@ -93,7 +95,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             string incomingSubtitleText,
             TeamsChannelAccount channelAccountDetails,
             UserActivity userActivityPayload,
-            bool isStatusAvailable = false)
+            bool isStatusAvailable = false,
+            string ticketId = null)
         {
             // TODO: This should be cleaned up when we re-do the way that we construct the cards
             var incomingQuestionText = GetQuestionText(userActivityPayload);
@@ -134,6 +137,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 variablesToValues.Add("notApplicable", Resource.NotApplicable);
                 variablesToValues.Add("statusFactTitle", Resource.StatusFactTitle);
                 variablesToValues.Add("openStatusValue", Resource.OpenStatusValue);
+                variablesToValues.Add("ticketId", ticketId);
                 return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
             }
 

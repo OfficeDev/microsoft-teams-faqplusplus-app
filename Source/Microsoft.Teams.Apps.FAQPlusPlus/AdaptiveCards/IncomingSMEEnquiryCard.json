@@ -80,11 +80,11 @@
             "choices": [
               {
                 "title": "%assignStatusText%",
-                "value": "1"
+                "value": "2"
               },
               {
                 "title": "%closeStatusText%",
-                "value": "2"
+                "value": "1"
               }
             ]
           }
