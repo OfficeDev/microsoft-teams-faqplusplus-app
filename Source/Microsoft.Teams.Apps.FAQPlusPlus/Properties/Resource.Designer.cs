@@ -115,6 +115,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your request has been assigned to an expert. They will directly send you a chat message..
+        /// </summary>
+        public static string AssignedTicketUserNotification {
+            get {
+                return ResourceManager.GetString("AssignedTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assign.
         /// </summary>
         public static string AssignStatusText {
@@ -147,6 +156,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ClosedFactTitle {
             get {
                 return ResourceManager.GetString("ClosedFactTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request has been closed. Please ask an expert again if you still need more assistance or have a new request..
+        /// </summary>
+        public static string ClosedTicketUserNotification {
+            get {
+                return ResourceManager.GetString("ClosedTicketUserNotification", resourceCulture);
             }
         }
         
@@ -340,6 +358,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your request has been reopened. An expert will directly send you a chat message..
+        /// </summary>
+        public static string ReopenedTicketUserNotification {
+            get {
+                return ResourceManager.GetString("ReopenedTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Here is what I found:.
         /// </summary>
         public static string ResponseHeaderText {
@@ -421,7 +448,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request is now open. Opened by {0}. .
+        ///   Looks up a localized string similar to The request is now open. Reopened by {0}. .
         /// </summary>
         public static string SMEOpenedStatus {
             get {

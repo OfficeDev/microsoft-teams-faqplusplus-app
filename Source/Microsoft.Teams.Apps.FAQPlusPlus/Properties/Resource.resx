@@ -327,17 +327,29 @@
   </data>
   <data name="SMEAssignedStatus" xml:space="preserve">
     <value>The request is now assigned. Assigned by {0}.</value>
-    <comment>The {0} placeholder is for the SME responsible for assigning the request.</comment>
+    <comment>Message posted to the thread when the ticket is assigned. {0} = name of SME who assigned the request.</comment>
   </data>
   <data name="SMEClosedStatus" xml:space="preserve">
     <value>The request is now closed. Closed by {0}.</value>
-    <comment>The {0} placeholder is for the SME responsible for closing the request.</comment>
+    <comment>Message posted to the thread when the ticket is closed. {0} = name of SME who closed the request.</comment>
   </data>
   <data name="SMEOpenedStatus" xml:space="preserve">
-    <value>The request is now open. Opened by {0}. </value>
-    <comment>The {0} placeholder is for the SME responsible for opening the request.</comment>
+    <value>The request is now open. Reopened by {0}. </value>
+    <comment>Message posted to the thread when the ticket is reopened. {0} = name of SME who reopened the request.</comment>
   </data>
   <data name="NonApplicableString" xml:space="preserve">
     <value>N/A</value>
+  </data>
+  <data name="AssignedTicketUserNotification" xml:space="preserve">
+    <value>Your request has been assigned to an expert. They will directly send you a chat message.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is assigned to an expert.</comment>
+  </data>
+  <data name="ClosedTicketUserNotification" xml:space="preserve">
+    <value>Your request has been closed. Please ask an expert again if you still need more assistance or have a new request.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
+  </data>
+  <data name="ReopenedTicketUserNotification" xml:space="preserve">
+    <value>Your request has been reopened. An expert will directly send you a chat message.</value>
+    <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
   </data>
 </root>

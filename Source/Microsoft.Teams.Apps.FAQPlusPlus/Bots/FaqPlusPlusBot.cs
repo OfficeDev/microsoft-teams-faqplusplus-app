@@ -18,7 +18,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Bot.Schema.Teams;
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Exceptions;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
@@ -394,19 +393,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
 
             // Post update to user and SME team thread
+            IMessageActivity userNotification = null;
             switch (payload.Status)
             {
                 case "0": // Open
                     await turnContext.SendActivityAsync(string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ReopenedTicketUserNotification));
                     break;
 
                 case "1": // Close
                     await turnContext.SendActivityAsync(string.Format(Resource.SMEClosedStatus, ticket.LastModifiedByName));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ClosedTicketUserNotification));
                     break;
 
                 case "2": // Assign to self
                     await turnContext.SendActivityAsync(string.Format(Resource.SMEAssignedStatus, ticket.AssignedToName));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.AssignedTicketUserNotification));
                     break;
+            }
+
+            if (userNotification != null)
+            {
+                userNotification.Conversation = new ConversationAccount { Id = ticket.RequesterConversationId };
+                await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken);
             }
         }
 
