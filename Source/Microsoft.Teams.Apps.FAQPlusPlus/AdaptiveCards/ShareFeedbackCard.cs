@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System.Collections.Generic;
     using global::AdaptiveCards;

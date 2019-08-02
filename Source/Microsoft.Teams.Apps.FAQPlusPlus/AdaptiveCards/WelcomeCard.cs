@@ -2,12 +2,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System.Threading.Tasks;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class process Welcome Card, when bot is installed by the user in personal scope.
@@ -15,7 +14,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     public class WelcomeCard
     {
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the user welcome card when bot is added in personal scope.
         /// </summary>
         /// <param name="welcomeText">Gets welcome text.</param>
         /// <returns>Card attachment as Json string.</returns>
@@ -84,7 +83,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                          }
                      })
             });
-
             return CardHelper.GenerateCardAttachment(userWelcomeCard.ToJson());
         }
     }

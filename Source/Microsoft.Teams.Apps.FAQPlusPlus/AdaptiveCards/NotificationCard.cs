@@ -2,15 +2,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// The class process Confirmation card-upon bot sending the user query to SME channel.
@@ -48,7 +46,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 
             var factSetList = GetFactSetList(userTitleValue, question, currentDateTime);
             userNotificationCard.Body.Add(new AdaptiveFactSet() { Facts = factSetList });
-
             return CardHelper.GenerateCardAttachment(userNotificationCard.ToJson());
         }
 

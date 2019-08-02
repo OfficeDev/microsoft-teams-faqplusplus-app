@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -13,9 +13,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     /// </summary>
     public static class WelcomeTeamCard
     {
-
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the adaptive card used to welcome a team when bot is added to the team.
         /// </summary>
         /// <param name="botDisplayName">Name of the bot.</param>
         /// <param name="teamName">Name of the team to which bot is added to. </param>
@@ -54,7 +53,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                          }
                      })
             });
-
             return CardHelper.GenerateCardAttachment(teamWelcomeCard.ToJson());
         }
     }

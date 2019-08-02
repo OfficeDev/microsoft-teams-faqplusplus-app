@@ -2,12 +2,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
-    using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -16,37 +13,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     /// </summary>
     public class UnrecognizedTeamInput
     {
-
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// Construct the card to render when there's an unrecognized input in a channel.
         /// </summary>
-        /// <returns>Card attachment as Json string.</returns>
+        /// <returns>Card attachment</returns>
         public static Attachment GetCard()
         {
-            AdaptiveCard unrecognizedTeamInputCard = new AdaptiveCard("1.0");
-            unrecognizedTeamInputCard.Body.Add(new AdaptiveTextBlock()
+            var card = new HeroCard
             {
                 Text = Resource.TeamCustomMessage,
-                Wrap = true
-            });
-
-            // Team tour submit button
-            unrecognizedTeamInputCard.Actions.Add(new AdaptiveSubmitAction()
-            {
-                Title = Resource.TakeATeamTourButtonText,
-                Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                     new
-                     {
-                         msteams = new
-                         {
-                             type = "messageBack",
-                             displayText = Resource.TakeATeamTourButtonText,
-                             text = "team tour"
-                         }
-                     })
-            });
-
-            return CardHelper.GenerateCardAttachment(unrecognizedTeamInputCard.ToJson());
+                Buttons = new List<CardAction>
+                {
+                    new CardAction(ActionTypes.MessageBack)
+                    {
+                        Title = Resource.TakeATeamTourButtonText,
+                        DisplayText = Resource.TakeATeamTourButtonText,
+                        Text = "team tour",
+                    }
+                }
+            };
+            return card.ToAttachment();
         }
     }
 }

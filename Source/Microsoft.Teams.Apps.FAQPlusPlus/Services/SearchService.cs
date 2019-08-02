@@ -63,17 +63,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
             switch (searchScope)
             {
                 case TicketSearchScope.RecentTickets:
-                    searchParam.OrderBy = new[] { "DateAssigned asc" };
+                    searchParam.OrderBy = new[] { "Timestamp desc" };
                     break;
 
                 case TicketSearchScope.OpenTickets:
-                    searchParam.Filter = "Status eq 0";
-                    searchParam.OrderBy = new[] { "DateCreated asc" };
+                    searchParam.Filter = "Status eq " + (int)TicketState.Open + " and AssignedToName eq null";
+                    searchParam.OrderBy = new[] { "Timestamp desc" };
                     break;
 
                 case TicketSearchScope.AssignedTickets:
-                    searchParam.Filter = "AssignedTo ne ' '";
-                    searchParam.OrderBy = new[] { "DateAssigned asc" };
+                    searchParam.Filter = "Status eq " + (int)TicketState.Open + " and AssignedToName ne null";
+                    searchParam.OrderBy = new[] { "Timestamp desc" };
                     break;
 
                 default:
@@ -83,21 +83,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
             searchParam.Top = count ?? DefaultSearchResultCount;
             searchParam.Skip = skip ?? 0;
             searchParam.IncludeTotalResultCount = false;
-            searchParam.Select = new[] { "TicketId", "Text", "Status", "AssignedTo", "DateCreated" };
+            searchParam.Select = new[] { "Timestamp", "Title", "Status", "AssignedToName", "DateCreated", "RequesterName", "RequesterUserPrincipalName", "Description", "RequesterGivenName", "SmeThreadConversationId", "DateAssigned", "DateClosed", "LastModifiedByName", "UserQuestion", "KnowledgeBaseAnswer" };
 
             var docs = await this.searchIndexClient.Documents.SearchAsync<TicketEntity>(searchQuery, searchParam);
             if (docs != null)
             {
                 foreach (SearchResult<TicketEntity> doc in docs.Results)
                 {
-                    tickets.Add(new TicketEntity
-                    {
-                        RowKey = doc.Document.TicketId,
-                        Text = doc.Document.Text,
-                        Status = doc.Document.Status,
-                        AssignedTo = doc.Document.AssignedTo,
-                        DateCreated = doc.Document.DateCreated
-                    });
+                    tickets.Add(doc.Document);
                 }
             }
 

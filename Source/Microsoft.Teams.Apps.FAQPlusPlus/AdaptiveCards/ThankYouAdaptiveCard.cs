@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -17,7 +17,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// This method will send thank you adaptive card to user upon posting feedback to SME team.
         /// </summary>
         /// <returns>The JSON string for the adaptive card.</returns>
-        [System.Obsolete]
         public static Attachment GetCard()
         {
             AdaptiveCard thankYouCard = new AdaptiveCard("1.0");
@@ -34,7 +33,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 Text = Resource.ThankYouAdaptiveCardContent,
                 Wrap = true
             });
-
             return CardHelper.GenerateCardAttachment(thankYouCard.ToJson());
         }
     }

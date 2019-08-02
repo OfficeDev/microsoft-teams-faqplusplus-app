@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -43,7 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 Wrap = true
             });
 
-            //Ask an expert show card.
+            // Ask an expert show card.
             AdaptiveCard askAnExpertShowCard = new AdaptiveCard("1.0");
             askAnExpertShowCard.Title = Resource.AskAnExpertButtonText;
 
@@ -172,7 +172,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 Title = Resource.ShareFeedbackButtonText,
                 Card = shareFeedbackShowCard
             });
-
             return CardHelper.GenerateCardAttachment(responseCard.ToJson());
         }
     }

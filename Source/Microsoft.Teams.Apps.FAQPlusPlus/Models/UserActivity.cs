@@ -30,7 +30,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
         /// Gets or sets the answer for the expert- Answer sent to the SME team along with feedback
         /// provided by the user on response given by bot calling QnA maker service.
         /// </summary>
-        
         public string SmeAnswer { get; set; }
 
         /// <summary>

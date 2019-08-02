@@ -48,7 +48,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<ICredentialProvider, ConfigurationCredentialProvider>();
             services.AddSingleton<ITicketsProvider>(new TicketsProvider(this.Configuration["StorageConnectionString"]));
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
-            services.AddTransient<IBot, FaqPlusPlusBot>();
+            services.AddSingleton(new MicrosoftAppCredentials(this.Configuration["MicrosoftAppId"], this.Configuration["MicrosoftAppPassword"]));
+            services.AddTransient<IBot>((provider) => new FaqPlusPlusBot(
+                provider.GetRequiredService<TelemetryClient>(),
+                provider.GetRequiredService<Common.Providers.IConfigurationProvider>(),
+                provider.GetRequiredService<IQnAMakerFactory>(),
+                provider.GetRequiredService<MessagingExtension>(),
+                this.Configuration["AppBaseUri"],
+                provider.GetRequiredService<MicrosoftAppCredentials>()));
             services.AddSingleton<TelemetryClient>();
             services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
             services.AddSingleton<ISearchService, SearchService>();

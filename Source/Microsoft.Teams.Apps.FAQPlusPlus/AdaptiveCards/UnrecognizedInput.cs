@@ -1,8 +1,8 @@
-﻿// <copyright file="UnrecognizedInputCard.cs" company="Microsoft">
+﻿// <copyright file="UnrecognizedInput.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -14,13 +14,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     public static class UnrecognizedInput
     {
         /// <summary>
-        /// This method will construct the adaptive card as an Attachment using JSON template.
+        /// This method will construct the adaptive card.
         /// </summary>
         /// <param name="question">The question that the user asks the bot.</param>
         /// <returns>Card attachment as Json string.</returns>
         public static Attachment GetCard(string question)
         {
-            var questionLineText = string.Format(Resource.QuestionLineText, question);
             {
                 AdaptiveCard unrecognizedInputCard = new AdaptiveCard("1.0");
                 unrecognizedInputCard.Body.Add(new AdaptiveTextBlock()
@@ -92,7 +91,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                     Title = Resource.AskAnExpertButtonText,
                     Card = askAnExpertShowCard
                 });
-
                 return CardHelper.GenerateCardAttachment(unrecognizedInputCard.ToJson());
             }
         }

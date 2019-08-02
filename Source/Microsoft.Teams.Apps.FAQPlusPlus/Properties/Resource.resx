@@ -325,4 +325,12 @@
     <value>Open</value>
     <comment>Status value is open which is used in notification cards to both SME team and user.</comment>
   </data>
+  <data name="AssignedToStatusValue" xml:space="preserve">
+    <value>Assigned to {0}</value>
+    <comment>"Assigned to" format string, {0} is the name of the assignee</comment>
+  </data>
+  <data name="ClosedByStatusValue" xml:space="preserve">
+    <value>Closed by {0}</value>
+    <comment>"Closed" format string, {0} is the name of the user who closed the ticket</comment>
+  </data>
 </root>

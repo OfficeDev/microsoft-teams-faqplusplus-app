@@ -1,13 +1,10 @@
 ﻿// <copyright file="AskAnExpertCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
-    using System.Collections.Generic;
-    using System.IO;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
