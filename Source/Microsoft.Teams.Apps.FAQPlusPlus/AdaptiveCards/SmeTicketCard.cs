@@ -10,6 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Newtonsoft.Json;
 
     public class SmeTicketCard
@@ -205,32 +206,36 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <summary>
         /// Gets the ticket status currently.
         /// </summary>
-        /// <param name="ticketModel">The current ticket information.</param>
+        /// <param name="ticket">The current ticket information.</param>
         /// <returns>A status string.</returns>
-        private string GetTicketStatus(TicketEntity ticketModel)
+        private string GetTicketStatus(TicketEntity ticket)
         {
-            if (ticketModel.Status == 0 && string.IsNullOrEmpty(ticketModel.AssignedToName))
+            if (ticket.Status == (int)TicketState.Open)
             {
-                return "Open";
-            }
-            else if (ticketModel.Status == 0 && !string.IsNullOrEmpty(ticketModel.AssignedToName))
-            {
-                return $"Assigned to {ticketModel.AssignedToName}";
+                return string.IsNullOrEmpty(ticket.AssignedToName) ? "Open" : $"Assigned to {ticket.AssignedToName}";
             }
             else
             {
-                return $"Closed by {ticketModel.LastModifiedByName}";
+                return $"Closed by {ticket.LastModifiedByName}";
             }
         }
 
         /// <summary>
         /// Gets the closed date of the ticket.
         /// </summary>
-        /// <param name="ticketModel">The current ticket information.</param>
+        /// <param name="ticket">The current ticket information.</param>
         /// <returns>The closed date of the ticket.</returns>
-        private string GetTicketClosedDate(TicketEntity ticketModel)
+        private string GetTicketClosedDate(TicketEntity ticket)
         {
-            return ticketModel.Status == 1 ? DateTime.UtcNow.ToString("D") : "N/A";
+            if (ticket.Status == (int)TicketState.Closed)
+            {
+                var dateClosed = ticket.DateClosed.Value;
+                return "{{DATE(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}";
+            }
+            else
+            {
+                return Resource.NotApplicable;
+            }
         }
     }
 }
