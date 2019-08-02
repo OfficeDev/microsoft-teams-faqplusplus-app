@@ -1,4 +1,4 @@
-﻿// <copyright file="UserActivity.cs" company="Microsoft">
+﻿// <copyright file="SubmitUserRequestPayload.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
@@ -8,8 +8,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
     /// This model class is responsible to model user activity with bot-
     // asking a question or providing feedback on app or on results given by the bot to the user.
     // </summary>
-    public class UserActivity
+    public class SubmitUserRequestPayload
     {
+        /// <summary>
+        /// Text associated with app feedback command
+        /// </summary>
+        public const string AppFeedbackAction = "AppFeedback";
+
+        /// <summary>
+        /// Text associated with results feedback command
+        /// </summary>
+        public const string ResultsFeedbackAction = "ResultsFeedback";
+
+        /// <summary>
+        /// Text associated with ask an expert command
+        /// </summary>
+        public const string QuestionForExpertAction = "QuestionForExpert";
+
         /// <summary>
         /// Gets or sets the bot feedback.
         /// </summary>

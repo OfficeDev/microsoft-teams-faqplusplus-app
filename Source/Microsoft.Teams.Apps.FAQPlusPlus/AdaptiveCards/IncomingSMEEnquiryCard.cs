@@ -39,7 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         public static Attachment CreateAppFeedbackCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            SubmitUserRequestPayload userActivityPayload)
         {
             var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.AppFeedbackText);
             return GetCard(Resource.AppFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
@@ -55,28 +55,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         public static Attachment CreateResultFeedbackCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            SubmitUserRequestPayload userActivityPayload)
         {
             var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.ResultsFeedbackText);
             return GetCard(Resource.ResultsFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
-        }
-
-        /// <summary>
-        /// Create a card that represents a ticket.
-        /// </summary>
-        /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
-        /// <param name="userAccountDetails">Details of the user submitting the ticket.</param>
-        /// <param name="userActivityPayload">Payload from the ticket submission.</param>
-        /// <param name="ticketId">The ID of the corresponding ticket.</param>
-        /// <returns>The card as an attachment</returns>
-        public static Attachment CreateTicketCard(
-            string incomingTitleValue,
-            TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload,
-            string ticketId)
-        {
-            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, userAccountDetails.Name, Resource.QuestionForExpertText);
-            return GetCard(Resource.QuestionForExpertText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload, true, ticketId);
         }
 
         /// <summary>
@@ -95,7 +77,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             string incomingTitleValue,
             string incomingSubtitleText,
             TeamsChannelAccount channelAccountDetails,
-            UserActivity userActivityPayload,
+            SubmitUserRequestPayload userActivityPayload,
             bool isStatusAvailable = false,
             string ticketId = null)
         {
@@ -148,7 +130,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(feedbackCardTemplate, variablesToValues));
         }
 
-        private static string GetQuestionText(UserActivity userActivityPayload)
+        private static string GetQuestionText(SubmitUserRequestPayload userActivityPayload)
         {
             if (!string.IsNullOrEmpty(userActivityPayload.QuestionForExpert))
             {

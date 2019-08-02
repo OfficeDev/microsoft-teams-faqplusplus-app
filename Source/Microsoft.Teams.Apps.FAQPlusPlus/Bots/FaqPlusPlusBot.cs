@@ -32,13 +32,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     /// </summary>
     public class FaqPlusPlusBot : ActivityHandler
     {
+        // Commands supported by the bot
         private const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
         private const string TeamTour = "team tour";
-        private const string AppFeedback = "AppFeedback";
-        private const string ResultsFeedback = "ResultsFeedback";
-        private const string QuestionForExpert = "QuestionForExpert";
 
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
@@ -278,7 +276,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Submits the question or feedback to the SME team
         private async Task OnAdaptiveCardSubmitInPersonalChatAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            var payload = ((JObject)message.Value).ToObject<UserActivity>();
+            var payload = ((JObject)message.Value).ToObject<SubmitUserRequestPayload>();
 
             if (!await UserInputValidations.Validate(payload, turnContext, cancellationToken))
             {
@@ -293,7 +291,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             switch (message.Text)
             {
-                case QuestionForExpert:
+                case SubmitUserRequestPayload.QuestionForExpertAction:
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
@@ -302,14 +300,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
                     break;
 
-                case AppFeedback:
+                case SubmitUserRequestPayload.AppFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
+
                     smeTeamCard = IncomingSMEEnquiryCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload);
                     userCard = ThankYouAdaptiveCard.GetCard();
                     break;
 
-                case ResultsFeedback:
+                case SubmitUserRequestPayload.ResultsFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received feedback about an answer");
+
                     smeTeamCard = IncomingSMEEnquiryCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload);
                     userCard = ThankYouAdaptiveCard.GetCard();
                     break;
@@ -561,7 +561,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         // Create a new ticket from the input
-        private async Task<TicketEntity> CreateTicketAsync(IMessageActivity message, UserActivity payload, TeamsChannelAccount member)
+        private async Task<TicketEntity> CreateTicketAsync(IMessageActivity message, SubmitUserRequestPayload payload, TeamsChannelAccount member)
         {
             TicketEntity ticketEntity = new TicketEntity
             {

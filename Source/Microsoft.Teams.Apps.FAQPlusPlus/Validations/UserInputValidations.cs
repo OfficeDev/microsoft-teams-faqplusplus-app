@@ -22,7 +22,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Validations
         /// <param name="turnContext">The current turn.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Return bool value.</returns>
-        public static async Task<bool> Validate(UserActivity payload, ITurnContext turnContext, CancellationToken cancellationToken)
+        public static async Task<bool> Validate(SubmitUserRequestPayload payload, ITurnContext turnContext, CancellationToken cancellationToken)
         {
             payload.AppFeedback = payload.AppFeedback ?? string.Empty;
             payload.QuestionForExpert = payload.QuestionForExpert ?? string.Empty;
