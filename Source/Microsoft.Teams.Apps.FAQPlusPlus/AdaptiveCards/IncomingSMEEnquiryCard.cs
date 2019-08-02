@@ -88,6 +88,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <param name="channelAccountDetails">Channel details to which bot post the user question.</param>
         /// <param name="userActivityPayload">User activity type:posting a feedback or asking a question to the expert.</param>
         /// <param name="isStatusAvailable">Flag value for status button- required only for ask an expert scenarios.</param>
+        /// <param name="ticketId">The ID of the new ticket.</param>
         /// <returns>The card JSON string.</returns>
         private static Attachment GetCard(
             string incomingTitleText,

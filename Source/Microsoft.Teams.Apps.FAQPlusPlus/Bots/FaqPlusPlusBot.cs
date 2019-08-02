@@ -298,7 +298,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
 
-                    smeTeamCard = IncomingSMEEnquiryCard.CreateTicketCard(payload.QuestionUserTitleText, userDetails, payload, newTicket.TicketId);
+                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
                     userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
                     break;
 
@@ -345,11 +345,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private async Task OnAdaptiveCardSubmitInChannelAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             var payload = ((JObject)message.Value).ToObject<ChangeTicketStatusPayload>();
+            this.telemetryClient.TrackTrace($"Received submit: ticketId={payload.TicketId} action={payload.Action}");
 
-            var ticket = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(payload.RowKey);
+            // Get the ticket from the data store
+            var ticket = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(payload.TicketId);
+            if (ticket == null)
+            {
+                // TODO: Send error message to the user
+                this.telemetryClient.TrackTrace($"Ticket {payload.TicketId} was not found in the data store");
+                return;
+            }
 
-            // Update the tickets based on the payload
-            switch (payload.Status)
+            // Update the ticket based on the payload
+            switch (payload.Action)
             {
                 case ChangeTicketStatusPayload.ReopenAction:
                     ticket.Status = (int)TicketState.Open;
@@ -374,7 +382,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 default:
                     // TODO: Show error message
-                    this.telemetryClient.TrackTrace($"Unknown status command {payload.Status}", SeverityLevel.Warning);
+                    this.telemetryClient.TrackTrace($"Unknown status command {payload.Action}", SeverityLevel.Warning);
                     return;
             }
 
@@ -382,6 +390,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticket.LastModifiedByObjectId = message.From.AadObjectId;
 
             await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticket);
+            this.telemetryClient.TrackTrace($"Ticket {ticket.TicketId} updated to status {ticket.Status} in store");
 
             // Update the card in the SME team
             var updateCardActivity = new Activity(ActivityTypes.Message)
@@ -390,32 +399,41 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
                 Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment() },
             };
-            await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
+            var updateResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
+            this.telemetryClient.TrackTrace($"Card for ticket {ticket.TicketId} was updated to status {ticket.Status}, id = {updateResponse.Id}");
 
             // Post update to user and SME team thread
+            string smeNotification = null;
             IMessageActivity userNotification = null;
-            switch (payload.Status)
+            switch (payload.Action)
             {
                 case ChangeTicketStatusPayload.ReopenAction:
-                    await turnContext.SendActivityAsync(string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name));
+                    smeNotification = string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name);
                     userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ReopenedTicketUserNotification));
                     break;
 
                 case ChangeTicketStatusPayload.CloseAction:
-                    await turnContext.SendActivityAsync(string.Format(Resource.SMEClosedStatus, ticket.LastModifiedByName));
+                    smeNotification = string.Format(Resource.SMEClosedStatus, ticket.LastModifiedByName);
                     userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ClosedTicketUserNotification));
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
-                    await turnContext.SendActivityAsync(string.Format(Resource.SMEAssignedStatus, ticket.AssignedToName));
+                    smeNotification = string.Format(Resource.SMEAssignedStatus, ticket.AssignedToName);
                     userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.AssignedTicketUserNotification));
                     break;
+            }
+
+            if (smeNotification != null)
+            {
+                var smeResponse = await turnContext.SendActivityAsync(smeNotification);
+                this.telemetryClient.TrackTrace($"SME team notified of update to ticket {ticket.TicketId}, id = {smeResponse.Id}");
             }
 
             if (userNotification != null)
             {
                 userNotification.Conversation = new ConversationAccount { Id = ticket.RequesterConversationId };
-                await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken);
+                var userResponse = await turnContext.Adapter.SendActivitiesAsync(turnContext, new Activity[] { (Activity)userNotification }, cancellationToken);
+                this.telemetryClient.TrackTrace($"User notified of update to ticket {ticket.TicketId}, id = {userResponse.FirstOrDefault()?.Id}");
             }
         }
 
@@ -444,7 +462,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 }
 
                 var qnaMaker = this.qnaMakerFactory.GetQnAMaker(kbId, endpointKey);
+
                 var response = await qnaMaker.GetAnswersAsync(turnContext);
+                this.telemetryClient.TrackTrace($"Received {response?.Count() ?? 0} answers from QnAMaker, with top score {response?.FirstOrDefault()?.Score ?? 0}");
+
                 return response?.FirstOrDefault();
             }
             catch (Exception ex)

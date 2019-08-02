@@ -9,11 +9,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Newtonsoft.Json;
 
     public class SmeTicketCard
     {
-        private TicketEntity ticketModel;
+        private readonly TicketEntity ticketModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmeTicketCard"/> class.
@@ -105,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 new AdaptiveSubmitAction
                                 {
                                     Type = "Action.Submit",
-                                    DataJson = JsonConvert.SerializeObject(new { rowKey = this.ticketModel.TicketId })
+                                    DataJson = JsonConvert.SerializeObject(new ChangeTicketStatusPayload { TicketId = this.ticketModel.TicketId })
                                 }
                             },
                         },
@@ -127,21 +128,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             {
                 adaptiveChoices = new AdaptiveChoiceSetInput
                 {
-                    Id = "statuscode",
+                    Id = "action",
                     IsMultiSelect = false,
                     Style = AdaptiveChoiceInputStyle.Compact,
-                    Value = this.ticketModel.Status.ToString(),
+                    Value = ChangeTicketStatusPayload.AssignToSelfAction,
                     Choices = new List<AdaptiveChoice>
                     {
                         new AdaptiveChoice
                         {
                             Title = "Assign",
-                            Value = "2",
+                            Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                         new AdaptiveChoice
                         {
                             Title = "Closed",
-                            Value = "1",
+                            Value = ChangeTicketStatusPayload.CloseAction,
                         },
                     },
                 };
@@ -150,26 +151,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             {
                 adaptiveChoices = new AdaptiveChoiceSetInput
                 {
-                    Id = "statuscode",
+                    Id = "action",
                     IsMultiSelect = false,
                     Style = AdaptiveChoiceInputStyle.Compact,
-                    Value = this.ticketModel.Status.ToString(),
+                    Value = ChangeTicketStatusPayload.CloseAction,
                     Choices = new List<AdaptiveChoice>
                     {
                         new AdaptiveChoice
                         {
                             Title = "Open",
-                            Value = "0",
+                            Value = ChangeTicketStatusPayload.ReopenAction,
                         },
                         new AdaptiveChoice
                         {
                             Title = "Assign",
-                            Value = "2",
+                            Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                         new AdaptiveChoice
                         {
                             Title = "Closed",
-                            Value = "1",
+                            Value = ChangeTicketStatusPayload.CloseAction,
                         },
                     },
                 };
@@ -178,21 +179,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             {
                 adaptiveChoices = new AdaptiveChoiceSetInput
                 {
-                    Id = "statuscode",
+                    Id = "action",
                     IsMultiSelect = false,
                     Style = AdaptiveChoiceInputStyle.Compact,
-                    Value = this.ticketModel.Status.ToString(),
+                    Value = ChangeTicketStatusPayload.ReopenAction,
                     Choices = new List<AdaptiveChoice>
                     {
                         new AdaptiveChoice
                         {
                             Title = "Open",
-                            Value = "0",
+                            Value = ChangeTicketStatusPayload.ReopenAction,
                         },
                         new AdaptiveChoice
                         {
                             Title = "Assign",
-                            Value = "2",
+                            Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                     },
                 };

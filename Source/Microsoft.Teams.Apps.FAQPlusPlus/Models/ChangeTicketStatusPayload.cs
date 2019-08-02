@@ -14,28 +14,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
         /// <summary>
         /// Action that reopens a closed ticket
         /// </summary>
-        public const string ReopenAction = "0";
+        public const string ReopenAction = "Reopen";
 
         /// <summary>
         /// Action that closes a ticket
         /// </summary>
-        public const string CloseAction = "1";
+        public const string CloseAction = "Close";
 
         /// <summary>
         /// Action that assigns a ticket to the person that performed the action
         /// </summary>
-        public const string AssignToSelfAction = "2";
+        public const string AssignToSelfAction = "AssignToSelf";
 
         /// <summary>
         /// Gets or sets the ticket id.
         /// </summary>
-        [JsonProperty("rowKey")]
-        public string RowKey { get; set; }
+        [JsonProperty("ticketId")]
+        public string TicketId { get; set; }
 
         /// <summary>
-        /// Gets or sets the action.
+        /// Gets or sets the action to perform on the ticket.
         /// </summary>
-        [JsonProperty("statuscode")]
-        public string Status { get; set; }
+        [JsonProperty("action")]
+        public string Action { get; set; }
     }
 }

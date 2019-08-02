@@ -73,18 +73,18 @@
         "body": [
           {
             "type": "Input.ChoiceSet",
-            "id": "statuscode",
+            "id": "action",
             "style": "compact",
             "isMultiSelect": false,
-            "value": "1",
+            "value": "AssignToSelf",
             "choices": [
               {
                 "title": "%assignStatusText%",
-                "value": "2"
+                "value": "AssignToSelf"
               },
               {
                 "title": "%closeStatusText%",
-                "value": "1"
+                "value": "Close"
               }
             ]
           }
@@ -95,7 +95,7 @@
             "type": "Action.Submit",
             "title": "%submitButtonText%",
             "data": {
-              "rowKey": "%ticketId%"
+              "ticketId": "%ticketId%"
             }
           }
         ],
