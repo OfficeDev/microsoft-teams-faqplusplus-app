@@ -18,7 +18,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     /// </summary>
     public class SmeTicketCard
     {
-        private readonly TicketEntity ticketModel;
+        private readonly TicketEntity ticket;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SmeTicketCard"/> class.
@@ -26,7 +26,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <param name="ticket">The ticket model with the latest details.</param>
         public SmeTicketCard(TicketEntity ticket)
         {
-            this.ticketModel = ticket;
+            this.ticket = ticket;
         }
 
         /// <summary>
@@ -41,8 +41,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = this.ticketModel.RequesterName != null ?
-                         string.Format("**{0}** is requesting support. Details as follows:", this.ticketModel.RequesterName) :
+                        Text = this.ticket.RequesterName != null ?
+                         string.Format("**{0}** is requesting support. Details as follows:", this.ticket.RequesterName) :
                         "Everyone there is a new request coming in, please see the details below:",
                         Wrap = true,
                     },
@@ -53,37 +53,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Status:",
-                                Value = this.GetTicketStatus(this.ticketModel),
+                                Value = this.GetTicketStatus(this.ticket),
                             },
                             new AdaptiveFact
                             {
                                 Title = "Title:",
-                                Value = this.ticketModel.Title,
+                                Value = this.ticket.Title,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Description:",
-                                Value = this.ticketModel.Description,
+                                Value = this.ticket.Description,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Knowledge Base Entry:",
-                                Value = this.ticketModel.KnowledgeBaseAnswer,
+                                Value = this.ticket.KnowledgeBaseAnswer,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Question asked:",
-                                Value = this.ticketModel.UserQuestion,
+                                Value = this.ticket.UserQuestion,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Created:",
-                                Value = this.ticketModel.DateCreated.ToString("D"),
+                                Value = this.ticket.DateCreated.ToString("D"),
                             },
                             new AdaptiveFact
                             {
                                 Title = "Closed:",
-                                Value = this.GetTicketClosedDate(this.ticketModel),
+                                Value = this.GetTicketClosedDate(this.ticket),
                             }
                         },
                     },
@@ -92,9 +92,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 {
                     new AdaptiveOpenUrlAction
                     {
-                        Type = "Action.OpenUrl",
-                        Title = $"Chat with {this.ticketModel.RequesterGivenName}",
-                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticketModel.RequesterUserPrincipalName}"),
+                        Title = $"Chat with {this.ticket.RequesterGivenName}",
+                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticket.RequesterUserPrincipalName}"),
                     },
                     new AdaptiveShowCardAction
                     {
@@ -103,14 +102,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                         {
                             Body = new List<AdaptiveElement>
                             {
-                                this.GetAdaptiveInputSet(this.ticketModel),
+                                this.GetAdaptiveInputSet(this.ticket),
                             },
                             Actions = new List<AdaptiveAction>
                             {
                                 new AdaptiveSubmitAction
                                 {
-                                    Type = "Action.Submit",
-                                    DataJson = JsonConvert.SerializeObject(new ChangeTicketStatusPayload { TicketId = this.ticketModel.TicketId })
+                                    DataJson = JsonConvert.SerializeObject(new ChangeTicketStatusPayload { TicketId = this.ticket.TicketId })
                                 }
                             },
                         },
