@@ -32,29 +32,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <summary>
         /// Store or update ticket entity in table storage
         /// </summary>
-        /// <param name="ticketEntity">ticketEntity.</param>
+        /// <param name="ticket">ticketEntity.</param>
         /// <returns><see cref="Task"/> that represents configuration entity is saved or updated.</returns>
-        public async Task SaveOrUpdateTicketEntityAsync(TicketEntity ticketEntity)
+        public Task SaveOrUpdateTicketAsync(TicketEntity ticket)
         {
-            ticketEntity.PartitionKey = PartitionKey;
-            ticketEntity.RowKey = ticketEntity.TicketId;
-            if (ticketEntity.Status == (int)TicketState.Closed ||
-                ticketEntity.Status == (int)TicketState.Open)
+            ticket.PartitionKey = PartitionKey;
+            ticket.RowKey = ticket.TicketId;
+
+            if (ticket.Status > (int)TicketState.MaxValue)
             {
-                await this.StoreOrUpdateTicketEntityAsync(ticketEntity);
+                throw new TicketValidationException($"The ticket status ({ticket.Status}) is not valid.");
             }
-            else
-            {
-                throw new StatusUpdateException("The ticket is being updated to an invalid status - tickets can only be updated to either: Open, Assigned, or Closed.");
-            }
+
+            return this.StoreOrUpdateTicketEntityAsync(ticket);
         }
 
         /// <inheritdoc/>
-        public async Task<TicketEntity> GetSavedTicketEntityDetailAsync(string rowKey)
+        public async Task<TicketEntity> GetTicketAsync(string ticketId)
         {
             await this.EnsureInitializedAsync();
 
-            TableOperation searchOperation = TableOperation.Retrieve<TicketEntity>(PartitionKey, rowKey);
+            var searchOperation = TableOperation.Retrieve<TicketEntity>(PartitionKey, ticketId);
             var searchResult = await this.ticketCloudTable.ExecuteAsync(searchOperation);
 
             return (TicketEntity)searchResult.Result;

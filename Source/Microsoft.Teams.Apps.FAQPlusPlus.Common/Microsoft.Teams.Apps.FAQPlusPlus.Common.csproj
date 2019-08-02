@@ -95,7 +95,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exceptions\StatusUpdateException.cs" />
+    <Compile Include="Exceptions\TicketValidationException.cs" />
     <Compile Include="Models\ConfigurationEntityTypes.cs" />
     <Compile Include="Providers\ITicketsProvider.cs" />
     <Compile Include="Providers\ConfigurationProvider.cs" />

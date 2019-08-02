@@ -330,7 +330,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 {
                     newTicket.SmeCardActivityId = resourceResponse.ActivityId;
                     newTicket.SmeThreadConversationId = resourceResponse.Id;
-                    await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(newTicket);
+                    await this.ticketsProvider.SaveOrUpdateTicketAsync(newTicket);
                 }
             }
 
@@ -349,7 +349,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.telemetryClient.TrackTrace($"Received submit: ticketId={payload.TicketId} action={payload.Action}");
 
             // Get the ticket from the data store
-            var ticket = await this.ticketsProvider.GetSavedTicketEntityDetailAsync(payload.TicketId);
+            var ticket = await this.ticketsProvider.GetTicketAsync(payload.TicketId);
             if (ticket == null)
             {
                 // TODO: Send error message to the user
@@ -390,7 +390,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             ticket.LastModifiedByName = message.From.Name;
             ticket.LastModifiedByObjectId = message.From.AadObjectId;
 
-            await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticket);
+            await this.ticketsProvider.SaveOrUpdateTicketAsync(ticket);
             this.telemetryClient.TrackTrace($"Ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}) in store");
 
             // Update the card in the SME team
@@ -580,7 +580,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 KnowledgeBaseAnswer = payload.SmeAnswer
             };
 
-            await this.ticketsProvider.SaveOrUpdateTicketEntityAsync(ticketEntity);
+            await this.ticketsProvider.SaveOrUpdateTicketAsync(ticketEntity);
 
             return ticketEntity;
         }
