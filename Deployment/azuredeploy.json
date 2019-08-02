@@ -18,7 +18,7 @@
       }
     },
     "botClientSecret": {
-      "type": "string",
+      "type": "securestring",
       "minLength": 1,
       "metadata": {
         "description": "The client secret of the bot Azure AD app."
