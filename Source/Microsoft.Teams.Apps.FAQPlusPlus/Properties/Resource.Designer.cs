@@ -124,6 +124,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assigned to {0}.
+        /// </summary>
+        public static string AssignedToStatusValue {
+            get {
+                return ResourceManager.GetString("AssignedToStatusValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assign.
         /// </summary>
         public static string AssignStatusText {
@@ -147,6 +156,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ChatTextButton {
             get {
                 return ResourceManager.GetString("ChatTextButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed by {0}.
+        /// </summary>
+        public static string ClosedByStatusValue {
+            get {
+                return ResourceManager.GetString("ClosedByStatusValue", resourceCulture);
             }
         }
         

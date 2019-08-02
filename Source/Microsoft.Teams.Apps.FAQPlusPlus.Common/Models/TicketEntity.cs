@@ -121,7 +121,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         public string LastModifiedByName { get; set; }
 
         /// <summary>
-        /// Gets or sets the display name of the user that last modified the ticket
+        /// Gets or sets the AAD object ID of the user that last modified the ticket
         /// </summary>
         [JsonProperty("LastModifiedByObjectId")]
         public string LastModifiedByObjectId { get; set; }
@@ -137,5 +137,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [JsonProperty("KnowledgeBaseAnswer")]
         public string KnowledgeBaseAnswer { get; set; }
+
+        /// <summary>
+        /// Gets timestamp from storage table
+        /// </summary>
+        [IsSortable]
+        [JsonProperty("Timestamp")]
+        public DateTimeOffset Timestamp { get; }
     }
 }

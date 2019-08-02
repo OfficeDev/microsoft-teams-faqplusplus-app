@@ -123,6 +123,39 @@
             <param name="ticketId">The ID of the new ticket.</param>
             <returns>The card JSON string.</returns>
         </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.MessagingExtensionTicketsCard.#ctor(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.MessagingExtensionTicketsCard"/> class.
+            </summary>
+            <param name="ticket">The ticket model with the latest details.</param>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.MessagingExtensionTicketsCard.ToAttachment">
+            <summary>
+            Method to generate the adaptive card.
+            </summary>
+            <returns>Returns the attachment that will be attached to messaging extension list.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.MessagingExtensionTicketsCard.GetGoToThreadUri(System.String)">
+            <summary>
+            Returns go to original thread uri which will help in opening the original conversation about the ticket
+            </summary>
+            <param name="threadConversationId">The thread along with message Id stored in storage table.</param>
+            <returns>original thread uri.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.MessagingExtensionTicketsCard.GetTicketStatus(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity)">
+            <summary>
+            Gets the ticket status currently.
+            </summary>
+            <param name="ticketModel">The current ticket information.</param>
+            <returns>A status string.</returns>
+        </member>
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.MessagingExtensionTicketsCard.GetTicketClosedDate(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity)">
+            <summary>
+            Gets the closed date of the ticket.
+            </summary>
+            <param name="ticketModel">The current ticket information.</param>
+            <returns>The closed date of the ticket.</returns>
+        </member>
         <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.ResponseAdaptiveCard">
             <summary>
              This class process Response Card- Response by bot when user asks a question to bot.
@@ -310,21 +343,6 @@
             <param name="count">count for pagination.</param>
             <param name="skip">skip for pagination.</param>
             <returns><see cref="T:System.Threading.Tasks.Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension.FormatSubTextForThumbnailCard(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity,System.Boolean)">
-            <summary>
-            Format the text according to the card type which needs to be displayed.
-            </summary>
-            <param name="ticket">Ticket data to display.</param>
-            <param name="isPreview">to determine if the formatting is for preview or card.</param>
-            <returns>returns string which will be used in messaging extension.</returns>
-        </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension.GetSearchQueryString(Microsoft.Bot.Schema.Teams.MessagingExtensionQuery)">
-            <summary>
-            Returns query which the user has typed in message extension search.
-            </summary>
-            <param name="query">query typed by user in message extension.</param>
-            <returns> returns user typed query.</returns>
         </member>
         <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper">
             <summary>
@@ -570,6 +588,11 @@
               Looks up a localized string similar to Your request has been assigned to an expert. They will directly send you a chat message..
             </summary>
         </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AssignedToStatusValue">
+            <summary>
+              Looks up a localized string similar to Assigned to {0}.
+            </summary>
+        </member>
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.AssignStatusText">
             <summary>
               Looks up a localized string similar to Assign.
@@ -583,6 +606,11 @@
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ChatTextButton">
             <summary>
               Looks up a localized string similar to Chat with {0}.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ClosedByStatusValue">
+            <summary>
+              Looks up a localized string similar to Closed by {0}.
             </summary>
         </member>
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.ClosedFactTitle">

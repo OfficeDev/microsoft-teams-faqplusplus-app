@@ -9,13 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="MessagingExtension\**" />
-    <Content Remove="MessagingExtension\**" />
-    <EmbeddedResource Remove="MessagingExtension\**" />
-    <None Remove="MessagingExtension\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Microsoft.Teams.Apps.FAQPlusPlus.xml" />
   </ItemGroup>
 
@@ -60,11 +53,18 @@
     </Content>
   </ItemGroup>
 
-    <ItemGroup>
-      <EmbeddedResource Update="Properties\Resource.resx">
-        <Generator>PublicResXFileCodeGenerator</Generator>
-        <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resource.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>
