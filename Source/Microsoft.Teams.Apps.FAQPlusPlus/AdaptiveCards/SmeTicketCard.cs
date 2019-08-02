@@ -219,7 +219,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             }
             else
             {
-                return $"Closed by {ticketModel.AssignedToName}";
+                return $"Closed by {ticketModel.LastModifiedByName}";
             }
         }
 
