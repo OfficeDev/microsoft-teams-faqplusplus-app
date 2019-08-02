@@ -19,18 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [Key]
         [JsonProperty("TicketId")]
-        public string TicketId
-        {
-            get
-            {
-                return this.RowKey;
-            }
-
-            set
-            {
-                this.RowKey = value;
-            }
-        }
+        public string TicketId { get; set; }
 
         /// <summary>
         /// Gets or sets status of the ticket

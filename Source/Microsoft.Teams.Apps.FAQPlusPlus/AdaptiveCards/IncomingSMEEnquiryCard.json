@@ -73,18 +73,18 @@
         "body": [
           {
             "type": "Input.ChoiceSet",
-            "id": "statuscode",
+            "id": "action",
             "style": "compact",
             "isMultiSelect": false,
-            "value": "1",
+            "value": "AssignToSelf",
             "choices": [
               {
                 "title": "%assignStatusText%",
-                "value": "1"
+                "value": "AssignToSelf"
               },
               {
                 "title": "%closeStatusText%",
-                "value": "2"
+                "value": "Close"
               }
             ]
           }
@@ -93,7 +93,10 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "%submitButtonText%"
+            "title": "%submitButtonText%",
+            "data": {
+              "ticketId": "%ticketId%"
+            }
           }
         ],
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"

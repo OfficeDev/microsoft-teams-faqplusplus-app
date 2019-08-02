@@ -2,8 +2,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using Microsoft.Bot.Schema;
@@ -33,11 +34,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         {
             var thankYouAdaptiveCardTitleText = Resource.ThankYouAdaptiveCardTitleText;
             var thankYouAdaptiveCardContent = Resource.ThankYouAdaptiveCardContent;
+            var todaysDate = DateTime.Now.ToString("s") + "Z";
+            var closedDate = Resource.NonApplicableString;
 
             var variablesToValues = new Dictionary<string, string>()
             {
                 { "thankYouAdaptiveCardTitleText", thankYouAdaptiveCardTitleText },
                 { "thankYouAdaptiveCardContent", thankYouAdaptiveCardContent },
+                { "todaysDate", todaysDate },
+                { "closedDate", closedDate },
             };
 
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));

@@ -62,7 +62,6 @@
             "placeholder": "%descriptionPlaceholder%",
             "isMultiline": true
           }
-
         ],
         "actions": [
           {

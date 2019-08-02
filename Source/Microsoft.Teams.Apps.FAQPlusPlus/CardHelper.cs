@@ -2,10 +2,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods
+namespace Microsoft.Teams.Apps.FAQPlusPlus
 {
     using System.Collections.Generic;
-    using System.IO;
     using Microsoft.Bot.Schema;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;

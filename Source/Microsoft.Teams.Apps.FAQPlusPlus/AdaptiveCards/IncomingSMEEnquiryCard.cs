@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System;
     using System.Collections.Generic;
@@ -39,7 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         public static Attachment CreateAppFeedbackCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            SubmitUserRequestPayload userActivityPayload)
         {
             var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.AppFeedbackText);
             return GetCard(Resource.AppFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
@@ -55,26 +55,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         public static Attachment CreateResultFeedbackCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            SubmitUserRequestPayload userActivityPayload)
         {
             var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.ResultsFeedbackText);
             return GetCard(Resource.ResultsFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
-        }
-
-        /// <summary>
-        /// Create a card that represents a ticket.
-        /// </summary>
-        /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
-        /// <param name="userAccountDetails">Details of the user submitting the ticket.</param>
-        /// <param name="userActivityPayload">Payload from the ticket submission.</param>
-        /// <returns>The card as an attachment</returns>
-        public static Attachment CreateTicketCard(
-            string incomingTitleValue,
-            TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
-        {
-            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, userAccountDetails.Name, Resource.QuestionForExpertText);
-            return GetCard(Resource.QuestionForExpertText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload, true);
         }
 
         /// <summary>
@@ -86,14 +70,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         /// <param name="channelAccountDetails">Channel details to which bot post the user question.</param>
         /// <param name="userActivityPayload">User activity type:posting a feedback or asking a question to the expert.</param>
         /// <param name="isStatusAvailable">Flag value for status button- required only for ask an expert scenarios.</param>
+        /// <param name="ticketId">The ID of the new ticket.</param>
         /// <returns>The card JSON string.</returns>
         private static Attachment GetCard(
             string incomingTitleText,
             string incomingTitleValue,
             string incomingSubtitleText,
             TeamsChannelAccount channelAccountDetails,
-            UserActivity userActivityPayload,
-            bool isStatusAvailable = false)
+            SubmitUserRequestPayload userActivityPayload,
+            bool isStatusAvailable = false,
+            string ticketId = null)
         {
             // TODO: This should be cleaned up when we re-do the way that we construct the cards
             var incomingQuestionText = GetQuestionText(userActivityPayload);
@@ -134,6 +120,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                 variablesToValues.Add("notApplicable", Resource.NotApplicable);
                 variablesToValues.Add("statusFactTitle", Resource.StatusFactTitle);
                 variablesToValues.Add("openStatusValue", Resource.OpenStatusValue);
+                variablesToValues.Add("ticketId", ticketId);
                 return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
             }
 
@@ -143,7 +130,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(feedbackCardTemplate, variablesToValues));
         }
 
-        private static string GetQuestionText(UserActivity userActivityPayload)
+        private static string GetQuestionText(SubmitUserRequestPayload userActivityPayload)
         {
             if (!string.IsNullOrEmpty(userActivityPayload.QuestionForExpert))
             {
