@@ -10,15 +10,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
+    /// <summary>
+    /// Creates a user notification card from a ticket.
+    /// </summary>
     public class UserNotificationCard
     {
-        private readonly TicketEntity ticketModel;
+        private readonly TicketEntity ticket;
 
-        public UserNotificationCard(TicketEntity ticketModel)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserNotificationCard"/> class.
+        /// </summary>
+        /// <param name="ticket">The ticket to create a card from</param>
+        public UserNotificationCard(TicketEntity ticket)
         {
-            this.ticketModel = ticketModel;
+            this.ticket = ticket;
         }
 
+        /// <summary>
+        /// Returns a user notification card for the ticket.
+        /// </summary>
+        /// <param name="message">The status message to add to the card</param>
+        /// <returns>An adaptive card as an attachment</returns>
         public Attachment ToAttachment(string message)
         {
             var card = new AdaptiveCard("1.0")
@@ -42,27 +54,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Status:",
-                                Value = this.GetTicketStatus(this.ticketModel),
+                                Value = this.GetTicketStatus(this.ticket),
                             },
                             new AdaptiveFact
                             {
                                 Title = "Title:",
-                                Value = this.ticketModel.Title,
+                                Value = this.ticket.Title,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Description:",
-                                Value = this.ticketModel.Description,
+                                Value = this.ticket.Description,
                             },
                             new AdaptiveFact
                             {
                                 Title = "Created:",
-                                Value = "{{DATE(" + this.ticketModel.DateCreated.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + this.ticketModel.DateCreated.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}",
+                                Value = "{{DATE(" + this.ticket.DateCreated.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + this.ticket.DateCreated.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}",
                             },
                             new AdaptiveFact
                             {
                                 Title = "Closed:",
-                                Value = this.GetTicketClosedDate(this.ticketModel),
+                                Value = this.GetTicketClosedDate(this.ticket),
                             }
                         },
                     },

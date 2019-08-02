@@ -6,8 +6,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
 {
     /// <summary>
     /// This model class is responsible to model user activity with bot-
-    // asking a question or providing feedback on app or on results given by the bot to the user.
-    // </summary>
+    /// asking a question or providing feedback on app or on results given by the bot to the user.
+    /// </summary>
     public class SubmitUserRequestPayload
     {
         /// <summary>

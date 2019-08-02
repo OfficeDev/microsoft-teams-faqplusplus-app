@@ -20,6 +20,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         private readonly HttpClient httpClient;
         private readonly ConcurrentDictionary<string, QnAMaker> qnaMakerInstances;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QnAMakerFactory"/> class.
+        /// </summary>
+        /// <param name="configuration">App configuration</param>
         public QnAMakerFactory(IConfiguration configuration)
         {
             this.configuration = configuration;

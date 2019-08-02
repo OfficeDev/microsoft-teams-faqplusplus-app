@@ -13,6 +13,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Newtonsoft.Json;
 
+    /// <summary>
+    /// Represents an SME ticket.
+    /// </summary>
     public class SmeTicketCard
     {
         private readonly TicketEntity ticketModel;
