@@ -17,5 +17,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// Represents a ticket that requires no further action
         /// </summary>
         Closed = 1,
+
+        /// <summary>
+        /// Sentinel value
+        /// </summary>
+        MaxValue = Closed,
     }
 }
