@@ -11,6 +11,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Microsoft.Bot.Schema.Teams;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     ///  This class process sending a notification card to SME team-
@@ -31,10 +33,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         public static Attachment CreateAppFeedbackCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            SubmitUserRequestPayload userActivityPayload)
         {
             var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.AppFeedbackText);
             return GetCard(Resource.AppFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
+        }
+
+        /// <summary>
+        /// Create a card that represents ask an expert.
+        /// </summary>
+        /// <param name="incomingTitleValue">Actual title text entered by the user for the given scenario.</param>
+        /// <param name="userAccountDetails">Details of the user submitting the feedback.</param>
+        /// <param name="userActivityPayload">Payload from the feedback submission.</param>
+        /// <param name="ticketId">Ticket Id.</param>
+        /// <returns>The card as an attachment</returns>
+        public static Attachment CreateAskAnExpertCard(
+           string incomingTitleValue,
+           TeamsChannelAccount userAccountDetails,
+           SubmitUserRequestPayload userActivityPayload,
+           string ticketId)
+        {
+            var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, userAccountDetails.Name, Resource.AskAnExpertText1);
+            return GetCard(Resource.AskAnExpertText1, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload, true, ticketId);
         }
 
         /// <summary>
@@ -47,7 +67,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         public static Attachment CreateResultFeedbackCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            SubmitUserRequestPayload userActivityPayload)
         {
             var incomingSubtitleText = string.Format(Resource.IncomingFeedbackSubHeaderText, userAccountDetails.Name, Resource.ResultsFeedbackText);
             return GetCard(Resource.ResultsFeedbackText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload);
@@ -63,7 +83,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         public static Attachment CreateTicketCard(
             string incomingTitleValue,
             TeamsChannelAccount userAccountDetails,
-            UserActivity userActivityPayload)
+            SubmitUserRequestPayload userActivityPayload)
         {
             var incomingSubtitleText = string.Format(Resource.QuestionForExpertSubHeaderText, userAccountDetails.Name, Resource.QuestionForExpertText);
             return GetCard(Resource.QuestionForExpertText, incomingTitleValue, incomingSubtitleText, userAccountDetails, userActivityPayload, true);
@@ -78,14 +98,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <param name="channelAccountDetails">Channel details to which bot post the user question.</param>
         /// <param name="userActivityPayload">User activity type:posting a feedback or asking a question to the expert.</param>
         /// <param name="isStatusAvailable">Flag value for status button- required only for ask an expert scenarios.</param>
+        /// <param name="ticketId">The ID of the new ticket.</param>
         /// <returns>The card JSON string.</returns>
         public static Attachment GetCard(
             string incomingTitleText,
             string incomingTitleValue,
             string incomingSubtitleText,
             TeamsChannelAccount channelAccountDetails,
-            UserActivity userActivityPayload,
-            bool isStatusAvailable = false)
+            SubmitUserRequestPayload userActivityPayload,
+            bool isStatusAvailable = false,
+             string ticketId = null)
         {
             var incomingAnswerText = string.IsNullOrEmpty(userActivityPayload.SmeAnswer) ? Resource.NotApplicable : userActivityPayload.SmeAnswer;
             var userQuestion = string.IsNullOrEmpty(userActivityPayload.UserQuestion) ? Resource.NotApplicable : userActivityPayload.UserQuestion;
@@ -141,10 +163,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                         {
                             new AdaptiveChoiceSetInput
                             {
-                                Id = "statuscode",
+                                Id = "action",
                                 Style = AdaptiveChoiceInputStyle.Compact,
                                 IsMultiSelect = false,
-                                Value = "1",
+                                Value = "AssignToSelf",
                                 Choices = GetChoiceSetList()
                             }
                         },
@@ -152,7 +174,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                         {
                             new AdaptiveSubmitAction
                             {
-                                Title = Resource.SubmitButtonText
+                                Type = AdaptiveSubmitAction.TypeName,
+                                DataJson = JsonConvert.SerializeObject(new { TicketId = ticketId })
                             }
                         }
                     }
@@ -175,8 +198,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         {
             return new List<AdaptiveChoice>()
                    {
-                        CardHelper.GetChoiceSet(Resource.AssignStatusText, "1"),
-                       CardHelper.GetChoiceSet(Resource.CloseStatusText, "2")
+                        CardHelper.GetChoiceSet(Resource.AssignStatusText, "AssignToSelf"),
+                       CardHelper.GetChoiceSet(Resource.CloseStatusText, "Close")
                    };
         }
 
@@ -194,7 +217,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 };
         }
 
-        private static string GetQuestionText(UserActivity userActivityPayload)
+        private static string GetQuestionText(SubmitUserRequestPayload userActivityPayload)
         {
             if (!string.IsNullOrEmpty(userActivityPayload.QuestionForExpert))
             {

@@ -23,11 +23,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         {
             return new Attachment()
             {
-                ContentType = "application/vnd.microsoft.card.adaptive",
+                ContentType = AdaptiveCard.ContentType,
                 Content = JsonConvert.DeserializeObject<JObject>(cardBody),
             };
         }
 
+        /// <summary>
+        /// Common method for constructing adaptivefact  for adaptive cards.
+        /// </summary>
+        /// <param name="title">Title for the fact.</param>
+        /// <param name="value">Value for the fact.</param>
+        /// <returns>Constructed adaptive fact.</returns>
         public static AdaptiveFact GetAdaptiveFact(string title, string value)
         {
             return new AdaptiveFact()
@@ -37,6 +43,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             };
         }
 
+        /// <summary>
+        /// Common method for construction choiceset  for adaptive cards.
+        /// </summary>
+        /// <param name="title">Title for the choice.</param>
+        /// <param name="value">Value for the choice.</param>
+        /// <returns>Constructed adaptive fact.</returns>
         public static AdaptiveChoice GetChoiceSet(string title, string value)
         {
             return new AdaptiveChoice()

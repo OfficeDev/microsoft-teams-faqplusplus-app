@@ -17,7 +17,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
-    using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
@@ -295,7 +294,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
-                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
+
+                    // ToDo: smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
+                    smeTeamCard = IncomingSMEEnquiryCard.CreateAskAnExpertCard(payload.QuestionUserTitleText, userDetails, payload, newTicket.TicketId);
 
                     userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
                     break;
