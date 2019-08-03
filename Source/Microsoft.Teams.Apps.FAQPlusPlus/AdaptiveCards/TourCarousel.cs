@@ -54,26 +54,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>Card attachment as Json string.</returns>
         private static Attachment GetCard(string cardTitleText, string cardContentText, string carouselImage)
         {
-            AdaptiveCard tourCarouselCard = new AdaptiveCard("1.0");
-            tourCarouselCard.Body.Add(new AdaptiveTextBlock()
+            AdaptiveCard tourCarouselCard = new AdaptiveCard("1.0")
             {
-                Weight = AdaptiveTextWeight.Bolder,
-                Text = cardTitleText,
-                Wrap = true
-            });
-
-            tourCarouselCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Text = cardContentText,
-                Wrap = true
-            });
-
-            tourCarouselCard.Body.Add(new AdaptiveImage()
-            {
-                HorizontalAlignment = AdaptiveHorizontalAlignment.Center,
-                Url = new Uri(carouselImage),
-                Size = AdaptiveImageSize.Large
-            });
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = cardTitleText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Text = cardContentText,
+                        Wrap = true
+                    },
+                    new AdaptiveImage
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Center,
+                        Url = new Uri(carouselImage),
+                        Size = AdaptiveImageSize.Large
+                    }
+                }
+            };
             return CardHelper.GenerateCardAttachment(tourCarouselCard.ToJson());
         }
     }

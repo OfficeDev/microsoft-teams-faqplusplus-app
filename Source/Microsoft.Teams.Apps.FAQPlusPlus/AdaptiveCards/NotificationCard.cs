@@ -28,24 +28,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             question = string.IsNullOrEmpty(question) ? Resource.NotApplicable : question;
             var currentDateTime = DateTime.UtcNow.ToString(DateFormat);
 
-            AdaptiveCard userNotificationCard = new AdaptiveCard("1.0");
-            userNotificationCard.Body.Add(new AdaptiveTextBlock()
+            AdaptiveCard userNotificationCard = new AdaptiveCard("1.0")
             {
-                Weight = AdaptiveTextWeight.Bolder,
-                Text = Resource.NotificationCardTitleText,
-                Wrap = true
-            });
-
-            userNotificationCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Weight = AdaptiveTextWeight.Bolder,
-                Text = Resource.NotificationAdaptiveCardContent,
-                Spacing = AdaptiveSpacing.Small,
-                Wrap = true
-            });
-
-            var factSetList = GetFactSetList(userTitleValue, question, currentDateTime);
-            userNotificationCard.Body.Add(new AdaptiveFactSet() { Facts = factSetList });
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = Resource.NotificationCardTitleText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = Resource.NotificationAdaptiveCardContent,
+                        Spacing = AdaptiveSpacing.Small,
+                        Wrap = true
+                    },
+                    new AdaptiveFactSet
+                    {
+                        Facts = GetFactSetList(userTitleValue, question, currentDateTime)
+                    }
+                }
+            };
             return CardHelper.GenerateCardAttachment(userNotificationCard.ToJson());
         }
 

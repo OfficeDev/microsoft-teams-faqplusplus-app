@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
+    using System.Collections.Generic;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -23,36 +24,42 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         {
             var welcomeTeamCardTitleText = string.Format(Resource.WelcomeTeamCardTitleText, teamName);
             var welcomeTeamCardContent = string.Format(Resource.WelcomeTeamCardContent, botDisplayName, teamName);
-            AdaptiveCard teamWelcomeCard = new AdaptiveCard("1.0");
-            teamWelcomeCard.Body.Add(new AdaptiveTextBlock()
+            AdaptiveCard teamWelcomeCard = new AdaptiveCard("1.0")
             {
-                Weight = AdaptiveTextWeight.Bolder,
-                Size = AdaptiveTextSize.Medium,
-                Text = welcomeTeamCardTitleText,
-                Wrap = true
-            });
-
-            teamWelcomeCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Text = welcomeTeamCardContent,
-                Wrap = true
-            });
-
-            // Team- take a tour submit action.
-            teamWelcomeCard.Actions.Add(new AdaptiveSubmitAction()
-            {
-                Title = Resource.TakeATeamTourButtonText,
-                Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                     new
-                     {
-                         msteams = new
-                         {
-                             type = "messageBack",
-                             displayText = Resource.TakeATeamTourButtonText,
-                             text = "team tour"
-                         }
-                     })
-            });
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Size = AdaptiveTextSize.Medium,
+                        Text = welcomeTeamCardTitleText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Text = welcomeTeamCardContent,
+                        Wrap = true
+                    }
+                },
+                Actions = new List<AdaptiveAction>
+                {
+                    // Team- take a tour submit action.
+                    new AdaptiveSubmitAction
+                    {
+                        Title = Resource.TakeATeamTourButtonText,
+                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
+                            new
+                             {
+                                 msteams = new
+                                 {
+                                     type = "messageBack",
+                                     displayText = Resource.TakeATeamTourButtonText,
+                                     text = "team tour"
+                                 }
+                             })
+                    }
+                }
+            };
             return CardHelper.GenerateCardAttachment(teamWelcomeCard.ToJson());
         }
     }

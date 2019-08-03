@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -27,62 +28,65 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             var messageText2 = welcomeTextValues[3];
             var takeATourButtonText = welcomeTextValues[4];
 
-            AdaptiveCard userWelcomeCard = new AdaptiveCard("1.0");
-            userWelcomeCard.Body.Add(new AdaptiveTextBlock()
+            AdaptiveCard userWelcomeCard = new AdaptiveCard("1.0")
             {
-                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                Size = AdaptiveTextSize.Small,
-                Spacing = AdaptiveSpacing.Small,
-                Weight = AdaptiveTextWeight.Default,
-                Text = welcomeText1,
-                Wrap = true
-            });
-
-            userWelcomeCard.Body.Add(new AdaptiveTextBlock()
-            {
-                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                Size = AdaptiveTextSize.Small,
-                Spacing = AdaptiveSpacing.Small,
-                Weight = AdaptiveTextWeight.Default,
-                Text = messageText1,
-                Wrap = true
-            });
-
-            userWelcomeCard.Body.Add(new AdaptiveTextBlock()
-            {
-                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                Size = AdaptiveTextSize.Small,
-                Spacing = AdaptiveSpacing.None,
-                Weight = AdaptiveTextWeight.Default,
-                Text = welcomeCardBulletText,
-                Wrap = true
-            });
-
-            userWelcomeCard.Body.Add(new AdaptiveTextBlock()
-            {
-                HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                Size = AdaptiveTextSize.Small,
-                Spacing = AdaptiveSpacing.Small,
-                Weight = AdaptiveTextWeight.Default,
-                Text = messageText2,
-                Wrap = true
-            });
-
-            // User take a tour submit action.
-            userWelcomeCard.Actions.Add(new AdaptiveSubmitAction()
-            {
-                Title = takeATourButtonText,
-                Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                     new
-                     {
-                         msteams = new
-                         {
-                             type = "messageBack",
-                             displayText = takeATourButtonText,
-                             text = "take a tour"
-                         }
-                     })
-            });
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                        Size = AdaptiveTextSize.Small,
+                        Spacing = AdaptiveSpacing.Small,
+                        Weight = AdaptiveTextWeight.Default,
+                        Text = welcomeText1,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                        Size = AdaptiveTextSize.Small,
+                        Spacing = AdaptiveSpacing.Small,
+                        Weight = AdaptiveTextWeight.Default,
+                        Text = messageText1,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                        Size = AdaptiveTextSize.Small,
+                        Spacing = AdaptiveSpacing.None,
+                        Weight = AdaptiveTextWeight.Default,
+                        Text = welcomeCardBulletText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                        Size = AdaptiveTextSize.Small,
+                        Spacing = AdaptiveSpacing.Small,
+                        Weight = AdaptiveTextWeight.Default,
+                        Text = messageText2,
+                        Wrap = true
+                    }
+                },
+                Actions = new List<AdaptiveAction>
+                {
+                    new AdaptiveSubmitAction
+                    {
+                        Title = takeATourButtonText,
+                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
+                             new
+                             {
+                                 msteams = new
+                                 {
+                                     type = "messageBack",
+                                     displayText = takeATourButtonText,
+                                     text = "take a tour"
+                                 }
+                             })
+                    }
+                }
+            };
             return CardHelper.GenerateCardAttachment(userWelcomeCard.ToJson());
         }
     }

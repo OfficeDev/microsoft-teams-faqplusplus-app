@@ -79,7 +79,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <param name="userActivityPayload">User activity type:posting a feedback or asking a question to the expert.</param>
         /// <param name="isStatusAvailable">Flag value for status button- required only for ask an expert scenarios.</param>
         /// <returns>The card JSON string.</returns>
-        private static Attachment GetCard(
+        public static Attachment GetCard(
             string incomingTitleText,
             string incomingTitleValue,
             string incomingSubtitleText,
@@ -98,27 +98,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             var currentDateTime = DateTime.UtcNow.ToString(DateFormat);
 
             // Constructing adaptive card that is sent to Sme team.
-            AdaptiveCard incomingSmeCard = new AdaptiveCard("1.0");
-
-            incomingSmeCard.Body.Add(new AdaptiveTextBlock()
+            AdaptiveCard incomingSmeCard = new AdaptiveCard("1.0")
             {
-                Weight = AdaptiveTextWeight.Bolder,
-                Text = incomingTitleText,
-                Color = AdaptiveTextColor.Attention,
-                Size = AdaptiveTextSize.Medium
-            });
-
-            incomingSmeCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Text = incomingSubtitleText,
-                Wrap = true
-            });
-
-            incomingSmeCard.Actions.Add(new AdaptiveOpenUrlAction()
-            {
-                Title = chatTextButton,
-                UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={channelAccountDetails.Email}"
-            });
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = incomingTitleText,
+                        Color = AdaptiveTextColor.Attention,
+                        Size = AdaptiveTextSize.Medium
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Text = incomingSubtitleText,
+                        Wrap = true
+                    }
+                },
+                Actions = new List<AdaptiveAction>
+                {
+                    new AdaptiveOpenUrlAction
+                    {
+                        Title = chatTextButton,
+                        UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={channelAccountDetails.Email}"
+                    }
+                }
+            };
 
             // Calling GetFactSetList.
             var factSetList = GetFactSetList(incomingTitleValue, GetQuestionText(userActivityPayload), incomingAnswerText, userQuestion, currentDateTime);
@@ -128,26 +133,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             {
                 factSetList.Add(CardHelper.GetAdaptiveFact(Resource.ClosedFactTitle, Resource.NotApplicable));
 
-                AdaptiveCard showCard = new AdaptiveCard("1.0");
-                showCard.Title = Resource.ChangeStatusButtonText;
-                showCard.Body.Add(new AdaptiveChoiceSetInput()
+                AdaptiveShowCardAction showCard = new AdaptiveShowCardAction
                 {
-                    Id = "statuscode",
-                    Style = AdaptiveChoiceInputStyle.Compact,
-                    IsMultiSelect = false,
-                    Value = "1",
-                    Choices = GetChoiceSetList()
-                });
-
-                showCard.Actions.Add(new AdaptiveSubmitAction()
-                {
-                    Title = Resource.SubmitButtonText
-                });
-
+                    Card = new AdaptiveCard("1.0")
+                    {
+                        Body = new List<AdaptiveElement>
+                        {
+                            new AdaptiveChoiceSetInput
+                            {
+                                Id = "statuscode",
+                                Style = AdaptiveChoiceInputStyle.Compact,
+                                IsMultiSelect = false,
+                                Value = "1",
+                                Choices = GetChoiceSetList()
+                            }
+                        },
+                        Actions = new List<AdaptiveAction>
+                        {
+                            new AdaptiveSubmitAction
+                            {
+                                Title = Resource.SubmitButtonText
+                            }
+                        }
+                    }
+                };
                 incomingSmeCard.Actions.Add(new AdaptiveShowCardAction()
                 {
-                    // Title = Resource.ChangeStatusButtonText,
-                    Card = showCard
+                    Title = Resource.ChangeStatusButtonText,
+                    Card = showCard.Card
                 });
                 incomingSmeCard.Body.Add(new AdaptiveFactSet() { Facts = factSetList });
                 return CardHelper.GenerateCardAttachment(incomingSmeCard.ToJson());

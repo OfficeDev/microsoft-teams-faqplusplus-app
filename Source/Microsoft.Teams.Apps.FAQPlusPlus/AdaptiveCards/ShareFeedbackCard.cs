@@ -20,76 +20,77 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>Feedback as an Attachment.</returns>
         public static Attachment GetCard()
         {
-            AdaptiveCard shareFeedbackCard = new AdaptiveCard("1.0");
-            shareFeedbackCard.Body.Add(new AdaptiveTextBlock()
+            AdaptiveCard shareFeedbackCard = new AdaptiveCard("1.0")
             {
-                Weight = AdaptiveTextWeight.Bolder,
-                Size = AdaptiveTextSize.Medium,
-                Text = Resource.FeedbackHeaderText,
-                Wrap = true
-            });
-
-            shareFeedbackCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Weight = AdaptiveTextWeight.Bolder,
-                Size = AdaptiveTextSize.Medium,
-                Text = Resource.FeedbackText1,
-                Wrap = true
-            });
-
-            shareFeedbackCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Weight = AdaptiveTextWeight.Bolder,
-                Size = AdaptiveTextSize.Medium,
-                Text = Resource.TitleText,
-                Wrap = true
-            });
-
-            shareFeedbackCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Weight = AdaptiveTextWeight.Bolder,
-                Size = AdaptiveTextSize.Medium,
-                Text = Resource.MandatoryFieldText,
-                Color = AdaptiveTextColor.Attention,
-                Spacing = AdaptiveSpacing.Small,
-                Wrap = true
-            });
-
-            shareFeedbackCard.Body.Add(new AdaptiveTextInput()
-            {
-                Id = "feedbackUserTitleText",
-                Placeholder = Resource.ShowCardTitleText,
-                IsMultiline = false
-            });
-
-            shareFeedbackCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Weight = AdaptiveTextWeight.Bolder,
-                Text = Resource.DescriptionText,
-                Wrap = true
-            });
-
-            shareFeedbackCard.Body.Add(new AdaptiveTextInput()
-            {
-                Id = "AppFeedback",
-                Placeholder = Resource.FeedbackDescriptionPlaceholderText,
-                IsMultiline = true
-            });
-
-            shareFeedbackCard.Actions.Add(new AdaptiveSubmitAction()
-            {
-                Title = Resource.ShareFeedbackButtonText,
-                Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                new
+                Body = new List<AdaptiveElement>
                 {
-                    msteams = new
+                    new AdaptiveTextBlock
                     {
-                        type = "messageBack",
-                        displayText = Resource.ShareFeedbackDisplayText,
-                        text = "AppFeedback"
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Size = AdaptiveTextSize.Medium,
+                        Text = Resource.FeedbackHeaderText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Size = AdaptiveTextSize.Medium,
+                        Text = Resource.FeedbackText1,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Size = AdaptiveTextSize.Medium,
+                        Text = Resource.TitleText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Size = AdaptiveTextSize.Medium,
+                        Text = Resource.MandatoryFieldText,
+                        Color = AdaptiveTextColor.Attention,
+                        Spacing = AdaptiveSpacing.Small,
+                        Wrap = true
+                    },
+                    new AdaptiveTextInput
+                    {
+                        Id = "feedbackUserTitleText",
+                        Placeholder = Resource.ShowCardTitleText,
+                        IsMultiline = false
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = Resource.DescriptionText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextInput
+                    {
+                        Id = "AppFeedback",
+                        Placeholder = Resource.FeedbackDescriptionPlaceholderText,
+                        IsMultiline = true
                     }
-                })
-            });
+                },
+                Actions = new List<AdaptiveAction>
+                {
+                    new AdaptiveSubmitAction
+                    {
+                        Title = Resource.ShareFeedbackButtonText,
+                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
+                        new
+                        {
+                            msteams = new
+                            {
+                                type = "messageBack",
+                                displayText = Resource.ShareFeedbackDisplayText,
+                                text = "AppFeedback"
+                            }
+                        })
+                    }
+                }
+            };
             return CardHelper.GenerateCardAttachment(shareFeedbackCard.ToJson());
         }
     }

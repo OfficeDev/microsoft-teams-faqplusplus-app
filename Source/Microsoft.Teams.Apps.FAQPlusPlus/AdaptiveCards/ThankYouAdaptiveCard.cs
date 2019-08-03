@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
+    using System.Collections.Generic;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -19,20 +20,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>The JSON string for the adaptive card.</returns>
         public static Attachment GetCard()
         {
-            AdaptiveCard thankYouCard = new AdaptiveCard("1.0");
-
-            thankYouCard.Body.Add(new AdaptiveTextBlock()
+            AdaptiveCard thankYouCard = new AdaptiveCard("1.0")
             {
-                Weight = AdaptiveTextWeight.Bolder,
-                Text = Resource.ThankYouAdaptiveCardTitleText,
-                Wrap = true
-            });
-            thankYouCard.Body.Add(new AdaptiveTextBlock()
-            {
-                Spacing = AdaptiveSpacing.Medium,
-                Text = Resource.ThankYouAdaptiveCardContent,
-                Wrap = true
-            });
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = Resource.ThankYouAdaptiveCardTitleText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Spacing = AdaptiveSpacing.Medium,
+                        Text = Resource.ThankYouAdaptiveCardContent,
+                        Wrap = true
+                    }
+                }
+            };
             return CardHelper.GenerateCardAttachment(thankYouCard.ToJson());
         }
     }

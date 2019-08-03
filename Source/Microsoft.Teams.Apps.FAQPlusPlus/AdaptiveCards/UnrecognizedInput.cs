@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
+    using System.Collections.Generic;
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -21,76 +22,82 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         public static Attachment GetCard(string question)
         {
             {
-                AdaptiveCard unrecognizedInputCard = new AdaptiveCard("1.0");
-                unrecognizedInputCard.Body.Add(new AdaptiveTextBlock()
+                AdaptiveCard unrecognizedInputCard = new AdaptiveCard("1.0")
                 {
-                    Text = Resource.CustomMessage,
-                    Wrap = true
-                });
-
-                // Ask an expert show card
-                AdaptiveCard askAnExpertShowCard = new AdaptiveCard("1.0");
-                askAnExpertShowCard.Title = Resource.AskAnExpertButtonText;
-
-                askAnExpertShowCard.Body.Add(new AdaptiveTextBlock()
-                {
-                    Weight = AdaptiveTextWeight.Bolder,
-                    Text = Resource.TitleText,
-                    Wrap = true
-                });
-
-                askAnExpertShowCard.Body.Add(new AdaptiveTextBlock()
-                {
-                    Weight = AdaptiveTextWeight.Bolder,
-                    Size = AdaptiveTextSize.Medium,
-                    Text = Resource.MandatoryFieldText,
-                    Color = AdaptiveTextColor.Attention,
-                    Spacing = AdaptiveSpacing.Small,
-                    Wrap = true
-                });
-
-                askAnExpertShowCard.Body.Add(new AdaptiveTextInput()
-                {
-                    Placeholder = Resource.ShowCardTitleText,
-                    Id = "questionUserTitleText",
-                    IsMultiline = false
-                });
-
-                askAnExpertShowCard.Body.Add(new AdaptiveTextBlock()
-                {
-                    Weight = AdaptiveTextWeight.Bolder,
-                    Text = Resource.DescriptionText,
-                    Wrap = true
-                });
-
-                askAnExpertShowCard.Body.Add(new AdaptiveTextInput()
-                {
-                    Id = "questionForExpert",
-                    Value = question,
-                    IsMultiline = true
-                });
-
-                askAnExpertShowCard.Actions.Add(new AdaptiveSubmitAction()
-                {
-                    Title = Resource.SubmitButtonText,
-                    Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                    new
+                    Body = new List<AdaptiveElement>
                     {
-                        msteams = new
+                        new AdaptiveTextBlock
                         {
-                            type = "messageBack",
-                            displayText = Resource.AskAnExpertDisplayText,
-                            text = "QuestionForExpert"
-                        },
-                        UserQuestion = question,
-                    })
-                });
+                            Text = Resource.CustomMessage,
+                            Wrap = true
+                        }
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveShowCardAction
+                        {
+                            Title = Resource.AskAnExpertButtonText,
+                            Card = new AdaptiveCard("1.0")
+                            {
+                                Body = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Weight = AdaptiveTextWeight.Bolder,
+                                        Text = Resource.TitleText,
+                                        Wrap = true
+                                    },
+                                    new AdaptiveTextBlock
+                                    {
+                                        Weight = AdaptiveTextWeight.Bolder,
+                                        Size = AdaptiveTextSize.Medium,
+                                        Text = Resource.MandatoryFieldText,
+                                        Color = AdaptiveTextColor.Attention,
+                                        Spacing = AdaptiveSpacing.Small,
+                                        Wrap = true
+                                    },
+                                    new AdaptiveTextInput
+                                    {
+                                        Placeholder = Resource.ShowCardTitleText,
+                                        Id = "questionUserTitleText",
+                                        IsMultiline = false
+                                    },
+                                    new AdaptiveTextBlock
+                                    {
+                                        Weight = AdaptiveTextWeight.Bolder,
+                                        Text = Resource.DescriptionText,
+                                        Wrap = true
+                                    },
+                                    new AdaptiveTextInput
+                                    {
+                                        Id = "questionForExpert",
+                                        Value = question,
+                                        IsMultiline = true
+                                    }
+                                },
+                                Actions = new List<AdaptiveAction>
+                                {
+                                    new AdaptiveSubmitAction
+                                    {
+                                        Title = Resource.SubmitButtonText,
+                                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
+                                        new
+                                        {
+                                            msteams = new
+                                            {
+                                                type = "messageBack",
+                                                displayText = Resource.AskAnExpertDisplayText,
+                                                text = "QuestionForExpert"
+                                            },
+                                            UserQuestion = question,
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
 
-                unrecognizedInputCard.Actions.Add(new AdaptiveShowCardAction()
-                {
-                    Title = Resource.AskAnExpertButtonText,
-                    Card = askAnExpertShowCard
-                });
                 return CardHelper.GenerateCardAttachment(unrecognizedInputCard.ToJson());
             }
         }
