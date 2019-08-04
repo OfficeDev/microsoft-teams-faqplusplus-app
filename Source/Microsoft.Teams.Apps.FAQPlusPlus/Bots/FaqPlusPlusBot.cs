@@ -294,11 +294,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
-
-                    // ToDo: smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
-                    smeTeamCard = IncomingSMEEnquiryCard.CreateAskAnExpertCard(payload.QuestionUserTitleText, userDetails, payload, newTicket.TicketId);
-
-                    userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
+                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(SubmitUserRequestPayload.QuestionForExpertAction);
+                    userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationAdaptiveCardContent);
                     break;
 
                 case SubmitUserRequestPayload.AppFeedbackAction:

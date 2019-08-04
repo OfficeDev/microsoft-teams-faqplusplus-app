@@ -14,10 +14,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Represents an SME ticket.
+    /// Represents an SME ticket used for both in place card update activity within Sme channel
+    /// when changing the ticket status and notification card when bot posts user question to Sme channel.
     /// </summary>
     public class SmeTicketCard
     {
+        private const string DateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
+        private const string Ellipsis = "...";
         private readonly TicketEntity ticket;
 
         /// <summary>
@@ -32,13 +35,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <summary>
         /// Method to generate the adaptive card.
         /// </summary>
+        /// <param name="questionForExpert">When user activity is question for expert.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
-        public Attachment ToAttachment()
+        public Attachment ToAttachment(string questionForExpert = null)
         {
+            var ticketCreatedDate = this.ticket.DateCreated.ToString(DateFormat);
+            var title = new AdaptiveTextBlock
+            {
+                Weight = AdaptiveTextWeight.Bolder,
+                Text = Resource.AskAnExpertText1,
+                Color = AdaptiveTextColor.Attention,
+                Size = AdaptiveTextSize.Medium
+            };
+            if (this.ticket.KnowledgeBaseAnswer != null && this.ticket.KnowledgeBaseAnswer.Length > 500)
+            {
+                this.ticket.KnowledgeBaseAnswer = this.ticket.KnowledgeBaseAnswer.Substring(0, 500) + Ellipsis;
+            }
+
             var card = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
                 {
+                    questionForExpert == SubmitUserRequestPayload.QuestionForExpertAction ? title : new AdaptiveTextBlock(),
                     new AdaptiveTextBlock
                     {
                         Text = this.ticket.RequesterName != null ?
@@ -53,7 +71,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Status:",
-                                Value = this.GetTicketStatus(this.ticket),
+                                Value = CardHelper.GetTicketStatus(this.ticket),
                             },
                             new AdaptiveFact
                             {
@@ -63,27 +81,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Description:",
-                                Value = this.ticket.Description,
+                                Value = CardHelper.GetDescriptionText(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {
                                 Title = "Knowledge Base Entry:",
-                                Value = this.ticket.KnowledgeBaseAnswer,
+                                Value = this.GetKbAnswer(),
                             },
                             new AdaptiveFact
                             {
                                 Title = "Question asked:",
-                                Value = this.ticket.UserQuestion,
+                                Value = this.GetUserQuestion(),
                             },
                             new AdaptiveFact
                             {
                                 Title = "Created:",
-                                Value = this.ticket.DateCreated.ToString("D"),
+                                Value = "{{DATE(" + ticketCreatedDate + ", SHORT)}} {{TIME(" + ticketCreatedDate + ")}}"
                             },
                             new AdaptiveFact
                             {
                                 Title = "Closed:",
-                                Value = this.GetTicketClosedDate(this.ticket),
+                                Value = CardHelper.GetTicketClosedDate(this.ticket),
                             }
                         },
                     },
@@ -111,7 +129,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                     DataJson = JsonConvert.SerializeObject(new ChangeTicketStatusPayload { TicketId = this.ticket.TicketId })
                                 }
                             },
-                        },
+                        }
                     },
                 },
             };
@@ -121,6 +139,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
             };
+        }
+
+        private string GetKbAnswer()
+        {
+            return !string.IsNullOrEmpty(this.ticket.KnowledgeBaseAnswer) ? this.ticket.KnowledgeBaseAnswer : Resource.NonApplicableString;
+        }
+
+        private string GetUserQuestion()
+        {
+            return !string.IsNullOrEmpty(this.ticket.UserQuestion) ? this.ticket.UserQuestion : Resource.NonApplicableString;
         }
 
         private AdaptiveElement GetAdaptiveInputSet(TicketEntity ticket)
@@ -202,41 +230,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             }
 
             return adaptiveChoices;
-        }
-
-        /// <summary>
-        /// Gets the ticket status currently.
-        /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
-        /// <returns>A status string.</returns>
-        private string GetTicketStatus(TicketEntity ticket)
-        {
-            if (ticket.Status == (int)TicketState.Open)
-            {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ? "Open" : $"Assigned to {ticket.AssignedToName}";
-            }
-            else
-            {
-                return $"Closed by {ticket.LastModifiedByName}";
-            }
-        }
-
-        /// <summary>
-        /// Gets the closed date of the ticket.
-        /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
-        /// <returns>The closed date of the ticket.</returns>
-        private string GetTicketClosedDate(TicketEntity ticket)
-        {
-            if (ticket.Status == (int)TicketState.Closed)
-            {
-                var dateClosed = ticket.DateClosed.Value;
-                return "{{DATE(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}";
-            }
-            else
-            {
-                return Resource.NotApplicable;
-            }
         }
     }
 }

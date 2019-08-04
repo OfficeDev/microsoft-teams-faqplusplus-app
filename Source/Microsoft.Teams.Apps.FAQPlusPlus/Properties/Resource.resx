@@ -313,10 +313,6 @@
     <value>Ask an expert</value>
     <comment>Ask an expert display text: text sent to the bot when ask an expert button is clicked.</comment>
   </data>
-  <data name="NotApplicable" xml:space="preserve">
-    <value>N/A</value>
-    <comment>Not applicable is used in scenarios like- ask an expert or share app feedback bot menu command where there is no question and answer from QnA service and to reflect the same in respective fields N/A is used.</comment>
-  </data>
   <data name="ShareFeedbackDisplayText" xml:space="preserve">
     <value>Share feedback</value>
     <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
@@ -347,6 +343,7 @@
   </data>
   <data name="NonApplicableString" xml:space="preserve">
     <value>N/A</value>
+    <comment>Not applicable is used in scenarios like- ask an expert or share app feedback bot menu command where there is no question and answer from QnA service and to reflect the same in respective fields N/A is used.</comment>
   </data>
   <data name="AssignedTicketUserNotification" xml:space="preserve">
     <value>Your request has been assigned to an expert. They will directly send you a chat message.</value>

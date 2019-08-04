@@ -6,6 +6,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
 {
     using global::AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -44,18 +46,48 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         }
 
         /// <summary>
-        /// Common method for construction choiceset  for adaptive cards.
+        /// Gets the closed date of the ticket.
         /// </summary>
-        /// <param name="title">Title for the choice.</param>
-        /// <param name="value">Value for the choice.</param>
-        /// <returns>Constructed adaptive fact.</returns>
-        public static AdaptiveChoice GetChoiceSet(string title, string value)
+        /// <param name="ticket">The current ticket information.</param>
+        /// <returns>The closed date of the ticket.</returns>
+        public static string GetTicketClosedDate(TicketEntity ticket)
         {
-            return new AdaptiveChoice()
+            if (ticket.Status == (int)TicketState.Closed)
             {
-                Title = title,
-                Value = value
-            };
+                var dateClosed = ticket.DateClosed.Value;
+                return "{{DATE(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}";
+            }
+            else
+            {
+                return Resource.NonApplicableString;
+            }
+        }
+
+        /// <summary>
+        /// Gets the ticket status currently.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <returns>A status string.</returns>
+        public static string GetTicketStatus(TicketEntity ticket)
+        {
+            if (ticket.Status == (int)TicketState.Open)
+            {
+                return string.IsNullOrEmpty(ticket.AssignedToName) ? "Open" : $"Assigned to {ticket.AssignedToName}";
+            }
+            else
+            {
+                return $"Closed by {ticket.LastModifiedByName}";
+            }
+        }
+
+        /// <summary>
+        /// Gets the user description text.
+        /// </summary>
+        /// <param name="ticketDescription">The current ticket information.</param>
+        /// <returns>A description string.</returns>
+        public static string GetDescriptionText(string ticketDescription)
+        {
+            return !string.IsNullOrWhiteSpace(ticketDescription) ? ticketDescription : Resource.NonApplicableString;
         }
     }
 }
