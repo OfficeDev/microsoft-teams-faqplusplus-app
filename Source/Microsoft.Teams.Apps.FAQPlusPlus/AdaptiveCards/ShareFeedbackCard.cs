@@ -10,7 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    ///  This class process a ShareFeedback Card function - A feature available in bot menu commands in 1:1 scope.
+    ///  This class process a Share feedback Card function - A feature available in bot menu commands in 1:1 scope.
     /// </summary>
     public class ShareFeedbackCard
     {

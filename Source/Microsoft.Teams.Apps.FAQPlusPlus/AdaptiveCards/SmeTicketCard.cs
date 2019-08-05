@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     /// </summary>
     public class SmeTicketCard
     {
-        private const string DateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
+        private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
         private const string Ellipsis = "...";
         private readonly TicketEntity ticket;
 
@@ -39,7 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>Returns the attachment that will be sent in a message.</returns>
         public Attachment ToAttachment(string questionForExpert = null)
         {
-            var ticketCreatedDate = this.ticket.DateCreated.ToString(DateFormat);
+            var ticketCreatedDate = this.ticket.DateCreated.ToLocalTime().ToString(DateFormat);
             var title = new AdaptiveTextBlock
             {
                 Weight = AdaptiveTextWeight.Bolder,
@@ -96,7 +96,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Created:",
-                                Value = "{{DATE(" + ticketCreatedDate + ", SHORT)}} {{TIME(" + ticketCreatedDate + ")}}"
+
+                                // We are using this format because DATE and TIME are not supported on mobile yet.
+                                Value = ticketCreatedDate
                             },
                             new AdaptiveFact
                             {

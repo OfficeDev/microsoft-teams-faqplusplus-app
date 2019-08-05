@@ -71,7 +71,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Created:",
-                                Value = this.ticketModel.DateCreated.ToString("D"),
+                                Value = this.ticketModel.DateCreated.ToLocalTime().ToString("ddd, MMM dd',' yyy hh':'mm tt"),
                             },
                             new AdaptiveFact
                             {

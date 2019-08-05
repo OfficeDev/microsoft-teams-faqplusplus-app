@@ -15,7 +15,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     /// </summary>
     public class UserNotificationCard
     {
-        private const string DateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
+        private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
         private readonly TicketEntity ticket;
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>An adaptive card as an attachment</returns>
         public Attachment ToAttachment(string message)
         {
-            var ticketCreatedDate = this.ticket.DateCreated.ToString(DateFormat);
+            var ticketCreatedDate = this.ticket.DateCreated.ToLocalTime().ToString(DateFormat);
             var card = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -71,7 +71,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Created:",
-                                Value = "{{DATE(" + ticketCreatedDate + ", SHORT)}} {{TIME(" + ticketCreatedDate + ")}}",
+
+                                // We are using this format because DATE and TIME are not supported on mobile yet.
+                                Value = ticketCreatedDate,
                             },
                             new AdaptiveFact
                             {

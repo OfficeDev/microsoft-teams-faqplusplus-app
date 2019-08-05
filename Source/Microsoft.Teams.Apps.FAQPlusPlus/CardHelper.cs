@@ -54,8 +54,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         {
             if (ticket.Status == (int)TicketState.Closed)
             {
-                var dateClosed = ticket.DateClosed.Value;
-                return "{{DATE(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}";
+                // We are using this format because DATE and TIME are not supported on mobile yet.
+                return ticket.DateClosed.Value.ToLocalTime().ToString("ddd, MMM dd',' yyy hh':'mm tt");
             }
             else
             {

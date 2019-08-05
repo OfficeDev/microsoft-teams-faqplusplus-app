@@ -18,7 +18,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     /// </summary>
     public class IncomingSMEEnquiryCard
     {
-        private const string DateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ssZ";
+        private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
         private const string Ellipsis = "...";
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 incomingAnswerText = incomingAnswerText.Substring(0, 500) + Ellipsis;
             }
 
-            var currentDateTime = DateTime.UtcNow.ToString(DateFormat);
+            var currentDateTime = DateTime.Now.ToLocalTime().ToString(DateFormat);
 
             // Constructing adaptive card that is sent to Sme team.
             AdaptiveCard incomingSmeCard = new AdaptiveCard("1.0")
@@ -139,7 +139,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     CardHelper.GetAdaptiveFact(Resource.DescriptionText, incomingQuestionText),
                     CardHelper.GetAdaptiveFact(Resource.KBEntryText, incomingAnswerText),
                     CardHelper.GetAdaptiveFact(Resource.QuestionText, userQuestion),
-                    CardHelper.GetAdaptiveFact(Resource.DateCreatedDisplayFactTitle, "{{DATE(" + currentDateTime + ", SHORT)}} at {{TIME(" + currentDateTime + ")}}"),
+
+                    // We are using this format because DATE and TIME are not supported on mobile yet.
+                    CardHelper.GetAdaptiveFact(Resource.DateCreatedDisplayFactTitle, currentDateTime),
                 };
         }
 

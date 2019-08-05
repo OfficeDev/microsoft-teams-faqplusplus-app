@@ -108,7 +108,7 @@
         </member>
         <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.ShareFeedbackCard">
             <summary>
-             This class process a ShareFeedback Card function - A feature available in bot menu commands in 1:1 scope.
+             This class process a Share feedback Card function - A feature available in bot menu commands in 1:1 scope.
             </summary>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards.ShareFeedbackCard.GetCard">
