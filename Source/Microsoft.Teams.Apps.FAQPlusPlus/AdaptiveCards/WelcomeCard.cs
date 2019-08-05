@@ -8,6 +8,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
     using System.IO;
     using System.Threading.Tasks;
     using Microsoft.Bot.Schema;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class process Welcome Card, when bot is installed by the user in personal scope.
@@ -31,17 +33,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
         {
             string[] welcomeTextValues = welcomeText.Split(';');
             var welcomeText1 = welcomeTextValues[0];
-            var welcomeText2 = welcomeTextValues[1];
-            var messageText1 = welcomeTextValues[2];
-            var bulletedList = welcomeTextValues[3];
-            var messageText2 = welcomeTextValues[4];
-            var takeATourButtonText = welcomeTextValues[5];
+            var messageText1 = welcomeTextValues[1];
+            var welcomeCardBulletText = welcomeTextValues[2];
+            var messageText2 = welcomeTextValues[3];
+            var takeATourButtonText = welcomeTextValues[4];
             var variablesToValues = new Dictionary<string, string>()
             {
                 { "welcomeText1", welcomeText1 },
-                { "welcomeText2", welcomeText2 },
                 { "messageText1", messageText1 },
-                { "bulletedList", bulletedList },
+                { "welcomeCardBulletText", welcomeCardBulletText },
                 { "messageText2", messageText2 },
                 { "takeATourButtonText", takeATourButtonText },
             };

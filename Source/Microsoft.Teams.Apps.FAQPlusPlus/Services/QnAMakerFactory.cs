@@ -5,6 +5,7 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
 {
     using System.Collections.Concurrent;
+    using System.Globalization;
     using System.Net.Http;
     using Microsoft.Bot.Builder.AI.QnA;
     using Microsoft.Bot.Configuration;
@@ -19,6 +20,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         private readonly HttpClient httpClient;
         private readonly ConcurrentDictionary<string, QnAMaker> qnaMakerInstances;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QnAMakerFactory"/> class.
+        /// </summary>
+        /// <param name="configuration">App configuration</param>
         public QnAMakerFactory(IConfiguration configuration)
         {
             this.configuration = configuration;
@@ -27,18 +32,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         }
 
         /// <inheritdoc/>
-        public QnAMaker GetQnAMaker(string knowledgeBaseId)
+        public QnAMaker GetQnAMaker(string knowledgeBaseId, string endpointKey)
         {
             return this.qnaMakerInstances.GetOrAdd(knowledgeBaseId, (kbId) =>
-                new QnAMaker(
-                    new QnAMakerService
-                    {
-                        KbId = kbId,
-                        EndpointKey = this.configuration["EndpointKey"],
-                        Hostname = this.configuration["KbHost"]
-                    },
-                    null,
-                    this.httpClient));
+            {
+                var serviceConfig = new QnAMakerService
+                {
+                    KbId = kbId,
+                    EndpointKey = endpointKey,
+                    Hostname = this.configuration["KbHost"]
+                };
+                var options = new QnAMakerOptions
+                {
+                    Top = 1,
+                    ScoreThreshold = float.Parse(this.configuration["ScoreThreshold"], CultureInfo.InvariantCulture),
+                };
+                return new QnAMaker(serviceConfig, options, this.httpClient);
+            });
         }
     }
 }

@@ -6,22 +6,34 @@
       "items": [
         {
           "type": "TextBlock",
-          "weight": "bolder",
+          "size": "Medium",
+          "weight": "Bolder",
           "text": "%thankYouAdaptiveCardTitleText%",
-          "wrap": true
-        },
-        {
-          "type": "Image",
-          "horizontalAlignment": "Center",
-          "spacing": "small",
-          "url": "%cardImageUrl%",
-          "size": "large"
+          "separator": true,
+          "color": "Attention"
         },
         {
           "type": "TextBlock",
           "text": "%thankYouAdaptiveCardContent%",
-          "spacing": "medium",
+          "spacing": "Medium",
           "wrap": true
+        },
+        {
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "Created:",
+              "value": "{{DATE(%todaysDate%, SHORT)}}"
+            },
+            {
+              "title": "Closed:",
+              "value": "%closedDate%"
+            },
+            {
+              "title": "Status:",
+              "value": "Open"
+            }
+          ]
         }
       ]
     }

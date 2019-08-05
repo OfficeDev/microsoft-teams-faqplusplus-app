@@ -5,25 +5,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
+    using System.Globalization;
     using System.Threading.Tasks;
+    using System.Web;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
+    using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
     using Newtonsoft.Json;
 
     /// <summary>
-    ///  This Class will be invoked by m essage extenion bot and will return result which will
-    ///  be used for populating message extension
+    /// Implements the logic of the messaging extension for FAQ++
     /// </summary>
     public class MessagingExtension
     {
-        private const int TextTrimLengthForCard = 10;
-        private const string ManifestExtensionParameter = "searchText"; // searchText is the parameter name in the manifest file
+        private const int TextTrimLengthForThumbnailCard = 45;
+        private const string SearchTextParameterName = "searchText";        // parameter name in the manifest file
+
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
 
@@ -42,7 +45,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// Based on type of activity return the search results or error result.
         /// </summary>
         /// <param name="turnContext">turnContext for messaging extension.</param>
-        /// <returns><see cref="Task"/> returns invokeresponse which will be used for providing the search result.</returns>
+        /// <returns><see cref="Task"/> that returns an <see cref="InvokeResponse"/> with search results, or null to ignore the activity.</returns>
         public async Task<InvokeResponse> HandleMessagingExtensionQueryAsync(ITurnContext<IInvokeActivity> turnContext)
         {
             try
@@ -56,7 +59,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         Body = new MessagingExtensionResponse
                         {
-                            ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
+                            ComposeExtension = await this.GetSearchResultAsync(searchQuery,  messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
                         },
                         Status = 200,
                     };
@@ -67,16 +70,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     return response;
                 }
             }
-            catch (Exception error)
+            catch (Exception ex)
             {
-                this.telemetryClient.TrackTrace($"Failed to compose a list for messaging extension: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
-                this.telemetryClient.TrackException(error);
+                this.telemetryClient.TrackTrace($"Failed to handle the ME command {turnContext.Activity.Name}: {ex.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(ex);
                 throw;
             }
         }
 
         /// <summary>
-        /// Get the results from Azure search service and populate the preview as well as card.
+        /// Get the results from Azure search service and populate the result (card + preview).
         /// </summary>
         /// <param name="query">query which the user had typed in message extension search.</param>
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
@@ -92,7 +95,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 Attachments = new List<MessagingExtensionAttachment>(),
             };
 
-            IList<TicketEntity> searchServiceResults = null;
+            IList<TicketEntity> searchServiceResults = new List<TicketEntity>();
+
+            // Enable prefix matches
+            query = (query ?? string.Empty) + "*";
 
             // commandId should be equal to Id mentioned in Manifest file under composeExtensions section
             switch (commandId)
@@ -110,77 +116,58 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
             }
 
-            foreach (var searchResult in searchServiceResults)
+            foreach (var ticket in searchServiceResults)
             {
-                var formattedResultTextForPreview = this.FormatSubTextForThumbnailCard(searchResult, true);
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
-                    Title = searchResult.AssignedTo,
-                    Text = formattedResultTextForPreview,
+                    Title = ticket.Title,
+                    Text = this.GetPreviewCardText(ticket),
                 };
 
-                var formattedResultTextForCard = this.FormatSubTextForThumbnailCard(searchResult, false);
-                ThumbnailCard card = new ThumbnailCard
-                {
-                    Title = searchResult.AssignedTo,
-                    Text = formattedResultTextForCard,
-                };
-
-                composeExtensionResult.Attachments.Add(card.ToAttachment().ToMessagingExtensionAttachment(previewCard.ToAttachment()));
+                var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
+                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment().ToMessagingExtensionAttachment(previewCard.ToAttachment()));
             }
 
             return composeExtensionResult;
         }
 
-        /// <summary>
-        /// This will format the text according to the card type which needs to be displayed in messaging extension.
-        /// </summary>
-        /// <param name="searchResult">searchResult from Azure search service.</param>
-        /// <param name="isPreview">to determine if the formatting is for preview or card.</param>
-        /// <returns>returns string which will be used in messaging extension.</returns>
-        private string FormatSubTextForThumbnailCard(TicketEntity searchResult, bool isPreview)
+        // Get the text for the preview card for the result
+        private string GetPreviewCardText(TicketEntity ticket)
         {
-            StringBuilder resultSubText = new StringBuilder();
-            if (!string.IsNullOrEmpty(searchResult.Text))
-            {
-                if (searchResult.Text.Length > TextTrimLengthForCard && isPreview)
-                {
-                    resultSubText.Append("Request: " + searchResult.Text.Substring(0, TextTrimLengthForCard) + "...");
-                }
-                else
-                {
-                    resultSubText.Append("Request: " + searchResult.Text);
-                }
-            }
-
-            if (searchResult.Status == (int)TicketState.Open)
-            {
-                resultSubText.Append(" | " + TicketState.Open);
-            }
-            else
-            {
-                resultSubText.Append(" | " + TicketState.Closed);
-            }
-
-            if (searchResult.DateCreated != null)
-            {
-                resultSubText.Append(" | " + searchResult.DateCreated);
-            }
-
-            return resultSubText.ToString();
+            var text = $@"
+<div>
+  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.DateCreated.ToShortDateString())} | {HttpUtility.HtmlEncode(this.GetDisplayStatus(ticket))}</div>
+  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.RequesterName)}</div>
+</div>";
+            return text.Trim();
         }
 
-        /// <summary>
-        /// Returns query which the user has typed in message extension search.
-        /// </summary>
-        /// <param name="query">query typed by user in message extension.</param>
-        /// <returns> returns user typed query.</returns>
+        // Construct the string to display for the status of the ticket
+        private string GetDisplayStatus(TicketEntity ticket)
+        {
+            switch (ticket.Status)
+            {
+                case (int)TicketState.Open:
+                    return string.IsNullOrEmpty(ticket.AssignedToName) ?
+                        Resource.OpenStatusValue :
+                        string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName);
+
+                case (int)TicketState.Closed:
+                    return string.Format(CultureInfo.CurrentCulture, Resource.ClosedByStatusValue, ticket.LastModifiedByName);
+
+                default:
+                    this.telemetryClient.TrackTrace($"Unknown ticket status {ticket.Status}", ApplicationInsights.DataContracts.SeverityLevel.Warning);
+                    return string.Empty;
+            }
+        }
+
+        // Get the value of the searchText parameter in the ME query
         private string GetSearchQueryString(MessagingExtensionQuery query)
         {
             string messageExtensionInputText = string.Empty;
             foreach (var parameter in query.Parameters)
             {
-                if (parameter.Name.Equals(ManifestExtensionParameter, StringComparison.OrdinalIgnoreCase))
+                if (parameter.Name.Equals(SearchTextParameterName, StringComparison.OrdinalIgnoreCase))
                 {
                     messageExtensionInputText = parameter.Value.ToString();
                     break;

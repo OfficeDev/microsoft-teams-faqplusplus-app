@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 {
     using System.Collections.Generic;
     using System.IO;
@@ -18,30 +18,36 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
 
         static ResponseAdaptiveCard()
         {
-            var cardJsonFilePath = Path.Combine(".",  "AdaptiveCards", "ResponseAdaptiveCard.json");
+            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "ResponseAdaptiveCard.json");
             CardTemplate = File.ReadAllText(cardJsonFilePath);
         }
 
         /// <summary>
         /// This method will construct the adaptive card as an Attachment using JSON template.
         /// </summary>
-        /// <param name="question">The question that the user asks the bot.</param>
+        /// <param name="question">Actual question from the QnA maker service.</param>
         /// <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
+        /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
         /// <returns>Card attachment as Json string.</returns>
-        public static Attachment GetCard(string question, string answer)
+        public static Attachment GetCard(string question, string answer, string userQuestion)
         {
-            var questionLineText = string.Format(Resource.QuestionLineText, question);
-            var answerLineText = string.Format(Resource.AnswerLineText, answer);
-
             var variablesToValues = new Dictionary<string, string>()
             {
-               { "questionLineText", questionLineText },
-               { "answerLineText", answerLineText },
-               { "resultQuestionText", question },
-               { "resultAnswerText", answer },
+               { "responseHeaderText", Resource.ResponseHeaderText },
+               { "questionLineText", question },
+               { "userQuestionText", userQuestion },
+               { "answerLineText", answer },
                { "askAnExpertButtonText",  Resource.AskAnExpertButtonText },
+               { "askAnExpertDisplayText", Resource.AskAnExpertDisplayText },
+               { "titleText", Resource.TitleText },
+               { "mandatoryFieldText", Resource.MandatoryFieldText },
+               { "showCardTitleText", Resource.ShowCardTitleText },
+               { "descriptionText", Resource.DescriptionText },
+               { "descriptionPlaceholder", Resource.AskAnExpertPlaceholderText },
+               { "resultQuestionText", question },
                { "submitButtonText",  Resource.SubmitButtonText },
-               { "shareResultsFeedbackButtonText", Resource.ShareFeedbackTitleText },
+               { "shareResultsFeedbackButtonText", Resource.ShareFeedbackButtonText },
+               { "shareFeedbackDisplayText", Resource.ShareFeedbackDisplayText },
                { "resultsFeedbackDetails", Resource.Resultsfeedbackdetails },
             };
             return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
