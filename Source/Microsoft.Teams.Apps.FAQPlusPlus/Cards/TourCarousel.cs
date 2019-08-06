@@ -1,12 +1,12 @@
 ﻿// <copyright file="TourCarousel.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
+    using System;
     using System.Collections.Generic;
-    using System.IO;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -14,14 +14,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     /// </summary>
     public class TourCarousel
     {
-        private static readonly string CardTemplate;
-
-        static TourCarousel()
-        {
-            var cardJsonFilePath = Path.Combine(".", "AdaptiveCards", "TourCarousel.json");
-            CardTemplate = File.ReadAllText(cardJsonFilePath);
-        }
-
         /// <summary>
         /// Create the set of cards that comprise the team tour carousel.
         /// </summary>
@@ -54,14 +46,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
 
         private static Attachment GetCard(string title, string text, string imageUri)
         {
-            var variablesToValues = new Dictionary<string, string>()
+            AdaptiveCard tourCarouselCard = new AdaptiveCard("1.0")
             {
-                { "cardTitleText", title },
-                { "cardContentText", text },
-                { "carouselImage", imageUri },
+                Body = new List<AdaptiveElement>
+                {
+                    new AdaptiveTextBlock
+                    {
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Text = title,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        Text = text,
+                        Wrap = true
+                    },
+                    new AdaptiveImage
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Center,
+                        Url = new Uri(imageUri),
+                        Size = AdaptiveImageSize.Large
+                    }
+                }
             };
-
-            return CardHelper.GenerateCardAttachment(CardHelper.GenerateCardBody(CardTemplate, variablesToValues));
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = tourCarouselCard,
+            };
         }
     }
 }

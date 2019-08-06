@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource {
@@ -106,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We have our experts to assist you better on any of your questions. You can always connect to our Experts..
+        ///   Looks up a localized string similar to If my answer isn&apos;t satisfactory, just let me know. I will connect you with our very capable experts!.
         /// </summary>
         public static string AskAnExpertText2 {
             get {
@@ -135,9 +135,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Assign.
         /// </summary>
-        public static string AssignStatusText {
+        public static string AssignStatusTitle {
             get {
-                return ResourceManager.GetString("AssignStatusText", resourceCulture);
+                return ResourceManager.GetString("AssignStatusTitle", resourceCulture);
             }
         }
         
@@ -196,7 +196,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I didn&apos;t find anything apt for your request. \n\n Do you want me to ask an expert?.
+        ///   Looks up a localized string similar to I didn&apos;t find anything apt for your request. Do you want me to ask an expert?.
         /// </summary>
         public static string CustomMessage {
             get {
@@ -241,7 +241,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to We would love to hear a feedback from you on how we are performing..
+        ///   Looks up a localized string similar to **{0}** is sharing feedback. Details as follows:.
+        /// </summary>
+        public static string FeedbackSubHeaderText {
+            get {
+                return ResourceManager.GetString("FeedbackSubHeaderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help me become better! Please share feedback on how I am doing so that my expert team can coach me to better help you..
         /// </summary>
         public static string FeedbackText1 {
             get {
@@ -259,7 +268,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I am your QnA bot, you can ask me a question and I will answer you back if I know the answer..
+        ///   Looks up a localized string similar to You can ask me a question by typing in the chat box below and I&apos;ll tell you what I know about it..
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -268,20 +277,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **{0}** is sharing feedback. Details as follows:.
-        /// </summary>
-        public static string IncomingFeedbackSubHeaderText {
-            get {
-                return ResourceManager.GetString("IncomingFeedbackSubHeaderText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Knowledge base entry:.
         /// </summary>
-        public static string KBEntryText {
+        public static string KBEntryFactTitle {
             get {
-                return ResourceManager.GetString("KBEntryText", resourceCulture);
+                return ResourceManager.GetString("KBEntryFactTitle", resourceCulture);
             }
         }
         
@@ -304,20 +304,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to N/A.
+        ///   Looks up a localized string similar to Your request below has been shared with the SME team. They will directly send you a chat message. .
         /// </summary>
-        public static string NotApplicable {
+        public static string NotificationCardContent {
             get {
-                return ResourceManager.GetString("NotApplicable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Your question has been shared with the SME team. They will directly send you a chat message. .
-        /// </summary>
-        public static string NotificationAdaptiveCardContent {
-            get {
-                return ResourceManager.GetString("NotificationAdaptiveCardContent", resourceCulture);
+                return ResourceManager.GetString("NotificationCardContent", resourceCulture);
             }
         }
         
@@ -333,9 +324,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
-        public static string OpenStatusValue {
+        public static string OpenStatusTitle {
             get {
-                return ResourceManager.GetString("OpenStatusValue", resourceCulture);
+                return ResourceManager.GetString("OpenStatusTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Question asked:.
+        /// </summary>
+        public static string QuestionAskedFactTitle {
+            get {
+                return ResourceManager.GetString("QuestionAskedFactTitle", resourceCulture);
             }
         }
         
@@ -363,15 +363,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string QuestionLineText {
             get {
                 return ResourceManager.GetString("QuestionLineText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Question asked:.
-        /// </summary>
-        public static string QuestionText {
-            get {
-                return ResourceManager.GetString("QuestionText", resourceCulture);
             }
         }
         
@@ -457,6 +448,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Everyone there is a new request coming in, please see the details below:.
+        /// </summary>
+        public static string SmeAttentionText {
+            get {
+                return ResourceManager.GetString("SmeAttentionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The request is now closed. Closed by {0}..
         /// </summary>
         public static string SMEClosedStatus {
@@ -502,7 +502,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to As an SME, you can initiate chat directly with the end user, by clicking on chat button..
+        ///   Looks up a localized string similar to Click chat with user button to initiate a direct chat..
         /// </summary>
         public static string TeamChatCardContent {
             get {
@@ -511,7 +511,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initiate chat with users.
+        ///   Looks up a localized string similar to Initiate chat with end users.
         /// </summary>
         public static string TeamChatHeaderText {
             get {
@@ -529,7 +529,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SME channel receives feedback from the users on the app performance or can ask a question to the SME channel..
+        ///   Looks up a localized string similar to You can see what users need help with.
         /// </summary>
         public static string TeamFunctionCardContent {
             get {
@@ -538,7 +538,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Notification from the users.
+        ///   Looks up a localized string similar to Receive notifications from end users.
         /// </summary>
         public static string TeamFunctionCardHeaderText {
             get {
@@ -547,7 +547,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can keep track of the user requests using the status assigned or closed..
+        ///   Looks up a localized string similar to Mark requests assigned or closed to keep track of queries..
         /// </summary>
         public static string TeamQueryCardContent {
             get {
@@ -565,20 +565,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thank you for your feedback.\n\n You are helping me become more helpful. I will share it with experts..
+        ///   Looks up a localized string similar to Thank you for your feedback. You are helping me become more helpful. I will share it with experts..
         /// </summary>
-        public static string ThankYouAdaptiveCardContent {
+        public static string ThankYouCardContent {
             get {
-                return ResourceManager.GetString("ThankYouAdaptiveCardContent", resourceCulture);
+                return ResourceManager.GetString("ThankYouCardContent", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Thank you!.
         /// </summary>
-        public static string ThankYouAdaptiveCardTitleText {
+        public static string ThankYouCardTitleText {
             get {
-                return ResourceManager.GetString("ThankYouAdaptiveCardTitleText", resourceCulture);
+                return ResourceManager.GetString("ThankYouCardTitleText", resourceCulture);
             }
         }
         

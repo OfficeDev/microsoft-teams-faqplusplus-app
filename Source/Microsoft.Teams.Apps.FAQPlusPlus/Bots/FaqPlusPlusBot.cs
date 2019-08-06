@@ -16,8 +16,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Bot.Connector.Authentication;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
-    using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
-    using Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
@@ -33,10 +32,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     public class FaqPlusPlusBot : ActivityHandler
     {
         // Commands supported by the bot
-        private const string TakeATour = "take a tour";
+        public const string TeamTour = "team tour";
+        public const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
-        private const string TeamTour = "team tour";
 
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
@@ -177,7 +176,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.telemetryClient.TrackTrace($"Bot added to 1:1 chat {activity.Conversation.Id}");
 
                 var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
+                var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText, TakeATour);
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
             }
         }
@@ -233,11 +232,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     var queryResult = await this.GetAnswerFromQnAMakerAsync(text, turnContext, cancellationToken);
                     if (queryResult != null)
                     {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseAdaptiveCard.GetCard(queryResult.Questions[0], queryResult.Answer, text)));
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ResponseCard.GetCard(queryResult.Questions[0], queryResult.Answer, text)));
                     }
                     else
                     {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInput.GetCard(text)));
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(UnrecognizedInputCard.GetCard(text)));
                     }
 
                     break;
@@ -266,7 +265,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 default:
                     this.telemetryClient.TrackTrace("Unrecognized input in channel");
-                    var unrecognizedInputCard = UnrecognizedTeamInput.GetCard();
+                    var unrecognizedInputCard = UnrecognizedTeamInputCard.GetCard();
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(unrecognizedInputCard));
                     break;
             }
@@ -295,23 +294,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
-                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment();
-
-                    userCard = NotificationCard.GetCard(payload.QuestionForExpert, payload.QuestionUserTitleText);
+                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp, true);
+                    userCard = new UserNotificationCard(newTicket).ToAttachment(message.LocalTimestamp, Resource.NotificationCardContent);
                     break;
 
                 case SubmitUserRequestPayload.AppFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
 
-                    smeTeamCard = IncomingSMEEnquiryCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload);
-                    userCard = ThankYouAdaptiveCard.GetCard();
+                    smeTeamCard = SmeFeedbackCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, turnContext.Activity.LocalTimestamp);
+                    userCard = ThankYouCard.GetCard();
                     break;
 
                 case SubmitUserRequestPayload.ResultsFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received feedback about an answer");
 
-                    smeTeamCard = IncomingSMEEnquiryCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload);
-                    userCard = ThankYouAdaptiveCard.GetCard();
+                    smeTeamCard = SmeFeedbackCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, turnContext.Activity.LocalTimestamp);
+                    userCard = ThankYouCard.GetCard();
                     break;
 
                 default:
@@ -398,7 +396,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 Id = ticket.SmeCardActivityId,
                 Conversation = new ConversationAccount { Id = ticket.SmeThreadConversationId },
-                Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment() },
+                Attachments = new List<Attachment> { new SmeTicketCard(ticket).ToAttachment(message.LocalTimestamp) },
             };
             var updateResponse = await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
             this.telemetryClient.TrackTrace($"Card for ticket {ticket.TicketId} updated to status ({ticket.Status}, {ticket.AssignedToObjectId}), activityId = {updateResponse.Id}");
@@ -411,21 +409,21 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case ChangeTicketStatusPayload.ReopenAction:
                     smeNotification = string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ReopenedTicketUserNotification));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(turnContext.Activity.LocalTimestamp, Resource.ReopenedTicketUserNotification));
                     userNotification.Summary = Resource.ReopenedTicketUserNotification;
                     break;
 
                 case ChangeTicketStatusPayload.CloseAction:
                     smeNotification = string.Format(Resource.SMEClosedStatus, ticket.LastModifiedByName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ClosedTicketUserNotification));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(turnContext.Activity.LocalTimestamp, Resource.ClosedTicketUserNotification));
                     userNotification.Summary = Resource.ClosedTicketUserNotification;
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
                     smeNotification = string.Format(Resource.SMEAssignedStatus, ticket.AssignedToName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.AssignedTicketUserNotification));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(turnContext.Activity.LocalTimestamp, Resource.AssignedTicketUserNotification));
                     userNotification.Summary = Resource.AssignedTicketUserNotification;
                     break;
             }
