@@ -2,10 +2,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
+    using System;
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -16,6 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     public class UserNotificationCard
     {
         private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
+
         private readonly TicketEntity ticket;
 
         /// <summary>
@@ -30,11 +32,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <summary>
         /// Returns a user notification card for the ticket.
         /// </summary>
+        /// <param name="localTimeStamp">Local time stamp of user activity.</param>
         /// <param name="message">The status message to add to the card</param>
         /// <returns>An adaptive card as an attachment</returns>
-        public Attachment ToAttachment(string message)
+        public Attachment ToAttachment(DateTimeOffset? localTimeStamp, string message)
         {
-            var ticketCreatedDate = this.ticket.DateCreated.ToLocalTime().ToString(DateFormat);
+            var ticketCreatedDate = CardHelper.GetLocalTimeStamp(localTimeStamp);
             var card = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -78,7 +81,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                             new AdaptiveFact
                             {
                                 Title = "Closed:",
-                                Value = CardHelper.GetTicketClosedDate(this.ticket),
+                                Value = CardHelper.GetTicketClosedDate(this.ticket, localTimeStamp),
                             }
                         },
                     },

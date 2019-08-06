@@ -12,7 +12,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
-    using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -149,7 +149,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 case (int)TicketState.Open:
                     return string.IsNullOrEmpty(ticket.AssignedToName) ?
-                        Resource.OpenStatusValue :
+                        Resource.SMEOpenedStatus :
                         string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName);
 
                 case (int)TicketState.Closed:

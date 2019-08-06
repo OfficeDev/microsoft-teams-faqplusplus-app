@@ -1,18 +1,19 @@
-﻿// <copyright file="UnrecognizedInput.cs" company="Microsoft">
+﻿// <copyright file="UnrecognizedInputCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class handles unrecognized input sent by the user-asking random question to bot.
     /// </summary>
-    public static class UnrecognizedInput
+    public static class UnrecognizedInputCard
     {
         /// <summary>
         /// This method will construct the adaptive card when unrecognized input is sent by the user.
@@ -49,8 +50,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                     },
                                     new AdaptiveTextBlock
                                     {
-                                        Weight = AdaptiveTextWeight.Bolder,
-                                        Size = AdaptiveTextSize.Medium,
                                         Text = Resource.MandatoryFieldText,
                                         Color = AdaptiveTextColor.Attention,
                                         Spacing = AdaptiveSpacing.Small,
@@ -59,7 +58,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                     new AdaptiveTextInput
                                     {
                                         Placeholder = Resource.ShowCardTitleText,
-                                        Id = "questionUserTitleText",
+                                        Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
                                         IsMultiline = false
                                     },
                                     new AdaptiveTextBlock
@@ -70,7 +69,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                     },
                                     new AdaptiveTextInput
                                     {
-                                        Id = "questionForExpert",
+                                        Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                                         Value = question,
                                         IsMultiline = true
                                     }
@@ -80,12 +79,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                     new AdaptiveSubmitAction
                                     {
                                         Title = Resource.SubmitButtonText,
-                                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                                        new
+                                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
                                         {
                                             msteams = new
                                             {
-                                                type = "messageBack",
+                                                type = ActionTypes.MessageBack,
                                                 displayText = Resource.AskAnExpertDisplayText,
                                                 text = "QuestionForExpert"
                                             },
@@ -98,7 +96,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     }
                 };
 
-                return CardHelper.GenerateCardAttachment(unrecognizedInputCard.ToJson());
+                return new Attachment
+                {
+                    ContentType = AdaptiveCard.ContentType,
+                    Content = unrecognizedInputCard,
+                };
             }
         }
     }

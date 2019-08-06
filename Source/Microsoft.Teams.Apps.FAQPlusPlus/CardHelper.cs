@@ -4,45 +4,27 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus
 {
-    using global::AdaptiveCards;
-    using Microsoft.Bot.Schema;
+    using System;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     /// <summary>
-    ///  This is a common class that builds adaptive card attachment.
+    ///  This is a card helper class used for  repetitive functions.
     /// </summary>
     public static class CardHelper
     {
-        /// <summary>
-        /// This method creates the card attachment using the Json.
-        /// </summary>
-        /// <param name="cardBody">Sends the adaptive card body as Json string.</param>
-        /// <returns>Card attachment as Json string.</returns>
-        public static Attachment GenerateCardAttachment(string cardBody)
-        {
-            return new Attachment()
-            {
-                ContentType = AdaptiveCard.ContentType,
-                Content = JsonConvert.DeserializeObject<JObject>(cardBody),
-            };
-        }
+        public const int KbAnswerMaxLength = 500;
+        private const string Ellipsis = "...";
+        private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
 
         /// <summary>
-        /// Common method for constructing adaptivefact  for adaptive cards.
+        /// Gets the shortened Kb answer limited 500 characters.
         /// </summary>
-        /// <param name="title">Title for the fact.</param>
-        /// <param name="value">Value for the fact.</param>
+        /// <param name="kbanswer">Answer from the KB.</param>
         /// <returns>Constructed adaptive fact.</returns>
-        public static AdaptiveFact GetAdaptiveFact(string title, string value)
+        public static string GetShortenedKbText(string kbanswer)
         {
-            return new AdaptiveFact()
-            {
-                Title = title,
-                Value = value
-            };
+            return kbanswer.Substring(0, KbAnswerMaxLength) + Ellipsis;
         }
 
         /// <summary>
@@ -50,12 +32,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>The closed date of the ticket.</returns>
-        public static string GetTicketClosedDate(TicketEntity ticket)
+        public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? localTimeStamp)
         {
             if (ticket.Status == (int)TicketState.Closed)
             {
                 // We are using this format because DATE and TIME are not supported on mobile yet.
-                return ticket.DateClosed.Value.ToLocalTime().ToString("ddd, MMM dd',' yyy hh':'mm tt");
+                return GetLocalTimeStamp(localTimeStamp);
             }
             else
             {
@@ -72,22 +54,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         {
             if (ticket.Status == (int)TicketState.Open)
             {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ? "Open" : $"Assigned to {ticket.AssignedToName}";
+                return string.IsNullOrEmpty(ticket.AssignedToName) ? Resource.OpenStatusTitle : string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
             }
             else
             {
-                return $"Closed by {ticket.LastModifiedByName}";
+                return string.Format(Resource.ClosedByStatusValue, ticket.LastModifiedByName);
             }
         }
 
         /// <summary>
-        /// Gets the user description text.
+        /// Gets local time stamp for the user activity.
         /// </summary>
         /// <param name="ticketDescription">The current ticket information.</param>
         /// <returns>A description string.</returns>
         public static string GetDescriptionText(string ticketDescription)
         {
             return !string.IsNullOrWhiteSpace(ticketDescription) ? ticketDescription : Resource.NonApplicableString;
+        }
+
+        /// <summary>
+        /// Gets the user description text.
+        /// </summary>
+        /// <param name="localTimeStamp">The current ticket information.</param>
+        /// <returns>A description string.</returns>
+        public static string GetLocalTimeStamp(DateTimeOffset? localTimeStamp)
+        {
+            return localTimeStamp.Value.ToString(DateFormat);
         }
     }
 }

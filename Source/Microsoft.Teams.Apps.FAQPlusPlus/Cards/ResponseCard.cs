@@ -1,21 +1,22 @@
-﻿// <copyright file="ResponseAdaptiveCard.cs" company="Microsoft">
+﻿// <copyright file="ResponseCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class process Response Card- Response by bot when user asks a question to bot.
     /// </summary>
-    public static class ResponseAdaptiveCard
+    public static class ResponseCard
     {
         /// <summary>
-        /// This method will construct the response card when user asks a question to Qna maker through bot.
+        /// This method will construct the response card when user asks a question to QnA maker through bot.
         /// </summary>
         /// <param name="question">Actual question from the QnA maker service.</param>
         /// <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
@@ -61,8 +62,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 },
                                 new AdaptiveTextBlock
                                 {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Size = AdaptiveTextSize.Medium,
                                     Text = Resource.MandatoryFieldText,
                                     Color = AdaptiveTextColor.Attention,
                                     Spacing = AdaptiveSpacing.Small,
@@ -71,7 +70,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 new AdaptiveTextInput
                                 {
                                     Placeholder = Resource.ShowCardTitleText,
-                                    Id = "questionUserTitleText",
+                                    Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
                                     IsMultiline = false
                                 },
                                 new AdaptiveTextBlock
@@ -82,7 +81,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 },
                                 new AdaptiveTextInput
                                 {
-                                    Id = "questionForExpert",
+                                    Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                                     Value = userQuestion,
                                     IsMultiline = true
                                 }
@@ -92,14 +91,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 new AdaptiveSubmitAction
                                 {
                                     Title = Resource.SubmitButtonText,
-                                    Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                                    new
+                                    Data = Newtonsoft.Json.Linq.JObject.FromObject(new
                                     {
                                         msteams = new
                                         {
-                                            type = "messageBack",
+                                            type = ActionTypes.MessageBack,
                                             displayText = Resource.AskAnExpertDisplayText,
-                                            text = "QuestionForExpert"
+                                            text = SubmitUserRequestPayload.QuestionForExpertAction
                                         },
                                         UserQuestion = userQuestion,
                                         SmeAnswer = answer
@@ -123,8 +121,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 },
                                 new AdaptiveTextBlock
                                 {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Size = AdaptiveTextSize.Medium,
                                     Text = Resource.MandatoryFieldText,
                                     Color = AdaptiveTextColor.Attention,
                                     Spacing = AdaptiveSpacing.Small,
@@ -133,7 +129,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 new AdaptiveTextInput
                                 {
                                     Placeholder = Resource.ShowCardTitleText,
-                                    Id = "feedbackUserTitleText",
+                                    Id = nameof(SubmitUserRequestPayload.FeedbackUserTitleText),
                                     IsMultiline = false
                                 },
                                 new AdaptiveTextBlock
@@ -144,7 +140,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 },
                                 new AdaptiveTextInput
                                 {
-                                    Id = "ResultsFeedback",
+                                    Id = nameof(SubmitUserRequestPayload.ResultsFeedback),
                                     IsMultiline = true,
                                     Placeholder = Resource.Resultsfeedbackdetails
                                 }
@@ -154,14 +150,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                                 new AdaptiveSubmitAction
                                 {
                                     Title = Resource.SubmitButtonText,
-                                    Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                                    new
+                                    Data = Newtonsoft.Json.Linq.JObject.FromObject(new
                                     {
                                         msteams = new
                                         {
-                                            type = "messageBack",
+                                            type = ActionTypes.MessageBack,
                                             displayText = Resource.ShareFeedbackDisplayText,
-                                            text = "ResultsFeedback"
+                                            text = SubmitUserRequestPayload.ResultsFeedbackAction
                                         },
                                         UserQuestion = userQuestion,
                                         SmeAnswer = answer
@@ -172,7 +167,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     }
                 }
             };
-            return CardHelper.GenerateCardAttachment(responseCard.ToJson());
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = responseCard,
+            };
         }
     }
 }

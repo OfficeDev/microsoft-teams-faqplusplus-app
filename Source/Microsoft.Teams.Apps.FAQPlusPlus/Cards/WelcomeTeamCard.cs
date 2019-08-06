@@ -2,11 +2,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -31,7 +32,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Size = AdaptiveTextSize.Medium,
                         Text = welcomeTeamCardTitleText,
                         Wrap = true
                     },
@@ -47,20 +47,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.TakeATeamTourButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                            new
+                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
                              {
                                  msteams = new
                                  {
-                                     type = "messageBack",
+                                     type = ActionTypes.MessageBack,
                                      displayText = Resource.TakeATeamTourButtonText,
-                                     text = "team tour"
+                                    text = FaqPlusPlusBot.TeamTour
                                  }
                              })
                     }
                 }
             };
-            return CardHelper.GenerateCardAttachment(teamWelcomeCard.ToJson());
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = teamWelcomeCard,
+            };
         }
     }
 }

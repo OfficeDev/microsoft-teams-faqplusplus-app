@@ -1,18 +1,18 @@
-﻿// <copyright file="ThankYouAdaptiveCard.cs" company="Microsoft">
+﻿// <copyright file="ThankYouCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     /// The class process Thank You adaptive card-upon bot posting user feedback to SME team.
     /// </summary>
-    public class ThankYouAdaptiveCard
+    public class ThankYouCard
     {
         /// <summary>
         /// This method will send thank you adaptive card to user upon posting feedback to SME team.
@@ -27,18 +27,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = Resource.ThankYouAdaptiveCardTitleText,
+                        Text = Resource.ThankYouCardTitleText,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
                         Spacing = AdaptiveSpacing.Medium,
-                        Text = Resource.ThankYouAdaptiveCardContent,
+                        Text = Resource.ThankYouCardContent,
                         Wrap = true
                     }
                 }
             };
-            return CardHelper.GenerateCardAttachment(thankYouCard.ToJson());
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = thankYouCard,
+            };
         }
     }
 }

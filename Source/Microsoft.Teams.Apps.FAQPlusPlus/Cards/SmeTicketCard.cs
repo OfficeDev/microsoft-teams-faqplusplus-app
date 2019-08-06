@@ -2,11 +2,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
@@ -14,13 +14,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
     using Newtonsoft.Json;
 
     /// <summary>
-    /// Represents an SME ticket used for both in place card update activity within Sme channel
-    /// when changing the ticket status and notification card when bot posts user question to Sme channel.
+    /// Represents an SME ticket used for both in place card update activity within SME channel
+    /// when changing the ticket status and notification card when bot posts user question to SME channel.
     /// </summary>
     public class SmeTicketCard
     {
-        private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
-        private const string Ellipsis = "...";
         private readonly TicketEntity ticket;
 
         /// <summary>
@@ -35,33 +33,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <summary>
         /// Method to generate the adaptive card.
         /// </summary>
-        /// <param name="questionForExpert">When user activity is question for expert.</param>
+        /// <param name="localTimeStamp">Local time stamp of the user activity.</param>
+        /// <param name="isQuestionForExpert"> Pass true when user activity is question for expert.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
-        public Attachment ToAttachment(string questionForExpert = null)
+        public Attachment ToAttachment(DateTimeOffset? localTimeStamp, bool isQuestionForExpert = false)
         {
-            var ticketCreatedDate = this.ticket.DateCreated.ToLocalTime().ToString(DateFormat);
-            var title = new AdaptiveTextBlock
+            var ticketCreatedDate = CardHelper.GetLocalTimeStamp(localTimeStamp);
+            var questionForExpertTitle = new AdaptiveTextBlock();
+            if (isQuestionForExpert)
             {
-                Weight = AdaptiveTextWeight.Bolder,
-                Text = Resource.AskAnExpertText1,
-                Color = AdaptiveTextColor.Attention,
-                Size = AdaptiveTextSize.Medium
-            };
-            if (this.ticket.KnowledgeBaseAnswer != null && this.ticket.KnowledgeBaseAnswer.Length > 500)
+                questionForExpertTitle.Weight = AdaptiveTextWeight.Bolder;
+                questionForExpertTitle.Text = Resource.AskAnExpertText1;
+                questionForExpertTitle.Color = AdaptiveTextColor.Attention;
+            }
+
+            if (this.ticket.KnowledgeBaseAnswer != null && this.ticket.KnowledgeBaseAnswer.Length > CardHelper.KbAnswerMaxLength)
             {
-                this.ticket.KnowledgeBaseAnswer = this.ticket.KnowledgeBaseAnswer.Substring(0, 500) + Ellipsis;
+                this.ticket.KnowledgeBaseAnswer = CardHelper.GetShortenedKbText(this.ticket.KnowledgeBaseAnswer);
             }
 
             var card = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
                 {
-                    questionForExpert == SubmitUserRequestPayload.QuestionForExpertAction ? title : new AdaptiveTextBlock(),
+                    questionForExpertTitle,
                     new AdaptiveTextBlock
                     {
                         Text = this.ticket.RequesterName != null ?
-                         string.Format("**{0}** is requesting support. Details as follows:", this.ticket.RequesterName) :
-                        "Everyone there is a new request coming in, please see the details below:",
+                         string.Format(Resource.QuestionForExpertSubHeaderText, this.ticket.RequesterName) :
+                        Resource.SmeAttentionText,
                         Wrap = true,
                     },
                     new AdaptiveFactSet
@@ -70,40 +70,40 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                         {
                             new AdaptiveFact
                             {
-                                Title = "Status:",
+                                Title = Resource.StatusFactTitle,
                                 Value = CardHelper.GetTicketStatus(this.ticket),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Title:",
+                                Title = Resource.TitleText,
                                 Value = this.ticket.Title,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Description:",
+                                Title = Resource.DescriptionText,
                                 Value = CardHelper.GetDescriptionText(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Knowledge Base Entry:",
+                                Title = Resource.KBEntryFactTitle,
                                 Value = this.GetKbAnswer(),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Question asked:",
+                                Title = Resource.QuestionAskedFactTitle,
                                 Value = this.GetUserQuestion(),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Created:",
+                                Title = Resource.DateCreatedDisplayFactTitle,
 
                                 // We are using this format because DATE and TIME are not supported on mobile yet.
                                 Value = ticketCreatedDate
                             },
                             new AdaptiveFact
                             {
-                                Title = "Closed:",
-                                Value = CardHelper.GetTicketClosedDate(this.ticket),
+                                Title = Resource.ClosedFactTitle,
+                                Value = CardHelper.GetTicketClosedDate(this.ticket, localTimeStamp),
                             }
                         },
                     },
@@ -112,12 +112,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 {
                     new AdaptiveOpenUrlAction
                     {
-                        Title = $"Chat with {this.ticket.RequesterGivenName}",
+                        Title = string.Format(Resource.ChatTextButton,this.ticket.RequesterGivenName),
                         Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticket.RequesterUserPrincipalName}"),
                     },
                     new AdaptiveShowCardAction
                     {
-                        Title = "Change status",
+                        Title = Resource.ChangeStatusButtonText,
                         Card = new AdaptiveCard("1.0")
                         {
                             Body = new List<AdaptiveElement>
@@ -168,12 +168,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     {
                         new AdaptiveChoice
                         {
-                            Title = "Assign",
+                            Title = Resource.AssignStatusTitle,
                             Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                         new AdaptiveChoice
                         {
-                            Title = "Closed",
+                            Title = Resource.ClosedFactTitle,
                             Value = ChangeTicketStatusPayload.CloseAction,
                         },
                     },
@@ -191,17 +191,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     {
                         new AdaptiveChoice
                         {
-                            Title = "Open",
+                            Title = Resource.OpenStatusTitle,
                             Value = ChangeTicketStatusPayload.ReopenAction,
                         },
                         new AdaptiveChoice
                         {
-                            Title = "Assign",
+                            Title = Resource.AssignStatusTitle,
                             Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                         new AdaptiveChoice
                         {
-                            Title = "Closed",
+                            Title = Resource.ClosedFactTitle,
                             Value = ChangeTicketStatusPayload.CloseAction,
                         },
                     },
@@ -219,12 +219,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     {
                         new AdaptiveChoice
                         {
-                            Title = "Open",
+                            Title = Resource.OpenStatusTitle,
                             Value = ChangeTicketStatusPayload.ReopenAction,
                         },
                         new AdaptiveChoice
                         {
-                            Title = "Assign",
+                            Title = Resource.AssignStatusTitle,
                             Value = ChangeTicketStatusPayload.AssignToSelfAction,
                         },
                     },

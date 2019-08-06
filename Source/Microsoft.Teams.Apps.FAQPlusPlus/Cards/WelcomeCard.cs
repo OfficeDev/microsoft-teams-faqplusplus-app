@@ -2,12 +2,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
 
     /// <summary>
     ///  This class process Welcome Card, when bot is installed by the user in personal scope.
@@ -18,8 +19,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// This method will construct the user welcome card when bot is added in personal scope.
         /// </summary>
         /// <param name="welcomeText">Gets welcome text.</param>
+        /// <param name="takeATour">User take a tour activity.</param>
         /// <returns>Card attachment as Json string.</returns>
-        public static async Task<Attachment> GetCard(string welcomeText)
+        public static async Task<Attachment> GetCard(string welcomeText, string takeATour)
         {
             string[] welcomeTextValues = welcomeText.Split(';');
             var welcomeText1 = welcomeTextValues[0];
@@ -74,20 +76,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveSubmitAction
                     {
                         Title = takeATourButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                             new
+                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
                              {
                                  msteams = new
                                  {
-                                     type = "messageBack",
+                                     type = ActionTypes.MessageBack,
                                      displayText = takeATourButtonText,
-                                     text = "take a tour"
+                                     text = FaqPlusPlusBot.TakeATour
                                  }
                              })
                     }
                 }
             };
-            return CardHelper.GenerateCardAttachment(userWelcomeCard.ToJson());
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = userWelcomeCard,
+            };
         }
     }
 }

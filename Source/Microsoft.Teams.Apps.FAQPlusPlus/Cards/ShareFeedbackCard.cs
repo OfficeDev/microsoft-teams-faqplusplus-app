@@ -2,11 +2,12 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -27,28 +28,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Size = AdaptiveTextSize.Medium,
                         Text = Resource.FeedbackHeaderText,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Size = AdaptiveTextSize.Medium,
                         Text = Resource.FeedbackText1,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Size = AdaptiveTextSize.Medium,
                         Text = Resource.TitleText,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
-                        Weight = AdaptiveTextWeight.Bolder,
-                        Size = AdaptiveTextSize.Medium,
                         Text = Resource.MandatoryFieldText,
                         Color = AdaptiveTextColor.Attention,
                         Spacing = AdaptiveSpacing.Small,
@@ -56,7 +52,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     },
                     new AdaptiveTextInput
                     {
-                        Id = "feedbackUserTitleText",
+                        Id = nameof(SubmitUserRequestPayload.FeedbackUserTitleText),
                         Placeholder = Resource.ShowCardTitleText,
                         IsMultiline = false
                     },
@@ -68,7 +64,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     },
                     new AdaptiveTextInput
                     {
-                        Id = "AppFeedback",
+                        Id = nameof(SubmitUserRequestPayload.AppFeedback),
                         Placeholder = Resource.FeedbackDescriptionPlaceholderText,
                         IsMultiline = true
                     }
@@ -78,20 +74,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.ShareFeedbackButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(
-                        new
+                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
                         {
                             msteams = new
                             {
-                                type = "messageBack",
+                                type = ActionTypes.MessageBack,
                                 displayText = Resource.ShareFeedbackDisplayText,
-                                text = "AppFeedback"
+                                text = SubmitUserRequestPayload.AppFeedbackAction
                             }
                         })
                     }
                 }
             };
-            return CardHelper.GenerateCardAttachment(shareFeedbackCard.ToJson());
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = shareFeedbackCard,
+            };
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿// <copyright file="TourCarousel.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -45,13 +44,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             };
         }
 
-        /// <summary>
-        /// This method will construct the tour card when user clicks on tour button both in personal and team scope.
-        /// </summary>
-        /// <param name="cardTitleText">Card Title Text.</param>
-        /// <param name="cardContentText">Title of the Card.</param>
-        /// <param name="carouselImage">Image for the Card.</param>
-        /// <returns>Card attachment as Json string.</returns>
         private static Attachment GetCard(string cardTitleText, string cardContentText, string carouselImage)
         {
             AdaptiveCard tourCarouselCard = new AdaptiveCard("1.0")
@@ -77,7 +69,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     }
                 }
             };
-            return CardHelper.GenerateCardAttachment(tourCarouselCard.ToJson());
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = tourCarouselCard,
+            };
         }
     }
 }
