@@ -11,6 +11,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     using Microsoft.Bot.Builder;
     using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Bot.Connector.Authentication;
+    using Microsoft.Bot.Schema;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
@@ -61,6 +62,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<MessagingExtension>();
+            services.AddSingleton<ConversationReference>();
+            services.AddSingleton<ConversationAccount>();
         }
 
         /// <summary>

@@ -6,12 +6,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
@@ -29,16 +32,41 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
+        private readonly IConfiguration configuration;
+        private readonly IBotFrameworkHttpAdapter adapter;
+        private readonly ConversationReference conversationReference;
+        private readonly Common.Providers.IConfigurationProvider configurationProvider;
+        private readonly ConversationAccount conversationAccount;
+
+        private string currentUserId;
+        private bool isUserPartOfRoster = false;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
         /// </summary>
         /// <param name="searchService">searchService DI.</param>
         /// <param name="telemetryClient">telemetryClient DI.</param>
-        public MessagingExtension(ISearchService searchService, TelemetryClient telemetryClient)
+        /// <param name="configuration">configuration DI.</param>
+        /// <param name="adapter">adapter DI.</param>
+        /// <param name="conversationReference">conversationReference DI.</param>
+        /// <param name="configurationProvider">configurationProvider DI.</param>
+        /// <param name="conversationAccount">conversationAccount DI.</param>
+        public MessagingExtension(
+            ISearchService searchService,
+            TelemetryClient telemetryClient,
+            IConfiguration configuration,
+            IBotFrameworkHttpAdapter adapter,
+            ConversationReference conversationReference,
+            Common.Providers.IConfigurationProvider configurationProvider,
+            ConversationAccount conversationAccount)
         {
             this.searchService = searchService;
             this.telemetryClient = telemetryClient;
+            this.configuration = configuration;
+            this.adapter = adapter;
+            this.conversationReference = conversationReference;
+            this.configurationProvider = configurationProvider;
+            this.conversationAccount = conversationAccount;
         }
 
         /// <summary>
@@ -52,17 +80,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 if (turnContext.Activity.Name == "composeExtension/query")
                 {
-                    var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContext.Activity.Value.ToString());
-                    var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
-
-                    return new InvokeResponse
+                    if (await this.IsValidSME(turnContext))
                     {
-                        Body = new MessagingExtensionResponse
+                        var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContext.Activity.Value.ToString());
+                        var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
+
+                        return new InvokeResponse
                         {
-                            ComposeExtension = await this.GetSearchResultAsync(searchQuery,  messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
-                        },
-                        Status = 200,
-                    };
+                            Body = new MessagingExtensionResponse
+                            {
+                                ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
+                            },
+                            Status = 200,
+                        };
+                    }
+                    else
+                    {
+                        return new InvokeResponse
+                        {
+                            Body = new MessagingExtensionResponse
+                            {
+                                ComposeExtension = new MessagingExtensionResult
+                                {
+                                    Text = "You don't have access to this app. Please contact your IT admin.",
+                                    Type = "message"
+                                },
+                            },
+                            Status = 200,
+                        };
+                    }
                 }
                 else
                 {
@@ -175,6 +221,43 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             return messageExtensionInputText;
+        }
+
+        // Check if user using the app is a valid SME or not
+        private async Task<bool> IsValidSME(ITurnContext<IInvokeActivity> turnContext)
+        {
+            var teamId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
+            this.conversationAccount.Id = teamId;
+            this.conversationReference.ServiceUrl = turnContext.Activity.ServiceUrl;
+            this.conversationReference.Conversation = this.conversationAccount;
+            this.currentUserId = turnContext.Activity.From.Id;
+            await ((BotFrameworkAdapter)this.adapter).ContinueConversationAsync(this.configuration["MicrosoftAppId"], this.conversationReference, this.BotCallback, default(CancellationToken));
+
+            return this.isUserPartOfRoster;
+        }
+
+        // BotCallback which will get members of the team and check if the SME is a already part of
+        // roster or not
+        private async Task BotCallback(ITurnContext turnContext, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var members = await ((BotFrameworkAdapter)this.adapter).GetConversationMembersAsync(turnContext, default(CancellationToken));
+
+                foreach (var member in members)
+                {
+                    if (member.Id.Equals(this.currentUserId))
+                    {
+                        this.isUserPartOfRoster = true;
+                    }
+                }
+            }
+            catch (Exception error)
+            {
+                this.telemetryClient.TrackTrace($"Bot is not installed into Teams {turnContext.Activity.Name}: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(error);
+                this.isUserPartOfRoster = false;
+            }
         }
     }
 }
