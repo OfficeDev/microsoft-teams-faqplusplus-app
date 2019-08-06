@@ -19,22 +19,41 @@
         {
           "type": "TextBlock",
           "text": "%incomingSubtitleText%",
-          "wrap": true
+          "wrap": true,
+          "value": "%dateCreatedValue%"
         },
         {
-          "type": "TextBlock",
-          "text": "%incomingQuestionText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
-          "text": "%incomingAnswerText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
-          "text": "%incomingFeedbackText%",
-          "wrap": true
+          "type": "FactSet",
+          "facts": [
+            {
+              "title": "%statusFactTitle%",
+              "value": "%openStatusValue%"
+            },
+            {
+              "title": "%titleText%",
+              "value": "%userTitleValue%"
+            },
+            {
+              "title": "%descriptionText%",
+              "value": "%incomingFeedbackText%"
+            },
+            {
+              "title": "%kbEntryText%",
+              "value": "%smeAnswer%"
+            },
+            {
+              "title": "%questionText%",
+              "value": "%userQuestionText%"
+            },
+            {
+              "title": "%dateCreatedDisplayFactTitle%",
+              "value": "{{DATE(%dateCreatedValue%, SHORT)}} {{TIME(%dateCreatedValue%)}}"
+            },
+            {
+              "title": "%closedFactTitle%",
+              "value": "%notApplicable%"
+            }
+          ]
         }
       ]
     }
@@ -47,29 +66,25 @@
     },
     {
       "type": "Action.ShowCard",
-      "title": "%statusShowCardHeader%",
+      "title": "%changeStatusButtonText%",
       "card": {
         "type": "AdaptiveCard",
         "style": "emphasis",
         "body": [
           {
             "type": "Input.ChoiceSet",
-            "id": "statuscode",
+            "id": "action",
             "style": "compact",
             "isMultiSelect": false,
-            "value": "1",
+            "value": "AssignToSelf",
             "choices": [
               {
-                "title": "%openStatusText%",
-                "value": "1"
-              },
-              {
                 "title": "%assignStatusText%",
-                "value": "2"
+                "value": "AssignToSelf"
               },
               {
                 "title": "%closeStatusText%",
-                "value": "3"
+                "value": "Close"
               }
             ]
           }
@@ -78,7 +93,10 @@
         "actions": [
           {
             "type": "Action.Submit",
-            "title": "%submitButtonText%"
+            "title": "%submitButtonText%",
+            "data": {
+              "ticketId": "%ticketId%"
+            }
           }
         ],
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"

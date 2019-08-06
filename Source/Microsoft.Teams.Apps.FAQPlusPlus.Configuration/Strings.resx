@@ -117,13 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="HelpTabTextToolTipHoverMessage" xml:space="preserve">
+    <value>Provide text which will be displayed in Help tab of the bot and then click on Ok to add or Edit to modify</value>
+    <comment>Message for help tab when information icon is hovered</comment>
+  </data>
   <data name="KnowledgeBaseToolTipHoverMessage" xml:space="preserve">
     <value>Provide a valid knowledgebase Id which will be used by bot and then click on Ok to add or Edit to modify</value>
     <comment>Message for knowledgebase Id when information icon is hovered</comment>
-  </data>
-  <data name="StaticTabToolTipHoverMessage" xml:space="preserve">
-    <value>Provide a static tab message which will be used in Help tab of the bot and then click on Ok to add or Edit to modify</value>
-    <comment>Message for static tab when information icon is hovered</comment>
   </data>
   <data name="TeamIdToolTipHoverMessage" xml:space="preserve">
     <value>Provide a team Id deeplink which will be used by bot and then click on Ok to add or Edit to modify</value>

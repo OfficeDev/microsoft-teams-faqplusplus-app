@@ -33,7 +33,7 @@
     </div>
     <div class="col-lg-12">
         <div class="col-lg-8">
-            @Html.Partial("~/Views/Home/_StaticTab.cshtml")
+            @Html.Partial("~/Views/Home/_HelpTab.cshtml")
         </div>
     </div>
 </div>
@@ -85,18 +85,18 @@
             }
         });
 
-        //Display static tab message text if its saved if yes then perform edit UI changes
+        //Display help tab message text if its saved if yes then perform edit UI changes
         $.ajax({
             type: "GET",
-            url: '@Url.Action("GetSavedStaticTabTextAsync")',
+            url: '@Url.Action("GetSavedHelpTabTextAsync")',
             success: function (result) {
-                if (result != "") {                //Display the default UI when no static tab text results are available for display
-                    $(".staticTabTextIdTextBox").val(result);
-                    toggleToEdit("staticTabText");
+                if (result != "") {                //Display the default UI when no help tab text results are available for display
+                    $(".helpTabTextIdTextBox").val(result);
+                    toggleToEdit("helpTabText");
                 }
             },
             error: function (error) {
-                saveFailureIconAndText("staticTabTextStorageStatusIcon", "staticTabTextStorageStatusMessage", "Unable to display static tab text due to HTTP: " + error.status + ", " + error.statusText);
+                saveFailureIconAndText("helpTabTextStorageStatusIcon", "helpTabTextStorageStatusMessage", "Unable to display help tab text due to HTTP: " + error.status + ", " + error.statusText);
             }
         });
     });

@@ -61,20 +61,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Provide text which will be displayed in Help tab of the bot and then click on Ok to add or Edit to modify.
+        /// </summary>
+        public static string HelpTabTextToolTipHoverMessage {
+            get {
+                return ResourceManager.GetString("HelpTabTextToolTipHoverMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provide a valid knowledgebase Id which will be used by bot and then click on Ok to add or Edit to modify.
         /// </summary>
         public static string KnowledgeBaseToolTipHoverMessage {
             get {
                 return ResourceManager.GetString("KnowledgeBaseToolTipHoverMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Provide a static tab message which will be used in Help tab of the bot and then click on Ok to add or Edit to modify.
-        /// </summary>
-        public static string StaticTabToolTipHoverMessage {
-            get {
-                return ResourceManager.GetString("StaticTabToolTipHoverMessage", resourceCulture);
             }
         }
         

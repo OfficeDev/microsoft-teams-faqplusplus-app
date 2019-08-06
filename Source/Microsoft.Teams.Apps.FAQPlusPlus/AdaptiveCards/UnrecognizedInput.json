@@ -6,16 +6,10 @@
       "items": [
         {
           "type": "TextBlock",
-          "text": "%questionLineText%",
-          "wrap": true
-        },
-        {
-          "type": "TextBlock",
           "text": "%customMessage%",
           "wrap": true
         }
 
-        
       ]
     }
   ],
@@ -28,17 +22,51 @@
         "style": "emphasis",
         "body": [
           {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%titleText%",
+            "wrap": true
+          },
+          {
+            "type": "TextBlock",
+            "weight": "default",
+            "text": "%mandatoryFieldText%",
+            "wrap": true,
+            "color": "Attention"
+          },
+          {
+            "type": "Input.Text",
+            "placeholder": "%showcardTitleText%",
+            "id": "questionUserTitleText",
+            "isMultiline": false
+          },
+          {
+            "type": "TextBlock",
+            "weight": "bolder",
+            "text": "%descriptionText%",
+            "wrap": true
+          },
+          {
             "type": "Input.Text",
             "id": "questionForExpert",
-            "isMultiline": true,
-            "value": "%resultQuestionText%"
+            "placeholder": "%descriptionPlaceholder%",
+            "isMultiline": true
           }
 
         ],
         "actions": [
           {
+
             "type": "Action.Submit",
-            "title": "%submitButtonText%"
+            "title": "%askAnExpertButtonText%",
+            "data": {
+              "msteams": {
+                "type": "messageBack",
+                "displayText": "%askAnExpertDisplayText%",
+                "text": "QuestionForExpert"
+              }
+            }
+
           }
         ],
         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json"
