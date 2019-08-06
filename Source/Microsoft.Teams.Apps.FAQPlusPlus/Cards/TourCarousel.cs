@@ -44,7 +44,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             };
         }
 
-        private static Attachment GetCard(string cardTitleText, string cardContentText, string carouselImage)
+        private static Attachment GetCard(string title, string text, string imageUri)
         {
             AdaptiveCard tourCarouselCard = new AdaptiveCard("1.0")
             {
@@ -53,18 +53,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = cardTitleText,
+                        Text = title,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = cardContentText,
+                        Text = text,
                         Wrap = true
                     },
                     new AdaptiveImage
                     {
                         HorizontalAlignment = AdaptiveHorizontalAlignment.Center,
-                        Url = new Uri(carouselImage),
+                        Url = new Uri(imageUri),
                         Size = AdaptiveImageSize.Large
                     }
                 }
