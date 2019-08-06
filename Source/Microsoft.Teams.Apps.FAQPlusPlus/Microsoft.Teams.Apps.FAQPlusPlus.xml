@@ -326,6 +326,11 @@
             </summary>
             <param name="searchService">searchService DI.</param>
             <param name="telemetryClient">telemetryClient DI.</param>
+            <param name="configuration">configuration DI.</param>
+            <param name="adapter">adapter DI.</param>
+            <param name="conversationReference">conversationReference DI.</param>
+            <param name="configurationProvider">configurationProvider DI.</param>
+            <param name="conversationAccount">conversationAccount DI.</param>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension.HandleMessagingExtensionQueryAsync(Microsoft.Bot.Builder.ITurnContext{Microsoft.Bot.Schema.IInvokeActivity})">
             <summary>
