@@ -223,8 +223,8 @@
               "value": "[parameters('tenantId')]"
             },
             {
-              "name": "AppBaseDomain",
-              "value": "[variables('botAppDomain')]"
+              "name": "AppBaseUri",
+              "value": "[concat('https://', variables('botAppDomain'))]"
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
@@ -239,16 +239,12 @@
               "value": "Debug"
             },
             {
-              "name": "RankerType",
-              "value": "QuestionOnly"
-            },
-            {
               "name": "ScoreThreshold",
               "value": "0.5"
             },
             {
               "name": "SearchServiceName",
-              "value": "variables('azureSearchName')"
+              "value": "[variables('azureSearchName')]"
             },
             {
               "name": "SearchServiceAdminApiKey",
