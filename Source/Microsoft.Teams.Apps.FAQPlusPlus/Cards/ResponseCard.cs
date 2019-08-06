@@ -16,7 +16,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class ResponseCard
     {
         /// <summary>
-        /// This method will construct the response card when user asks a question to QnA maker through bot.
+        /// This method will construct the response card when user asks a question to QnA Maker through bot.
         /// </summary>
         /// <param name="question">Actual question from the QnA maker service.</param>
         /// <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
