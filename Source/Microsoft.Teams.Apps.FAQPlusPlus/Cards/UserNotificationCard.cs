@@ -67,7 +67,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             new AdaptiveFact
                             {
                                 Title = Resource.DescriptionText,
-                                Value = CardHelper.GetDescriptionText(this.ticket.Description),
+                                Value = CardHelper.ValidateTextIsNullorEmpty(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {

@@ -65,13 +65,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         }
 
         /// <summary>
-        /// Gets local time stamp for the user activity.
+        /// Common method to check the string value if it is null or empty.
         /// </summary>
-        /// <param name="ticketDescription">The current ticket information.</param>
-        /// <returns>A description string.</returns>
-        public static string GetDescriptionText(string ticketDescription)
+        /// <param name="value">String value.</param>
+        /// <returns>A string or N/A.</returns>
+        public static string ValidateTextIsNullorEmpty(string value)
         {
-            return !string.IsNullOrWhiteSpace(ticketDescription) ? ticketDescription : Resource.NonApplicableString;
+            return !string.IsNullOrWhiteSpace(value) ? value : Resource.NonApplicableString;
         }
 
         /// <summary>

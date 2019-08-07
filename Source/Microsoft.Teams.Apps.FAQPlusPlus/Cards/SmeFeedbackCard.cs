@@ -117,12 +117,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                              new AdaptiveFact
                              {
                                 Title = Resource.KBEntryFactTitle,
-                                Value = kbAnswer,
+                                Value = CardHelper.ValidateTextIsNullorEmpty(kbAnswer),
                              },
                              new AdaptiveFact
                              {
                                 Title = Resource.QuestionAskedFactTitle,
-                                Value = userQuestion,
+                                Value = CardHelper.ValidateTextIsNullorEmpty(userQuestion),
                              },
 
                              new AdaptiveFact

@@ -78,17 +78,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             new AdaptiveFact
                             {
                                 Title = Resource.DescriptionText,
-                                Value = CardHelper.GetDescriptionText(this.ticket.Description),
+                                Value = CardHelper.ValidateTextIsNullorEmpty(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {
                                 Title = Resource.KBEntryFactTitle,
-                                Value = this.GetKbAnswer(kbAnswer),
+                                Value = CardHelper.ValidateTextIsNullorEmpty(kbAnswer),
                             },
                             new AdaptiveFact
                             {
                                 Title = Resource.QuestionAskedFactTitle,
-                                Value = this.GetUserQuestion(),
+                                Value = CardHelper.ValidateTextIsNullorEmpty(this.ticket.UserQuestion),
                             },
                             new AdaptiveFact
                             {
@@ -138,16 +138,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
             };
-        }
-
-        private string GetKbAnswer(string kbAnswer)
-        {
-            return !string.IsNullOrEmpty(kbAnswer) ? kbAnswer : Resource.NonApplicableString;
-        }
-
-        private string GetUserQuestion()
-        {
-            return !string.IsNullOrEmpty(this.ticket.UserQuestion) ? this.ticket.UserQuestion : Resource.NonApplicableString;
         }
 
         private AdaptiveElement GetAdaptiveInputSet(TicketEntity ticket)
