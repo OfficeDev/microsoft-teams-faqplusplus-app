@@ -28,6 +28,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.AskAnExpertText1,
+                        Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
                     new AdaptiveTextBlock

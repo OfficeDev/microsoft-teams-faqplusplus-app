@@ -106,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If my answer isn&apos;t satisfactory, just let me know. I will connect you with our very capable experts!.
+        ///   Looks up a localized string similar to If my answer isn&apos;t satisfactory, I&apos;ll connect you to an expert..
         /// </summary>
         public static string AskAnExpertText2 {
             get {
@@ -250,7 +250,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Help me become better! Please share feedback on how I am doing so that my expert team can coach me to better help you..
+        ///   Looks up a localized string similar to Tell my team of experts how I&apos;m doing so they can help me improve..
         /// </summary>
         public static string FeedbackText1 {
             get {
@@ -259,7 +259,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ask a question!.
+        ///   Looks up a localized string similar to Ask a question.
         /// </summary>
         public static string FunctionCardText1 {
             get {
@@ -268,7 +268,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can ask me a question by typing in the chat box below and I&apos;ll tell you what I know about it..
+        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below and I&apos;ll either answer it or refer you to an expert..
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -502,6 +502,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Take a tour.
+        /// </summary>
+        public static string TakeATourButtonText {
+            get {
+                return ResourceManager.GetString("TakeATourButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click chat with user button to initiate a direct chat..
         /// </summary>
         public static string TeamChatCardContent {
@@ -565,20 +574,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thank you for your feedback. You are helping me become more helpful. I will share it with experts..
+        ///   Looks up a localized string similar to Thank you for your feedback! I&apos;ve shared it with the experts. This helps me learn and improve..
         /// </summary>
-        public static string ThankYouCardContent {
+        public static string ThankYouTextContent {
             get {
-                return ResourceManager.GetString("ThankYouCardContent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Thank you!.
-        /// </summary>
-        public static string ThankYouCardTitleText {
-            get {
-                return ResourceManager.GetString("ThankYouCardTitleText", resourceCulture);
+                return ResourceManager.GetString("ThankYouTextContent", resourceCulture);
             }
         }
         

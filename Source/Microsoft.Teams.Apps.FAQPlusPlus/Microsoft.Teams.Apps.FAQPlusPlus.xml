@@ -165,7 +165,7 @@
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Cards.ResponseCard.GetCard(System.String,System.String,System.String)">
             <summary>
-            This method will construct the response card when user asks a question to QnA maker through bot.
+            This method will construct the response card when user asks a question to QnA Maker through bot.
             </summary>
             <param name="question">Actual question from the QnA maker service.</param>
             <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
@@ -773,6 +773,11 @@
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TakeATeamTourButtonText">
             <summary>
               Looks up a localized string similar to Team tour.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TakeATourButtonText">
+            <summary>
+              Looks up a localized string similar to Take a tour.
             </summary>
         </member>
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.TeamChatCardContent">
