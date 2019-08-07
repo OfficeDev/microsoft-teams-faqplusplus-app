@@ -74,11 +74,12 @@
              This is a card helper class used for  repetitive functions.
             </summary>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.TruncateStringIfLonger(System.String)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.TruncateStringIfLonger(System.String,System.Int32)">
             <summary>
             Gets the shortened Kb answer limited 500 characters.
             </summary>
-            <param name="kbAnswer">Answer from the KB.</param>
+            <param name="text">Text to be truncated.</param>
+            <param name="maxLength">Text gets truncated by defined max length.</param>
             <returns>Constructed adaptive fact.</returns>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetTicketClosedDate(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity,System.Nullable{System.DateTimeOffset})">

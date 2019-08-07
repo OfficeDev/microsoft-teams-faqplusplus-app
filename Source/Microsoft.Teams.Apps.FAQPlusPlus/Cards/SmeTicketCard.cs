@@ -47,7 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 questionForExpertTitle.Color = AdaptiveTextColor.Attention;
             }
 
-            var kbAnswer = CardHelper.TruncateStringIfLonger(this.ticket.KnowledgeBaseAnswer);
+            var kbAnswer = CardHelper.TruncateStringIfLonger(this.ticket.KnowledgeBaseAnswer, CardHelper.KbAnswerMaxLength);
 
             var card = new AdaptiveCard("1.0")
             {

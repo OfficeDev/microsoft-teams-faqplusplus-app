@@ -20,11 +20,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <summary>
         /// Gets the shortened Kb answer limited 500 characters.
         /// </summary>
-        /// <param name="kbAnswer">Answer from the KB.</param>
+        /// <param name="text">Text to be truncated.</param>
+        /// <param name="maxLength">Text gets truncated by defined max length.</param>
         /// <returns>Constructed adaptive fact.</returns>
-        public static string TruncateStringIfLonger(string kbAnswer)
+        public static string TruncateStringIfLonger(string text, int maxLength)
         {
-            return !string.IsNullOrWhiteSpace(kbAnswer) ? kbAnswer.Substring(0, KbAnswerMaxLength) + Ellipsis : Resource.NonApplicableString;
+            return !string.IsNullOrWhiteSpace(text) ? text.Substring(0, maxLength) + Ellipsis : Resource.NonApplicableString;
         }
 
         /// <summary>
