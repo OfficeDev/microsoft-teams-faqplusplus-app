@@ -25,7 +25,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <returns>Constructed adaptive fact.</returns>
         public static string TruncateStringIfLonger(string text, int maxLength)
         {
-            return !string.IsNullOrWhiteSpace(text) ? text.Substring(0, maxLength) + Ellipsis : Resource.NonApplicableString;
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                if (text.Length > maxLength)
+                {
+                    return text.Substring(0, maxLength) + Ellipsis;
+                }
+
+                return text;
+            }
+            else
+            {
+                return Resource.NonApplicableString;
+            }
         }
 
         /// <summary>
