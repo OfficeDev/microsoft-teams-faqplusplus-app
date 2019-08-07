@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlusPlus.Common", "Microsoft.Teams.Apps.FAQPlusPlus.Common\Microsoft.Teams.Apps.FAQPlusPlus.Common.csproj", "{BDE00A37-17FA-4375-BD73-4A45263E51BC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Teams.Apps.FAQPlusPlus.Configuration", "Microsoft.Teams.Apps.FAQPlusPlus.Configuration\Microsoft.Teams.Apps.FAQPlusPlus.Configuration.csproj", "{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.Teams.Apps.FAQPlusPlus", "Microsoft.Teams.Apps.FAQPlusPlus\Microsoft.Teams.Apps.FAQPlusPlus.csproj", "{055149A6-01FF-4C2A-8CD5-DD0061A28CD8}"
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BDE00A37-17FA-4375-BD73-4A45263E51BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDE00A37-17FA-4375-BD73-4A45263E51BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDE00A37-17FA-4375-BD73-4A45263E51BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDE00A37-17FA-4375-BD73-4A45263E51BC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB347EC9-3571-43D2-9D54-3C14EA9E47BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
