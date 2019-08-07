@@ -376,6 +376,10 @@
               "value": "[reference(resourceId('Microsoft.Insights/components/', variables('configAppInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
+              "name": "ida:AADInstance",
+              "value": "https://login.microsoftonline.com/"
+            },
+            {
               "name": "ida:ClientId",
               "value": "[parameters('configAppClientId')]"
             },
