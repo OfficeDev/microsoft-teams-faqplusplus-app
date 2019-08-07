@@ -250,9 +250,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Teams.Apps.FAQPlusPlus.Common.Standard\Microsoft.Teams.Apps.FAQPlusPlus.Common.Standard.csproj">
+    <ProjectReference Include="..\Microsoft.Teams.Apps.FAQPlusPlus.Common.Standard\Microsoft.Teams.Apps.FAQPlusPlus.Common.csproj">
       <Project>{daf9540b-13cb-4875-a6e0-5997bdf2f73f}</Project>
-      <Name>Microsoft.Teams.Apps.FAQPlusPlus.Common.Standard</Name>
+      <Name>Microsoft.Teams.Apps.FAQPlusPlus.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
