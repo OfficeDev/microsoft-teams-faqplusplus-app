@@ -62,8 +62,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<MessagingExtension>();
-            services.AddSingleton<ConversationReference>();
-            services.AddSingleton<ConversationAccount>();
         }
 
         /// <summary>

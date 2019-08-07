@@ -320,7 +320,7 @@
             Implements the logic of the messaging extension for FAQ++
             </summary>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension.#ctor(Microsoft.Teams.Apps.FAQPlusPlus.Services.ISearchService,Microsoft.ApplicationInsights.TelemetryClient,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Bot.Builder.Integration.AspNet.Core.IBotFrameworkHttpAdapter,Microsoft.Bot.Schema.ConversationReference,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IConfigurationProvider,Microsoft.Bot.Schema.ConversationAccount)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension.#ctor(Microsoft.Teams.Apps.FAQPlusPlus.Services.ISearchService,Microsoft.ApplicationInsights.TelemetryClient,Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Bot.Builder.Integration.AspNet.Core.IBotFrameworkHttpAdapter,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IConfigurationProvider)">
             <summary>
             Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension"/> class.
             </summary>
@@ -328,9 +328,7 @@
             <param name="telemetryClient">telemetryClient DI.</param>
             <param name="configuration">configuration DI.</param>
             <param name="adapter">adapter DI.</param>
-            <param name="conversationReference">conversationReference DI.</param>
             <param name="configurationProvider">configurationProvider DI.</param>
-            <param name="conversationAccount">conversationAccount DI.</param>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension.HandleMessagingExtensionQueryAsync(Microsoft.Bot.Builder.ITurnContext{Microsoft.Bot.Schema.IInvokeActivity})">
             <summary>
@@ -691,6 +689,11 @@
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.NonApplicableString">
             <summary>
               Looks up a localized string similar to N/A.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.NonSmeErrorText">
+            <summary>
+              Looks up a localized string similar to You don&apos;t have access to this app. Please contact your IT admin..
             </summary>
         </member>
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.NotApplicable">
