@@ -356,6 +356,10 @@
   <data name="SmeAttentionText" xml:space="preserve">
     <value>Everyone there is a new request coming in, please see the details below:</value>
   </data>
+  <data name="GoToOriginalThreadButtonText" xml:space="preserve">
+    <value>Go to original thread</value>
+    <comment>Go to original thread button available on messaging extension card.</comment>
+  </data>
   <data name="TakeATourButtonText" xml:space="preserve">
     <value>Take a tour</value>
     <comment>Take a tour button provided in the user welcome card which enables the user to take a tour on what the bot does in personal scope.</comment>

@@ -20,17 +20,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <summary>
         /// Gets the shortened Kb answer limited 500 characters.
         /// </summary>
-        /// <param name="kbanswer">Answer from the KB.</param>
+        /// <param name="text">Text to be truncated.</param>
+        /// <param name="maxLength">Text gets truncated by defined max length.</param>
         /// <returns>Constructed adaptive fact.</returns>
-        public static string GetShortenedKbText(string kbanswer)
+        public static string TruncateStringIfLonger(string text, int maxLength)
         {
-            return kbanswer.Substring(0, KbAnswerMaxLength) + Ellipsis;
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                if (text.Length > maxLength)
+                {
+                    return text.Substring(0, maxLength) + Ellipsis;
+                }
+
+                return text;
+            }
+            else
+            {
+                return Resource.NonApplicableString;
+            }
         }
 
         /// <summary>
         /// Gets the closed date of the ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
+        /// <param name="localTimeStamp">Local time stamp of the user activity.</param>
         /// <returns>The closed date of the ticket.</returns>
         public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? localTimeStamp)
         {
@@ -63,13 +77,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         }
 
         /// <summary>
-        /// Gets local time stamp for the user activity.
+        /// Common method to check the string value if it is null or empty.
         /// </summary>
-        /// <param name="ticketDescription">The current ticket information.</param>
-        /// <returns>A description string.</returns>
-        public static string GetDescriptionText(string ticketDescription)
+        /// <param name="value">String value.</param>
+        /// <returns>A string or N/A.</returns>
+        public static string ValidateTextIsNullorEmpty(string value)
         {
-            return !string.IsNullOrWhiteSpace(ticketDescription) ? ticketDescription : Resource.NonApplicableString;
+            return !string.IsNullOrWhiteSpace(value) ? value : Resource.NonApplicableString;
         }
 
         /// <summary>

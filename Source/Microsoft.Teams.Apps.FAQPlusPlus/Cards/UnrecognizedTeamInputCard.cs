@@ -6,6 +6,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -28,7 +29,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Title = Resource.TakeATeamTourButtonText,
                         DisplayText = Resource.TakeATeamTourButtonText,
-                        Text = "team tour",
+                        Text = FaqPlusPlusBot.TeamTour,
                     }
                 }
             };

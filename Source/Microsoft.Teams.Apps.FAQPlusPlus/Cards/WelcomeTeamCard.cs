@@ -53,7 +53,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                  {
                                      type = ActionTypes.MessageBack,
                                      displayText = Resource.TakeATeamTourButtonText,
-                                    text = FaqPlusPlusBot.TeamTour
+                                     text = FaqPlusPlusBot.TeamTour
                                  }
                              })
                     }

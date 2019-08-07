@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="AdaptiveCards\ThankYouAdaptiveCard.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Microsoft.Teams.Apps.FAQPlusPlus.xml" />
   </ItemGroup>
 

@@ -20,9 +20,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// This method will construct the user welcome card when bot is added in personal scope.
         /// </summary>
         /// <param name="welcomeText">Gets welcome text.</param>
-        /// <param name="takeATour">User take a tour activity.</param>
         /// <returns>Card attachment as Json string.</returns>
-        public static async Task<Attachment> GetCard(string welcomeText, string takeATour)
+        public static async Task<Attachment> GetCard(string welcomeText)
         {
             AdaptiveCard userWelcomeCard = new AdaptiveCard("1.0")
             {
@@ -33,8 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
                         Size = AdaptiveTextSize.Small,
                         Spacing = AdaptiveSpacing.Small,
-                        Weight = AdaptiveTextWeight.Default,
-                        Text = welcomeText,
+                        Text = welcomeText1,
                         Wrap = true
                     },
                 },

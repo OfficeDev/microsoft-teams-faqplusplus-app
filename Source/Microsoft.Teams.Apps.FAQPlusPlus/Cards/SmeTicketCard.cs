@@ -47,10 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 questionForExpertTitle.Color = AdaptiveTextColor.Attention;
             }
 
-            if (this.ticket.KnowledgeBaseAnswer != null && this.ticket.KnowledgeBaseAnswer.Length > CardHelper.KbAnswerMaxLength)
-            {
-                this.ticket.KnowledgeBaseAnswer = CardHelper.GetShortenedKbText(this.ticket.KnowledgeBaseAnswer);
-            }
+            var kbAnswer = CardHelper.TruncateStringIfLonger(this.ticket.KnowledgeBaseAnswer, CardHelper.KbAnswerMaxLength);
 
             var card = new AdaptiveCard("1.0")
             {
@@ -81,17 +78,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             new AdaptiveFact
                             {
                                 Title = Resource.DescriptionText,
-                                Value = CardHelper.GetDescriptionText(this.ticket.Description),
+                                Value = CardHelper.ValidateTextIsNullorEmpty(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {
                                 Title = Resource.KBEntryFactTitle,
-                                Value = this.GetKbAnswer(),
+                                Value = CardHelper.ValidateTextIsNullorEmpty(kbAnswer),
                             },
                             new AdaptiveFact
                             {
                                 Title = Resource.QuestionAskedFactTitle,
-                                Value = this.GetUserQuestion(),
+                                Value = CardHelper.ValidateTextIsNullorEmpty(this.ticket.UserQuestion),
                             },
                             new AdaptiveFact
                             {
@@ -112,7 +109,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveOpenUrlAction
                     {
-                        Title = string.Format(Resource.ChatTextButton,this.ticket.RequesterGivenName),
+                        Title = string.Format(Resource.ChatTextButton, this.ticket.RequesterGivenName),
                         Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticket.RequesterUserPrincipalName}"),
                     },
                     new AdaptiveShowCardAction
@@ -141,16 +138,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
             };
-        }
-
-        private string GetKbAnswer()
-        {
-            return !string.IsNullOrEmpty(this.ticket.KnowledgeBaseAnswer) ? this.ticket.KnowledgeBaseAnswer : Resource.NonApplicableString;
-        }
-
-        private string GetUserQuestion()
-        {
-            return !string.IsNullOrEmpty(this.ticket.UserQuestion) ? this.ticket.UserQuestion : Resource.NonApplicableString;
         }
 
         private AdaptiveElement GetAdaptiveInputSet(TicketEntity ticket)

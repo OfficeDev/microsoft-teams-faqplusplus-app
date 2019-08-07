@@ -74,11 +74,12 @@
              This is a card helper class used for  repetitive functions.
             </summary>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetShortenedKbText(System.String)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.TruncateStringIfLonger(System.String,System.Int32)">
             <summary>
             Gets the shortened Kb answer limited 500 characters.
             </summary>
-            <param name="kbanswer">Answer from the KB.</param>
+            <param name="text">Text to be truncated.</param>
+            <param name="maxLength">Text gets truncated by defined max length.</param>
             <returns>Constructed adaptive fact.</returns>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetTicketClosedDate(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity,System.Nullable{System.DateTimeOffset})">
@@ -86,6 +87,7 @@
             Gets the closed date of the ticket.
             </summary>
             <param name="ticket">The current ticket information.</param>
+            <param name="localTimeStamp">Local time stamp of the user activity.</param>
             <returns>The closed date of the ticket.</returns>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetTicketStatus(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity)">
@@ -95,12 +97,12 @@
             <param name="ticket">The current ticket information.</param>
             <returns>A status string.</returns>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetDescriptionText(System.String)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.ValidateTextIsNullorEmpty(System.String)">
             <summary>
-            Gets local time stamp for the user activity.
+            Common method to check the string value if it is null or empty.
             </summary>
-            <param name="ticketDescription">The current ticket information.</param>
-            <returns>A description string.</returns>
+            <param name="value">String value.</param>
+            <returns>A string or N/A.</returns>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetLocalTimeStamp(System.Nullable{System.DateTimeOffset})">
             <summary>
@@ -320,12 +322,11 @@
              This class process Welcome Card, when bot is installed by the user in personal scope.
             </summary>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Cards.WelcomeCard.GetCard(System.String,System.String)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Cards.WelcomeCard.GetCard(System.String)">
             <summary>
             This method will construct the user welcome card when bot is added in personal scope.
             </summary>
             <param name="welcomeText">Gets welcome text.</param>
-            <param name="takeATour">User take a tour activity.</param>
             <returns>Card attachment as Json string.</returns>
         </member>
         <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Cards.WelcomeTeamCard">
@@ -648,6 +649,11 @@
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FunctionCardText2">
             <summary>
               Looks up a localized string similar to You can ask me a question by typing in the chat box below and I&apos;ll tell you what I know about it..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.GoToOriginalThreadButtonText">
+            <summary>
+              Looks up a localized string similar to Go to original thread.
             </summary>
         </member>
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.KBEntryFactTitle">
