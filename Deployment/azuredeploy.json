@@ -199,8 +199,8 @@
           "alwaysOn": true,
           "appSettings": [
             {
-              "name": "PROJECT",
-              "value": "Source/Microsoft.Teams.Apps.FaqPlusPlus/Microsoft.Teams.Apps.FaqPlusPlus.csproj"
+              "name": "SITE_ROLE",
+              "value": "bot"
             },
             {
               "name": "MicrosoftAppId",
@@ -228,10 +228,6 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId('Microsoft.Insights/components/', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
-            },
-            {
-              "name": "ApplicationInsightsInstrumentationKey",
               "value": "[reference(resourceId('Microsoft.Insights/components/', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
@@ -360,8 +356,8 @@
           "alwaysOn": false,
           "appSettings": [
             {
-              "name": "PROJECT",
-              "value": "Source/Microsoft.Teams.Apps.FaqPlusPlus.Configuration/Microsoft.Teams.Apps.FaqPlusPlus.Configuration.csproj"
+              "name": "SITE_ROLE",
+              "value": "config"
             },
             {
               "name": "StorageConnectionString",
@@ -377,10 +373,6 @@
             },
             {
               "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-              "value": "[reference(resourceId('Microsoft.Insights/components/', variables('configAppInsightsName')), '2015-05-01').InstrumentationKey]"
-            },
-            {
-              "name": "ApplicationInsightsInstrumentationKey",
               "value": "[reference(resourceId('Microsoft.Insights/components/', variables('configAppInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
