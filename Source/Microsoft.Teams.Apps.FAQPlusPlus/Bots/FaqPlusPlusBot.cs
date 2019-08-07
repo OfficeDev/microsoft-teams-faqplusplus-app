@@ -176,7 +176,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.telemetryClient.TrackTrace($"Bot added to 1:1 chat {activity.Conversation.Id}");
 
                 var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText, TakeATour);
+                var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
             }
         }

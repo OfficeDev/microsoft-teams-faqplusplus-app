@@ -277,6 +277,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to original thread.
+        /// </summary>
+        public static string GoToOriginalThreadButtonText {
+            get {
+                return ResourceManager.GetString("GoToOriginalThreadButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Knowledge base entry:.
         /// </summary>
         public static string KBEntryFactTitle {

@@ -32,7 +32,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
-                        Weight = AdaptiveTextWeight.Default,
                         Text = Resource.AskAnExpertPlaceholderText,
                         Wrap = true
                     },

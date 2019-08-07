@@ -47,10 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 questionForExpertTitle.Color = AdaptiveTextColor.Attention;
             }
 
-            if (this.ticket.KnowledgeBaseAnswer != null && this.ticket.KnowledgeBaseAnswer.Length > CardHelper.KbAnswerMaxLength)
-            {
-                this.ticket.KnowledgeBaseAnswer = CardHelper.GetShortenedKbText(this.ticket.KnowledgeBaseAnswer);
-            }
+            var kbAnswer = CardHelper.TruncateStringIfLonger(this.ticket.KnowledgeBaseAnswer);
 
             var card = new AdaptiveCard("1.0")
             {
@@ -86,7 +83,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             new AdaptiveFact
                             {
                                 Title = Resource.KBEntryFactTitle,
-                                Value = this.GetKbAnswer(),
+                                Value = this.GetKbAnswer(kbAnswer),
                             },
                             new AdaptiveFact
                             {
@@ -112,7 +109,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveOpenUrlAction
                     {
-                        Title = string.Format(Resource.ChatTextButton,this.ticket.RequesterGivenName),
+                        Title = string.Format(Resource.ChatTextButton, this.ticket.RequesterGivenName),
                         Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticket.RequesterUserPrincipalName}"),
                     },
                     new AdaptiveShowCardAction
@@ -143,9 +140,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             };
         }
 
-        private string GetKbAnswer()
+        private string GetKbAnswer(string kbAnswer)
         {
-            return !string.IsNullOrEmpty(this.ticket.KnowledgeBaseAnswer) ? this.ticket.KnowledgeBaseAnswer : Resource.NonApplicableString;
+            return !string.IsNullOrEmpty(kbAnswer) ? kbAnswer : Resource.NonApplicableString;
         }
 
         private string GetUserQuestion()

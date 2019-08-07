@@ -85,7 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                             {
                                                 type = ActionTypes.MessageBack,
                                                 displayText = Resource.AskAnExpertDisplayText,
-                                                text = "QuestionForExpert"
+                                                text = SubmitUserRequestPayload.QuestionForExpertAction
                                             },
                                             UserQuestion = question,
                                         })

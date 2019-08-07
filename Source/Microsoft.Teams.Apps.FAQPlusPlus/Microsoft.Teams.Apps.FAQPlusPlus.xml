@@ -74,11 +74,11 @@
              This is a card helper class used for  repetitive functions.
             </summary>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetShortenedKbText(System.String)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.TruncateStringIfLonger(System.String)">
             <summary>
             Gets the shortened Kb answer limited 500 characters.
             </summary>
-            <param name="kbanswer">Answer from the KB.</param>
+            <param name="kbAnswer">Answer from the KB.</param>
             <returns>Constructed adaptive fact.</returns>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetTicketClosedDate(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity,System.Nullable{System.DateTimeOffset})">
@@ -86,6 +86,7 @@
             Gets the closed date of the ticket.
             </summary>
             <param name="ticket">The current ticket information.</param>
+            <param name="localTimeStamp">Local time stamp of the user activity.</param>
             <returns>The closed date of the ticket.</returns>
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetTicketStatus(Microsoft.Teams.Apps.FAQPlusPlus.Common.Models.TicketEntity)">
@@ -165,7 +166,7 @@
         </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Cards.ResponseCard.GetCard(System.String,System.String,System.String)">
             <summary>
-            This method will construct the response card when user asks a question to QnA maker through bot.
+            This method will construct the response card when user asks a question to QnA Maker through bot.
             </summary>
             <param name="question">Actual question from the QnA maker service.</param>
             <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
@@ -320,12 +321,11 @@
              This class process Welcome Card, when bot is installed by the user in personal scope.
             </summary>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Cards.WelcomeCard.GetCard(System.String,System.String)">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Cards.WelcomeCard.GetCard(System.String)">
             <summary>
             This method will construct the user welcome card when bot is added in personal scope.
             </summary>
             <param name="welcomeText">Gets welcome text.</param>
-            <param name="takeATour">User take a tour activity.</param>
             <returns>Card attachment as Json string.</returns>
         </member>
         <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Cards.WelcomeTeamCard">
@@ -648,6 +648,11 @@
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FunctionCardText2">
             <summary>
               Looks up a localized string similar to You can ask me a question by typing in the chat box below and I&apos;ll tell you what I know about it..
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.GoToOriginalThreadButtonText">
+            <summary>
+              Looks up a localized string similar to Go to original thread.
             </summary>
         </member>
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.KBEntryFactTitle">

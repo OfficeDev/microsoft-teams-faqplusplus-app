@@ -360,4 +360,8 @@
   <data name="SmeAttentionText" xml:space="preserve">
     <value>Everyone there is a new request coming in, please see the details below:</value>
   </data>
+  <data name="GoToOriginalThreadButtonText" xml:space="preserve">
+    <value>Go to original thread</value>
+    <comment>Go to original thread button available on messaging extension card.</comment>
+  </data>
 </root>

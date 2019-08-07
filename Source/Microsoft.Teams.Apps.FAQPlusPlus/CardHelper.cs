@@ -20,17 +20,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         /// <summary>
         /// Gets the shortened Kb answer limited 500 characters.
         /// </summary>
-        /// <param name="kbanswer">Answer from the KB.</param>
+        /// <param name="kbAnswer">Answer from the KB.</param>
         /// <returns>Constructed adaptive fact.</returns>
-        public static string GetShortenedKbText(string kbanswer)
+        public static string TruncateStringIfLonger(string kbAnswer)
         {
-            return kbanswer.Substring(0, KbAnswerMaxLength) + Ellipsis;
+            return !string.IsNullOrWhiteSpace(kbAnswer) ? kbAnswer.Substring(0, KbAnswerMaxLength) + Ellipsis : Resource.NonApplicableString;
         }
 
         /// <summary>
         /// Gets the closed date of the ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
+        /// <param name="localTimeStamp">Local time stamp of the user activity.</param>
         /// <returns>The closed date of the ticket.</returns>
         public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? localTimeStamp)
         {

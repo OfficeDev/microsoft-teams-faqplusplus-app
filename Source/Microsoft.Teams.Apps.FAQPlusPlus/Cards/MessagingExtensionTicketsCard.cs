@@ -65,12 +65,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             new AdaptiveFact
                             {
                                 Title = Resource.KBEntryFactTitle,
-                                Value = this.ticketModel.KnowledgeBaseAnswer != null ? this.ticketModel.KnowledgeBaseAnswer : "N/A",
+                                Value = this.ticketModel.KnowledgeBaseAnswer != null ? this.ticketModel.KnowledgeBaseAnswer : Resource.NonApplicableString,
                             },
                             new AdaptiveFact
                             {
                                 Title = Resource.QuestionAskedFactTitle,
-                                Value = this.ticketModel.UserQuestion != null ? this.ticketModel.UserQuestion : "N/A",
+                                Value = this.ticketModel.UserQuestion != null ? this.ticketModel.UserQuestion : Resource.NonApplicableString,
                             },
                             new AdaptiveFact
                             {
@@ -90,13 +90,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveOpenUrlAction
                     {
                         Type = "Action.OpenUrl",
-                        Title = $"Chat with {this.ticketModel.RequesterGivenName}",
+                        Title = string.Format(Resource.ChatTextButton, this.ticketModel.RequesterGivenName),
                         Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticketModel.RequesterUserPrincipalName}"),
                     },
                     new AdaptiveOpenUrlAction
                     {
                         Type = "Action.OpenUrl",
-                        Title = $"Go to original thread",
+                        Title = Resource.GoToOriginalThreadButtonText,
                         Url = new Uri(this.GetGoToThreadUri(this.ticketModel.SmeThreadConversationId))
                     }
                 },
@@ -135,15 +135,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             if (ticketModel.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
-                return "Open";
+                return Resource.OpenStatusTitle;
             }
             else if (ticketModel.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
-                return $"Assigned to {ticketModel.AssignedToName}";
+                return string.Format(Resource.AssignedToStatusValue, ticketModel.AssignedToName);
             }
             else
             {
-                return $"Closed by {ticketModel.LastModifiedByName}";
+                return string.Format(Resource.ClosedByStatusValue, ticketModel.LastModifiedByName);
             }
         }
 
@@ -154,7 +154,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>The closed date of the ticket.</returns>
         private string GetTicketClosedDate(TicketEntity ticketModel)
         {
-            return ticketModel.Status == (int)TicketState.Closed ? ticketModel.DateClosed.Value.ToString("D") : "N/A";
+            return ticketModel.Status == (int)TicketState.Closed ? ticketModel.DateClosed.Value.ToString("D") : Resource.NonApplicableString;
         }
     }
 }

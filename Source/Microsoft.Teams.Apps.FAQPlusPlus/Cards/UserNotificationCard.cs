@@ -16,8 +16,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     /// </summary>
     public class UserNotificationCard
     {
-        private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
-
         private readonly TicketEntity ticket;
 
         /// <summary>
@@ -58,29 +56,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveFact
                             {
-                                Title = "Status:",
+                                Title = Resource.StatusFactTitle,
                                 Value = CardHelper.GetTicketStatus(this.ticket),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Title:",
+                                Title = Resource.TitleText,
                                 Value = this.ticket.Title,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Description:",
+                                Title = Resource.DescriptionText,
                                 Value = CardHelper.GetDescriptionText(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Created:",
+                                Title = Resource.DateCreatedDisplayFactTitle,
 
                                 // We are using this format because DATE and TIME are not supported on mobile yet.
                                 Value = ticketCreatedDate,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Closed:",
+                                Title = Resource.ClosedFactTitle,
                                 Value = CardHelper.GetTicketClosedDate(this.ticket, localTimeStamp),
                             }
                         },
