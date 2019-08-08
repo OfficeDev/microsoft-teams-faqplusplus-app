@@ -9,6 +9,16 @@
             Implements the core logic of the FAQ++ bot.
             </summary>
         </member>
+        <member name="F:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot.TeamTour">
+            <summary>
+            TeamTour - text that triggers team tour action.
+            </summary>
+        </member>
+        <member name="F:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot.TakeATour">
+            <summary>
+            TakeAtour - text that triggers take a tour action for the user.
+            </summary>
+        </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot.#ctor(Microsoft.ApplicationInsights.TelemetryClient,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.IConfigurationProvider,Microsoft.Teams.Apps.FAQPlusPlus.Services.IQnAMakerFactory,Microsoft.Teams.Apps.FAQPlusPlus.Bots.MessagingExtension,System.String,Microsoft.Bot.Connector.Authentication.MicrosoftAppCredentials,Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers.ITicketsProvider)">
             <summary>
             Initializes a new instance of the <see cref="T:Microsoft.Teams.Apps.FAQPlusPlus.Bots.FaqPlusPlusBot"/> class.
@@ -74,9 +84,14 @@
              This is a card helper class used for  repetitive functions.
             </summary>
         </member>
+        <member name="F:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.KbAnswerMaxLength">
+            <summary>
+            KbAnswerMaxLength- setting the max length of the Knowledgbase answer to show in UI.
+            </summary>
+        </member>
         <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.TruncateStringIfLonger(System.String,System.Int32)">
             <summary>
-            Gets the shortened Kb answer limited 500 characters.
+            Truncates the string when the length is exceeds the defined max length.
             </summary>
             <param name="text">Text to be truncated.</param>
             <param name="maxLength">Text gets truncated by defined max length.</param>
@@ -104,11 +119,12 @@
             <param name="value">String value.</param>
             <returns>A string or N/A.</returns>
         </member>
-        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetLocalTimeStamp(System.Nullable{System.DateTimeOffset})">
+        <member name="M:Microsoft.Teams.Apps.FAQPlusPlus.CardHelper.GetLocalTimeStamp(System.Nullable{System.DateTimeOffset},System.Nullable{System.DateTime})">
             <summary>
-            Gets the user description text.
+            Gets the local time stamp of the user activity.
             </summary>
             <param name="localTimeStamp">The current ticket information.</param>
+            <param name="ticketDate">Ticket date.</param>
             <returns>A description string.</returns>
         </member>
         <member name="T:Microsoft.Teams.Apps.FAQPlusPlus.Cards.AskAnExpertCard">
@@ -629,6 +645,11 @@
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FeedbackHeaderText">
             <summary>
               Looks up a localized string similar to Share app feedback.
+            </summary>
+        </member>
+        <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FeedbackRatingRequired">
+            <summary>
+              Looks up a localized string similar to Rating (Required):.
             </summary>
         </member>
         <member name="P:Microsoft.Teams.Apps.FAQPlusPlus.Properties.Resource.FeedbackSubHeaderText">

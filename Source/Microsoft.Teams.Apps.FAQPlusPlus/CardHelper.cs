@@ -13,12 +13,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
     /// </summary>
     public static class CardHelper
     {
+        /// <summary>
+        /// KbAnswerMaxLength- setting the max length of the Knowledgbase answer to show in UI.
+        /// </summary>
         public const int KbAnswerMaxLength = 500;
         private const string Ellipsis = "...";
         private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
 
         /// <summary>
-        /// Gets the shortened Kb answer limited 500 characters.
+        /// Truncates the string when the length is exceeds the defined max length.
         /// </summary>
         /// <param name="text">Text to be truncated.</param>
         /// <param name="maxLength">Text gets truncated by defined max length.</param>
@@ -51,7 +54,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             if (ticket.Status == (int)TicketState.Closed)
             {
                 // We are using this format because DATE and TIME are not supported on mobile yet.
-                return GetLocalTimeStamp(localTimeStamp);
+                return GetLocalTimeStamp(localTimeStamp, ticket.DateClosed);
             }
             else
             {
@@ -87,13 +90,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         }
 
         /// <summary>
-        /// Gets the user description text.
+        /// Gets the local time stamp of the user activity.
         /// </summary>
         /// <param name="localTimeStamp">The current ticket information.</param>
+        /// <param name="ticketDate">Ticket date.</param>
         /// <returns>A description string.</returns>
-        public static string GetLocalTimeStamp(DateTimeOffset? localTimeStamp)
+        public static string GetLocalTimeStamp(DateTimeOffset? localTimeStamp, DateTime? ticketDate)
         {
-            return localTimeStamp.Value.ToString(DateFormat);
+            return ticketDate.Value.Add(localTimeStamp?.Offset ?? TimeSpan.FromMinutes(0)).ToString(DateFormat);
         }
     }
 }

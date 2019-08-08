@@ -241,6 +241,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rating (Required):.
+        /// </summary>
+        public static string FeedbackRatingRequired {
+            get {
+                return ResourceManager.GetString("FeedbackRatingRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to **{0}** is sharing feedback. Details as follows:.
         /// </summary>
         public static string FeedbackSubHeaderText {

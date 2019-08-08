@@ -91,17 +91,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 new AdaptiveSubmitAction
                                 {
                                     Title = Resource.SubmitButtonText,
-                                    Data = Newtonsoft.Json.Linq.JObject.FromObject(new
+                                    Data = new
                                     {
-                                        msteams = new
-                                        {
-                                            type = ActionTypes.MessageBack,
-                                            displayText = Resource.AskAnExpertDisplayText,
-                                            text = SubmitUserRequestPayload.QuestionForExpertAction
-                                        },
+                                         msteams = new CardAction
+                                         {
+                                            Type = ActionTypes.MessageBack,
+                                            DisplayText = Resource.AskAnExpertDisplayText,
+                                            Text = SubmitUserRequestPayload.QuestionForExpertAction
+                                         },
                                         UserQuestion = userQuestion,
                                         SmeAnswer = answer
-                                    })
+                                    }
                                 }
                             }
                         }
@@ -150,17 +150,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 new AdaptiveSubmitAction
                                 {
                                     Title = Resource.SubmitButtonText,
-                                    Data = Newtonsoft.Json.Linq.JObject.FromObject(new
+                                    Data = new
                                     {
-                                        msteams = new
+                                        msteams = new CardAction
                                         {
-                                            type = ActionTypes.MessageBack,
-                                            displayText = Resource.ShareFeedbackDisplayText,
-                                            text = SubmitUserRequestPayload.ResultsFeedbackAction
+                                            Type = ActionTypes.MessageBack,
+                                            DisplayText = Resource.ShareFeedbackDisplayText,
+                                            Text = SubmitUserRequestPayload.ResultsFeedbackAction
                                         },
                                         UserQuestion = userQuestion,
                                         SmeAnswer = answer
-                                    })
+                                    },
                                 }
                             }
                         }

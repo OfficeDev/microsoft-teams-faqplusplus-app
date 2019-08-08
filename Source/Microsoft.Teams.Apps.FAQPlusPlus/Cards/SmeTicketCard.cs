@@ -38,7 +38,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Returns the attachment that will be sent in a message.</returns>
         public Attachment ToAttachment(DateTimeOffset? localTimeStamp, bool isQuestionForExpert = false)
         {
-            var ticketCreatedDate = CardHelper.GetLocalTimeStamp(localTimeStamp);
+            var ticketCreatedDate = CardHelper.GetLocalTimeStamp(localTimeStamp, this.ticket.DateCreated);
             var questionForExpertTitle = new AdaptiveTextBlock();
             if (isQuestionForExpert)
             {
@@ -160,7 +160,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         },
                         new AdaptiveChoice
                         {
-                            Title = Resource.ClosedFactTitle,
+                            Title = Resource.CloseStatusText,
                             Value = ChangeTicketStatusPayload.CloseAction,
                         },
                     },

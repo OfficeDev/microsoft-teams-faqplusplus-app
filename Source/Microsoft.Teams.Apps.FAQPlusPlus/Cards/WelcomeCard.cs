@@ -5,7 +5,6 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
@@ -20,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="welcomeText">Gets welcome text.</param>
         /// <returns>Card attachment as Json string.</returns>
-        public static async Task<Attachment> GetCard(string welcomeText)
+        public static Attachment GetCard(string welcomeText)
         {
             string[] welcomeTextValues = welcomeText.Split(';');
             var welcomeText1 = welcomeTextValues[0];
@@ -71,15 +70,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = takeATourButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
-                             {
-                                 msteams = new
-                                 {
-                                     type = ActionTypes.MessageBack,
-                                     displayText = takeATourButtonText,
-                                     text = FaqPlusPlusBot.TakeATour
-                                 }
-                             })
+                        Data = new
+                        {
+                            msteams = new CardAction
+                            {
+                              Type = ActionTypes.MessageBack,
+                              DisplayText = takeATourButtonText,
+                              Text = FaqPlusPlusBot.TakeATour
+                            }
+                        },
                     }
                 }
             };

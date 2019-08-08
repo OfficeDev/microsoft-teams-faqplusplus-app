@@ -74,15 +74,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.ShareFeedbackButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
+                        Data = new
                         {
-                            msteams = new
+                            msteams = new CardAction
                             {
-                                type = ActionTypes.MessageBack,
-                                displayText = Resource.ShareFeedbackDisplayText,
-                                text = SubmitUserRequestPayload.AppFeedbackAction
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = Resource.ShareFeedbackDisplayText,
+                                Text = SubmitUserRequestPayload.AppFeedbackAction
                             }
-                        })
+                        },
                     }
                 }
             };

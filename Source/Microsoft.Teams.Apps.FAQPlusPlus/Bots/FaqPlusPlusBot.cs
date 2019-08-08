@@ -32,7 +32,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     public class FaqPlusPlusBot : ActivityHandler
     {
         // Commands supported by the bot
+
+        /// <summary>
+        /// TeamTour - text that triggers team tour action.
+        /// </summary>
         public const string TeamTour = "team tour";
+
+        /// <summary>
+        /// TakeAtour - text that triggers take a tour action for the user.
+        /// </summary>
         public const string TakeATour = "take a tour";
         private const string AskAnExpert = "ask an expert";
         private const string Feedback = "share feedback";
@@ -176,7 +184,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.telemetryClient.TrackTrace($"Bot added to 1:1 chat {activity.Conversation.Id}");
 
                 var welcomeText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
-                var userWelcomeCardAttachment = await WelcomeCard.GetCard(welcomeText);
+                var userWelcomeCardAttachment = WelcomeCard.GetCard(welcomeText);
                 await turnContext.SendActivityAsync(MessageFactory.Attachment(userWelcomeCardAttachment));
             }
         }

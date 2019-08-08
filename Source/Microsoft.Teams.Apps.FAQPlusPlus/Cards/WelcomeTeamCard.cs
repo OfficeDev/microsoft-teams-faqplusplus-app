@@ -4,6 +4,7 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
+    using System;
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -47,15 +48,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.TakeATeamTourButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
-                             {
-                                 msteams = new
-                                 {
-                                     type = ActionTypes.MessageBack,
-                                     displayText = Resource.TakeATeamTourButtonText,
-                                     text = FaqPlusPlusBot.TeamTour
-                                 }
-                             })
+                        Data = new
+                        {
+                            msteam = new CardAction
+                            {
+                                Type = ActionTypes.MessageBack,
+                                DisplayText= Resource.TakeATeamTourButtonText,
+                                Text = FaqPlusPlusBot.TeamTour
+                            }
+                        },
                     }
                 }
             };

@@ -128,7 +128,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                              new AdaptiveFact
                              {
                                 Title = Resource.DateCreatedDisplayFactTitle,
-                                Value = CardHelper.GetLocalTimeStamp(localTimeStamp),
+                                Value = CardHelper.GetLocalTimeStamp(localTimeStamp, DateTime.UtcNow),
                              },
                          },
                     }

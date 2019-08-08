@@ -35,7 +35,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>An adaptive card as an attachment</returns>
         public Attachment ToAttachment(DateTimeOffset? localTimeStamp, string message)
         {
-            var ticketCreatedDate = CardHelper.GetLocalTimeStamp(localTimeStamp);
+            var ticketCreatedDate = CardHelper.GetLocalTimeStamp(localTimeStamp, this.ticket.DateCreated);
             var card = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
