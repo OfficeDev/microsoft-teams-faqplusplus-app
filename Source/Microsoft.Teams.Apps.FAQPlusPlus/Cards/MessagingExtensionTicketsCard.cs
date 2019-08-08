@@ -1,14 +1,18 @@
 ﻿// <copyright file="MessagingExtensionTicketsCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
+    /// <summary>
+    /// Implements messaging extension.
+    /// </summary>
     public class MessagingExtensionTicketsCard
     {
         private readonly TicketEntity ticketModel;
@@ -35,8 +39,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveTextBlock
                     {
                         Text = this.ticketModel.RequesterName != null ?
-                         string.Format("**{0}** is requesting support. Details as follows:", this.ticketModel.RequesterName) :
-                        "Everyone there is a new request coming in, please see the details below:",
+                         string.Format(Resource.QuestionForExpertSubHeaderText, this.ticketModel.RequesterName) :
+                        Resource.SmeAttentionText,
                         Wrap = true,
                     },
                     new AdaptiveFactSet
@@ -45,37 +49,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                         {
                             new AdaptiveFact
                             {
-                                Title = "Status:",
+                                Title = Resource.OpenStatusTitle,
                                 Value = this.GetTicketStatus(this.ticketModel),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Title:",
+                                Title = Resource.TitleText,
                                 Value = this.ticketModel.Title,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Description:",
+                                Title = Resource.DescriptionText,
                                 Value = this.ticketModel.Description,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Knowledge Base Entry:",
-                                Value = this.ticketModel.KnowledgeBaseAnswer != null ? this.ticketModel.KnowledgeBaseAnswer : "N/A",
+                                Title = Resource.KBEntryFactTitle,
+                                Value = this.ticketModel.KnowledgeBaseAnswer != null ? this.ticketModel.KnowledgeBaseAnswer : Resource.NonApplicableString,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Question asked:",
-                                Value = this.ticketModel.UserQuestion != null ? this.ticketModel.UserQuestion : "N/A",
+                                Title = Resource.QuestionAskedFactTitle,
+                                Value = this.ticketModel.UserQuestion != null ? this.ticketModel.UserQuestion : Resource.NonApplicableString,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Created:",
-                                Value = this.ticketModel.DateCreated.ToString("D"),
+                                Title = Resource.DateCreatedDisplayFactTitle,
+                                Value = this.ticketModel.DateCreated.ToString("ddd, MMM dd',' yyy hh':'mm tt"),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Closed:",
+                                Title = Resource.DateCreatedDisplayFactTitle,
                                 Value = this.GetTicketClosedDate(this.ticketModel),
                             }
                         },
@@ -86,13 +90,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                     new AdaptiveOpenUrlAction
                     {
                         Type = "Action.OpenUrl",
-                        Title = $"Chat with {this.ticketModel.RequesterGivenName}",
-                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticketModel.RequesterUserPrincipalName}"),
+                        Title = string.Format(Resource.ChatTextButton, this.ticketModel.RequesterGivenName),
+                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.ticketModel.RequesterUserPrincipalName)}"),
                     },
                     new AdaptiveOpenUrlAction
                     {
                         Type = "Action.OpenUrl",
-                        Title = $"Go to original thread",
+                        Title = Resource.GoToOriginalThreadButtonText,
                         Url = new Uri(this.GetGoToThreadUri(this.ticketModel.SmeThreadConversationId))
                     }
                 },
@@ -131,15 +135,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         {
             if (ticketModel.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
-                return "Open";
+                return Resource.OpenStatusTitle;
             }
             else if (ticketModel.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
-                return $"Assigned to {ticketModel.AssignedToName}";
+                return string.Format(Resource.AssignedToStatusValue, ticketModel.AssignedToName);
             }
             else
             {
-                return $"Closed by {ticketModel.LastModifiedByName}";
+                return string.Format(Resource.ClosedByStatusValue, ticketModel.LastModifiedByName);
             }
         }
 
@@ -150,7 +154,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// <returns>The closed date of the ticket.</returns>
         private string GetTicketClosedDate(TicketEntity ticketModel)
         {
-            return ticketModel.Status == (int)TicketState.Closed ? ticketModel.DateClosed.Value.ToString("D") : "N/A";
+            return ticketModel.Status == (int)TicketState.Closed ? ticketModel.DateClosed.Value.ToString("D") : Resource.NonApplicableString;
         }
     }
 }
