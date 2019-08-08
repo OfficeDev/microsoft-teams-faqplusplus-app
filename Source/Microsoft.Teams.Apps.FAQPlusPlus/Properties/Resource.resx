@@ -354,7 +354,7 @@
     <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
   </data>
   <data name="ReopenedTicketUserNotification" xml:space="preserve">
-    <value>Your request has been reopened. An expert will directly send you a chat message.</value>
+    <value>Your request is open again. An expert will directly send you a chat message.</value>
     <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
   </data>
   <data name="SmeAttentionText" xml:space="preserve">

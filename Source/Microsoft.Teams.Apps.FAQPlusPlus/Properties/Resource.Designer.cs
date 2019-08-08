@@ -421,7 +421,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request has been reopened. An expert will directly send you a chat message..
+        ///   Looks up a localized string similar to Your request is open again. An expert will directly send you a chat message..
         /// </summary>
         public static string ReopenedTicketUserNotification {
             get {
