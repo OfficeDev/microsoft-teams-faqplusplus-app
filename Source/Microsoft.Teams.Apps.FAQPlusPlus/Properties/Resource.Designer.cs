@@ -187,7 +187,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close.
+        ///   Looks up a localized string similar to Closed.
         /// </summary>
         public static string CloseStatusText {
             get {
@@ -264,6 +264,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string FunctionCardText2 {
             get {
                 return ResourceManager.GetString("FunctionCardText2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to original thread.
+        /// </summary>
+        public static string GoToOriginalThreadButtonText {
+            get {
+                return ResourceManager.GetString("GoToOriginalThreadButtonText", resourceCulture);
             }
         }
         
@@ -597,6 +606,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string TitleText {
             get {
                 return ResourceManager.GetString("TitleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassigned.
+        /// </summary>
+        public static string UnassignedStatusText {
+            get {
+                return ResourceManager.GetString("UnassignedStatusText", resourceCulture);
             }
         }
         

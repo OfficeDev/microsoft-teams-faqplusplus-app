@@ -68,8 +68,8 @@
         {
           "id": "openrequests",
           "type": "query",
-          "title": "Open",
-          "description": "Search open requests not yet assigned to an expert",
+          "title": "Unassigned",
+          "description": "Search unassigned requests not yet assigned to an expert",
           "parameters": [
             {
               "name": "searchText",

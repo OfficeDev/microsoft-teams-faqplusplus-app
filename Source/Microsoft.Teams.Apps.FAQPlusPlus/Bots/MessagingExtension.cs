@@ -160,7 +160,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
                     Title = ticket.Title,
-                    Text = this.GetPreviewCardText(ticket),
+                    Text = this.GetPreviewCardText(ticket, commandId),
                 };
 
                 var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
@@ -171,13 +171,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         // Get the text for the preview card for the result
-        private string GetPreviewCardText(TicketEntity ticket)
+        private string GetPreviewCardText(TicketEntity ticket, string commandId)
         {
             var text = $@"
-<div>
-  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.DateCreated.ToShortDateString())} | {HttpUtility.HtmlEncode(this.GetDisplayStatus(ticket))}</div>
-  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.RequesterName)}</div>
-</div>";
+            <div>
+                <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.DateCreated.ToShortDateString())} | {HttpUtility.HtmlEncode(ticket.RequesterName)}</div>";
+            if (!commandId.Equals("openrequests"))
+            {
+                text = text + $"<div style='white-space:nowrap'>{HttpUtility.HtmlEncode(this.GetDisplayStatus(ticket))}</div>";
+            }
+
+            text = text + $"</div>";
             return text.Trim();
         }
 
@@ -188,11 +192,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 case (int)TicketState.Open:
                     return string.IsNullOrEmpty(ticket.AssignedToName) ?
-                        Resource.OpenStatusValue :
+                        Resource.UnassignedStatusText :
                         string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName);
 
                 case (int)TicketState.Closed:
-                    return string.Format(CultureInfo.CurrentCulture, Resource.ClosedByStatusValue, ticket.LastModifiedByName);
+                    return string.Format(CultureInfo.CurrentCulture, Resource.CloseStatusText);
 
                 default:
                     this.telemetryClient.TrackTrace($"Unknown ticket status {ticket.Status}", ApplicationInsights.DataContracts.SeverityLevel.Warning);
