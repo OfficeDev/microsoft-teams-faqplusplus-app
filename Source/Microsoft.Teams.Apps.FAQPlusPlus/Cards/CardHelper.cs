@@ -18,6 +18,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         public const int KbAnswerMaxLength = 500;
 
+        /// <summary>
+        /// Maximum length of the user title
+        /// </summary>
+        public const int UserTitleMaxLength = 50;
+
+        /// <summary>
+        /// Maximum length of the user description
+        /// </summary>
+        public const int UserDescriptionMaxLength = 200;
+
         private const string Ellipsis = "...";
 
         /// <summary>
@@ -60,15 +70,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>A status string.</returns>
-        public static string GetTicketStatus(TicketEntity ticket)
+        public static string GetUserTicketStatus(TicketEntity ticket)
         {
             if (ticket.Status == (int)TicketState.Open)
             {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ? Resource.OpenStatusTitle : string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
+                return string.IsNullOrEmpty(ticket.AssignedToName) ?
+                    Resource.UnassignedUserNotificationStatus :
+                    Resource.AssignedUserNotificationStatus;
             }
             else
             {
-                return string.Format(Resource.ClosedByStatusValue, ticket.LastModifiedByName);
+                return Resource.ClosedUserNotificationStatus;
             }
         }
 

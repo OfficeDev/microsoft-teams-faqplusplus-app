@@ -182,7 +182,7 @@
     <comment>Ability to chat directly with end user from SME channel.</comment>
   </data>
   <data name="NotificationCardContent" xml:space="preserve">
-    <value>Your request below has been shared with the SME team. They will directly send you a chat message. </value>
+    <value>I've shared your question with the related experts. They'll respond to you directly with a chat message.</value>
     <comment>Confirmation message to the user upon asking question to the expert.</comment>
   </data>
   <data name="NotificationCardTitleText" xml:space="preserve">
@@ -318,7 +318,7 @@
     <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
   </data>
   <data name="OpenStatusTitle" xml:space="preserve">
-    <value>Open</value>
+    <value>Unassigned</value>
     <comment>Status value is open which is used in notification cards to both SME team and user.</comment>
   </data>
   <data name="AssignedToStatusValue" xml:space="preserve">
@@ -346,11 +346,11 @@
     <comment>Not applicable is used in scenarios like- ask an expert or share app feedback bot menu command where there is no question and answer from QnA service and to reflect the same in respective fields N/A is used.</comment>
   </data>
   <data name="AssignedTicketUserNotification" xml:space="preserve">
-    <value>Your request has been assigned to an expert. They will directly send you a chat message.</value>
+    <value>Your question has been assigned to an expert. They'll respond to you directly with a chat message.</value>
     <comment>Notification text sent to the user who opened a ticket, when the ticket is assigned to an expert.</comment>
   </data>
   <data name="ClosedTicketUserNotification" xml:space="preserve">
-    <value>Your request has been closed. Please ask an expert again if you still need more assistance or have a new request.</value>
+    <value>This request has been closed. Ask an expert again if you still need more assistance.</value>
     <comment>Notification text sent to the user who opened a ticket, when the ticket is closed.</comment>
   </data>
   <data name="ReopenedTicketUserNotification" xml:space="preserve">
@@ -367,5 +367,17 @@
   <data name="NonSmeErrorText" xml:space="preserve">
     <value>You don't have access to this app. Please contact your IT admin.</value>
     <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
+  </data>
+  <data name="AssignedUserNotificationStatus" xml:space="preserve">
+    <value>Assigned</value>
+    <comment>The status value for the user notification when a ticket is assigned to an expert</comment>
+  </data>
+  <data name="ClosedUserNotificationStatus" xml:space="preserve">
+    <value>Closed</value>
+    <comment>The status value for the user notification when a ticket is closed by an expert.</comment>
+  </data>
+  <data name="UnassignedUserNotificationStatus" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>The status value for the user notification when a ticket is unassigned</comment>
   </data>
 </root>

@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource {
@@ -115,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request has been assigned to an expert. They will directly send you a chat message..
+        ///   Looks up a localized string similar to Your question has been assigned to an expert. They&apos;ll respond to you directly with a chat message..
         /// </summary>
         public static string AssignedTicketUserNotification {
             get {
@@ -129,6 +129,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string AssignedToStatusValue {
             get {
                 return ResourceManager.GetString("AssignedToStatusValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assigned.
+        /// </summary>
+        public static string AssignedUserNotificationStatus {
+            get {
+                return ResourceManager.GetString("AssignedUserNotificationStatus", resourceCulture);
             }
         }
         
@@ -178,11 +187,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request has been closed. Please ask an expert again if you still need more assistance or have a new request..
+        ///   Looks up a localized string similar to This request has been closed. Ask an expert again if you still need more assistance..
         /// </summary>
         public static string ClosedTicketUserNotification {
             get {
                 return ResourceManager.GetString("ClosedTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed.
+        /// </summary>
+        public static string ClosedUserNotificationStatus {
+            get {
+                return ResourceManager.GetString("ClosedUserNotificationStatus", resourceCulture);
             }
         }
         
@@ -322,7 +340,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request below has been shared with the SME team. They will directly send you a chat message. .
+        ///   Looks up a localized string similar to I&apos;ve shared your question with the related experts. They&apos;ll respond to you directly with a chat message..
         /// </summary>
         public static string NotificationCardContent {
             get {
@@ -340,7 +358,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open.
+        ///   Looks up a localized string similar to Unassigned.
         /// </summary>
         public static string OpenStatusTitle {
             get {
@@ -606,6 +624,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string TitleText {
             get {
                 return ResourceManager.GetString("TitleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassigned.
+        /// </summary>
+        public static string UnassignedUserNotificationStatus {
+            get {
+                return ResourceManager.GetString("UnassignedUserNotificationStatus", resourceCulture);
             }
         }
         
