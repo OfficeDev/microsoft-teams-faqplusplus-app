@@ -28,7 +28,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.AskAnExpertText1,
-                        Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
@@ -73,18 +72,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.AskAnExpertButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
+                        Data = new
                         {
-                            msteams = new
+                            msteams = new CardAction
                             {
-                                type = ActionTypes.MessageBack,
-                                displayText = Resource.AskAnExpertDisplayText,
-                                text = SubmitUserRequestPayload.QuestionForExpertAction
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = Resource.AskAnExpertDisplayText,
+                                Text = SubmitUserRequestPayload.QuestionForExpertAction
                             }
-                        })
+                        },
                     }
                 }
             };
+
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,

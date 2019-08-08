@@ -2,56 +2,52 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    ///  This is a card helper class used for  repetitive functions.
+    /// Utility functions for constructing cards used in this project.
     /// </summary>
     public static class CardHelper
     {
+        /// <summary>
+        /// Maximum length of the knowledge base answer to show
+        /// </summary>
         public const int KbAnswerMaxLength = 500;
+
         private const string Ellipsis = "...";
-        private const string DateFormat = "ddd, MMM dd',' yyy hh':'mm tt";
 
         /// <summary>
-        /// Gets the shortened Kb answer limited 500 characters.
+        /// Truncate the provided string to a given maximum length.
         /// </summary>
         /// <param name="text">Text to be truncated.</param>
-        /// <param name="maxLength">Text gets truncated by defined max length.</param>
-        /// <returns>Constructed adaptive fact.</returns>
+        /// <param name="maxLength">The maximum length in characters of the text.</param>
+        /// <returns>Truncated string.</returns>
         public static string TruncateStringIfLonger(string text, int maxLength)
         {
-            if (!string.IsNullOrWhiteSpace(text))
+            if ((text != null) && (text.Length > maxLength))
             {
-                if (text.Length > maxLength)
-                {
-                    return text.Substring(0, maxLength) + Ellipsis;
-                }
+                text = text.Substring(0, maxLength) + Ellipsis;
+            }
 
-                return text;
-            }
-            else
-            {
-                return Resource.NonApplicableString;
-            }
+            return text;
         }
 
         /// <summary>
         /// Gets the closed date of the ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
-        /// <param name="localTimeStamp">Local time stamp of the user activity.</param>
+        /// <param name="activityLocalTimestamp">Local time stamp of the user activity.</param>
         /// <returns>The closed date of the ticket.</returns>
-        public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? localTimeStamp)
+        public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
         {
             if (ticket.Status == (int)TicketState.Closed)
             {
                 // We are using this format because DATE and TIME are not supported on mobile yet.
-                return GetLocalTimeStamp(localTimeStamp);
+                return GetFormattedDateInUserTimeZone(ticket.DateClosed.Value, activityLocalTimestamp);
             }
             else
             {
@@ -77,23 +73,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
         }
 
         /// <summary>
-        /// Common method to check the string value if it is null or empty.
+        /// Return "N/A" if the given text is null or empty, or the text unchanged, otherwise.
         /// </summary>
         /// <param name="value">String value.</param>
         /// <returns>A string or N/A.</returns>
-        public static string ValidateTextIsNullorEmpty(string value)
+        public static string ConvertNullOrEmptyToNotApplicable(string value)
         {
             return !string.IsNullOrWhiteSpace(value) ? value : Resource.NonApplicableString;
         }
 
         /// <summary>
-        /// Gets the user description text.
+        /// Returns a string that will display the given date and time in the user's local time zone, when placed in an adaptive card.
         /// </summary>
-        /// <param name="localTimeStamp">The current ticket information.</param>
+        /// <param name="dateTime">The date and time to format.</param>
+        /// <param name="userLocalTime">The sender's local time, as determined by the local timestamp of the activity.</param>
         /// <returns>A description string.</returns>
-        public static string GetLocalTimeStamp(DateTimeOffset? localTimeStamp)
+        public static string GetFormattedDateInUserTimeZone(DateTime dateTime, DateTimeOffset? userLocalTime)
         {
-            return localTimeStamp.Value.ToString(DateFormat);
+            // Adaptive card on mobile has a bug where it does not support DATE and TIME, so for now we convert the date and time manually
+            // TODO: Change to use DATE() function
+            return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToShortDateString();
         }
     }
 }

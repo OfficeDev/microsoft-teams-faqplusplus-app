@@ -40,7 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
                 {
                     KbId = kbId,
                     EndpointKey = endpointKey,
-                    Hostname = this.configuration["KbHost"]
+                    Hostname = this.configuration["QnAMakerHostUrl"]
                 };
                 var options = new QnAMakerOptions
                 {

@@ -5,11 +5,9 @@
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class process Welcome Card, when bot is installed by the user in personal scope.
@@ -21,8 +19,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="welcomeText">Gets welcome text.</param>
         /// <returns>Card attachment as Json string.</returns>
-        public static async Task<Attachment> GetCard(string welcomeText)
+        public static Attachment GetCard(string welcomeText)
         {
+            string[] welcomeTextValues = welcomeText.Split(';');
+            var welcomeText1 = welcomeTextValues[0];
+            var messageText1 = welcomeTextValues[1];
+            var welcomeCardBulletText = welcomeTextValues[2];
+            var messageText2 = welcomeTextValues[3];
+            var takeATourButtonText = welcomeTextValues[4];
+
             AdaptiveCard userWelcomeCard = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -35,24 +40,49 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Text = welcomeText1,
                         Wrap = true
                     },
+                    new AdaptiveTextBlock
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                        Size = AdaptiveTextSize.Small,
+                        Spacing = AdaptiveSpacing.Small,
+                        Text = messageText1,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                        Size = AdaptiveTextSize.Small,
+                        Spacing = AdaptiveSpacing.None,
+                        Text = welcomeCardBulletText,
+                        Wrap = true
+                    },
+                    new AdaptiveTextBlock
+                    {
+                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
+                        Size = AdaptiveTextSize.Small,
+                        Spacing = AdaptiveSpacing.Small,
+                        Text = messageText2,
+                        Wrap = true
+                    }
                 },
                 Actions = new List<AdaptiveAction>
                 {
                     new AdaptiveSubmitAction
                     {
-                        Title = Resource.TakeATourButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
-                             {
-                                 msteams = new
-                                 {
-                                     type = ActionTypes.MessageBack,
-                                     displayText = Resource.TakeATourButtonText,
-                                     text = FaqPlusPlusBot.TakeATour
-                                 }
-                             })
+                        Title = takeATourButtonText,
+                        Data = new
+                        {
+                            msteams = new CardAction
+                            {
+                              Type = ActionTypes.MessageBack,
+                              DisplayText = takeATourButtonText,
+                              Text = FaqPlusPlusBot.TakeATour
+                            }
+                        },
                     }
                 }
             };
+
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,

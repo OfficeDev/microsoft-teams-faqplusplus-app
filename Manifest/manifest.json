@@ -29,6 +29,27 @@
         "personal",
         "team"
       ],
+      "commandLists": [
+        {
+            "scopes": [
+                "personal"
+            ],
+            "commands": [
+                {
+                    "title": "Take a tour",
+                    "description": "Tour of key features"
+                },
+                {
+                    "title": "Ask an expert",
+                    "description": "Connect with an expert"
+                },
+                {
+                    "title": "Share feedback",
+                    "description": "Send feedback"
+                }
+            ]
+        }
+      ],
       "supportsFiles": false,
       "isNotificationOnly": false
     }

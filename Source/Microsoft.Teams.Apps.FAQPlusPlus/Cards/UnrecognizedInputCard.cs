@@ -22,86 +22,84 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Card attachment as Json string.</returns>
         public static Attachment GetCard(string question)
         {
+            AdaptiveCard unrecognizedInputCard = new AdaptiveCard("1.0")
             {
-                AdaptiveCard unrecognizedInputCard = new AdaptiveCard("1.0")
+                Body = new List<AdaptiveElement>
                 {
-                    Body = new List<AdaptiveElement>
+                    new AdaptiveTextBlock
                     {
-                        new AdaptiveTextBlock
-                        {
-                            Text = Resource.CustomMessage,
-                            Wrap = true
-                        }
-                    },
-                    Actions = new List<AdaptiveAction>
+                        Text = Resource.CustomMessage,
+                        Wrap = true
+                    }
+                },
+                Actions = new List<AdaptiveAction>
+                {
+                    new AdaptiveShowCardAction
                     {
-                        new AdaptiveShowCardAction
+                        Title = Resource.AskAnExpertButtonText,
+                        Card = new AdaptiveCard("1.0")
                         {
-                            Title = Resource.AskAnExpertButtonText,
-                            Card = new AdaptiveCard("1.0")
+                            Body = new List<AdaptiveElement>
                             {
-                                Body = new List<AdaptiveElement>
+                                new AdaptiveTextBlock
                                 {
-                                    new AdaptiveTextBlock
-                                    {
-                                        Weight = AdaptiveTextWeight.Bolder,
-                                        Text = Resource.TitleText,
-                                        Wrap = true
-                                    },
-                                    new AdaptiveTextBlock
-                                    {
-                                        Text = Resource.MandatoryFieldText,
-                                        Color = AdaptiveTextColor.Attention,
-                                        Spacing = AdaptiveSpacing.Small,
-                                        Wrap = true
-                                    },
-                                    new AdaptiveTextInput
-                                    {
-                                        Placeholder = Resource.ShowCardTitleText,
-                                        Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
-                                        IsMultiline = false
-                                    },
-                                    new AdaptiveTextBlock
-                                    {
-                                        Weight = AdaptiveTextWeight.Bolder,
-                                        Text = Resource.DescriptionText,
-                                        Wrap = true
-                                    },
-                                    new AdaptiveTextInput
-                                    {
-                                        Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
-                                        Value = question,
-                                        IsMultiline = true
-                                    }
+                                    Weight = AdaptiveTextWeight.Bolder,
+                                    Text = Resource.TitleText,
+                                    Wrap = true
                                 },
-                                Actions = new List<AdaptiveAction>
+                                new AdaptiveTextBlock
                                 {
-                                    new AdaptiveSubmitAction
+                                    Text = Resource.MandatoryFieldText,
+                                    Color = AdaptiveTextColor.Attention,
+                                    Spacing = AdaptiveSpacing.Small,
+                                    Wrap = true
+                                },
+                                new AdaptiveTextInput
+                                {
+                                    Placeholder = Resource.ShowCardTitleText,
+                                    Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
+                                    IsMultiline = false
+                                },
+                                new AdaptiveTextBlock
+                                {
+                                    Weight = AdaptiveTextWeight.Bolder,
+                                    Text = Resource.DescriptionText,
+                                    Wrap = true
+                                },
+                                new AdaptiveTextInput
+                                {
+                                    Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
+                                    Value = question,
+                                    IsMultiline = true
+                                }
+                            },
+                            Actions = new List<AdaptiveAction>
+                            {
+                                new AdaptiveSubmitAction
+                                {
+                                    Title = Resource.SubmitButtonText,
+                                    Data = new
                                     {
-                                        Title = Resource.SubmitButtonText,
-                                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
+                                        msteams = new CardAction
                                         {
-                                            msteams = new
-                                            {
-                                                type = ActionTypes.MessageBack,
-                                                displayText = Resource.AskAnExpertDisplayText,
-                                                text = SubmitUserRequestPayload.QuestionForExpertAction
-                                            },
-                                            UserQuestion = question,
-                                        })
-                                    }
+                                            Type = ActionTypes.MessageBack,
+                                            DisplayText = Resource.AskAnExpertDisplayText,
+                                            Text = SubmitUserRequestPayload.QuestionForExpertAction
+                                        },
+                                        UserQuestion = question,
+                                    },
                                 }
                             }
                         }
                     }
-                };
+                }
+            };
 
-                return new Attachment
-                {
-                    ContentType = AdaptiveCard.ContentType,
-                    Content = unrecognizedInputCard,
-                };
-            }
+            return new Attachment
+            {
+                ContentType = AdaptiveCard.ContentType,
+                Content = unrecognizedInputCard,
+            };
         }
     }
 }

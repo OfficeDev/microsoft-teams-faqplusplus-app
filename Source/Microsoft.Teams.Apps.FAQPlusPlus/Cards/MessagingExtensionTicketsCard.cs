@@ -91,7 +91,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Type = "Action.OpenUrl",
                         Title = string.Format(Resource.ChatTextButton, this.ticketModel.RequesterGivenName),
-                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={this.ticketModel.RequesterUserPrincipalName}"),
+                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.ticketModel.RequesterUserPrincipalName)}"),
                     },
                     new AdaptiveOpenUrlAction
                     {

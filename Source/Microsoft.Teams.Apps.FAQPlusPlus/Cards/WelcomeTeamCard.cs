@@ -47,18 +47,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.TakeATeamTourButtonText,
-                        Data = Newtonsoft.Json.Linq.JObject.FromObject(new
-                             {
-                                 msteams = new
-                                 {
-                                     type = ActionTypes.MessageBack,
-                                     displayText = Resource.TakeATeamTourButtonText,
-                                     text = FaqPlusPlusBot.TeamTour
-                                 }
-                             })
+                        Data = new
+                        {
+                            msteam = new CardAction
+                            {
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = Resource.TakeATeamTourButtonText,
+                                Text = FaqPlusPlusBot.TeamTour
+                            }
+                        },
                     }
                 }
             };
+
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,

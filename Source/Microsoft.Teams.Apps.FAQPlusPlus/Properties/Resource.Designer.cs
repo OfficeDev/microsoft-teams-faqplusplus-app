@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource {
@@ -313,11 +313,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request below has been shared with the SME team. They will directly send you a chat message. .
+        ///   Looks up a localized string similar to You don&apos;t have access to this app. Please contact your IT admin..
         /// </summary>
-        public static string NotificationCardContent {
+        public static string NonSmeErrorText {
             get {
-                return ResourceManager.GetString("NotificationCardContent", resourceCulture);
+                return ResourceManager.GetString("NonSmeErrorText", resourceCulture);
             }
         }
         
@@ -332,6 +332,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to Open.
+        /// </summary>
+        public static string OpenStatusTitle {
+            get {
+                return ResourceManager.GetString("OpenStatusTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Question asked:.
         /// </summary>
         public static string OpenStatusTitle {
             get {

@@ -6,12 +6,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
     using Microsoft.ApplicationInsights;
     using Microsoft.Bot.Builder;
+    using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
@@ -29,16 +32,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
+        private readonly IConfiguration configuration;
+        private readonly IBotFrameworkHttpAdapter adapter;
+        private readonly Common.Providers.IConfigurationProvider configurationProvider;
+        private readonly string appID;
+        private readonly BotFrameworkAdapter botAdapter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
         /// </summary>
         /// <param name="searchService">searchService DI.</param>
         /// <param name="telemetryClient">telemetryClient DI.</param>
-        public MessagingExtension(ISearchService searchService, TelemetryClient telemetryClient)
+        /// <param name="configuration">configuration DI.</param>
+        /// <param name="adapter">adapter DI.</param>
+        /// <param name="configurationProvider">configurationProvider DI.</param>
+        public MessagingExtension(
+            ISearchService searchService,
+            TelemetryClient telemetryClient,
+            IConfiguration configuration,
+            IBotFrameworkHttpAdapter adapter,
+            Common.Providers.IConfigurationProvider configurationProvider)
         {
             this.searchService = searchService;
             this.telemetryClient = telemetryClient;
+            this.configuration = configuration;
+            this.adapter = adapter;
+            this.configurationProvider = configurationProvider;
+            this.appID = this.configuration["MicrosoftAppId"];
+            this.botAdapter = (BotFrameworkAdapter)this.adapter;
         }
 
         /// <summary>
@@ -52,17 +73,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             {
                 if (turnContext.Activity.Name == "composeExtension/query")
                 {
-                    var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContext.Activity.Value.ToString());
-                    var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
-
-                    return new InvokeResponse
+                    if (await this.IsMemberOfSmeTeamAsync(turnContext))
                     {
-                        Body = new MessagingExtensionResponse
+                        var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContext.Activity.Value.ToString());
+                        var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
+
+                        return new InvokeResponse
                         {
-                            ComposeExtension = await this.GetSearchResultAsync(searchQuery,  messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
-                        },
-                        Status = 200,
-                    };
+                            Body = new MessagingExtensionResponse
+                            {
+                                ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
+                            },
+                            Status = 200,
+                        };
+                    }
+                    else
+                    {
+                        return new InvokeResponse
+                        {
+                            Body = new MessagingExtensionResponse
+                            {
+                                ComposeExtension = new MessagingExtensionResult
+                                {
+                                    Text = Resource.NonSmeErrorText,
+                                    Type = "message"
+                                },
+                            },
+                            Status = 200,
+                        };
+                    }
                 }
                 else
                 {
@@ -175,6 +214,49 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             return messageExtensionInputText;
+        }
+
+        // Check if user using the app is a valid SME or not
+        private async Task<bool> IsMemberOfSmeTeamAsync(ITurnContext<IInvokeActivity> turnContext)
+        {
+            var teamId = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.TeamId);
+            bool isUserPartOfRoster = false;
+            try
+            {
+                ConversationAccount conversationAccount = new ConversationAccount();
+                conversationAccount.Id = teamId;
+
+                ConversationReference conversationReference = new ConversationReference();
+                conversationReference.ServiceUrl = turnContext.Activity.ServiceUrl;
+                conversationReference.Conversation = conversationAccount;
+
+                string currentUserId = turnContext.Activity.From.Id;
+                await this.botAdapter.ContinueConversationAsync(
+                    this.appID,
+                    conversationReference,
+                    async (newTurnContext, newCancellationToken) =>
+                    {
+                        var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
+
+                        foreach (var member in members)
+                        {
+                            if (member.Id.Equals(currentUserId))
+                            {
+                                isUserPartOfRoster = true;
+                                break;
+                            }
+                        }
+                    },
+                default(CancellationToken));
+            }
+            catch (Exception error)
+            {
+                this.telemetryClient.TrackTrace($"Failed to get members of team {teamId}: {error.Message}", ApplicationInsights.DataContracts.SeverityLevel.Error);
+                this.telemetryClient.TrackException(error);
+                isUserPartOfRoster = false;
+            }
+
+            return isUserPartOfRoster;
         }
     }
 }
