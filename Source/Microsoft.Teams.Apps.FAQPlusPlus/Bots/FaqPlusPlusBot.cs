@@ -309,14 +309,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case SubmitUserRequestPayload.AppFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
 
-                    smeTeamCard = SmeFeedbackCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, turnContext.Activity.LocalTimestamp);
+                    smeTeamCard = SmeFeedbackCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, message.LocalTimestamp);
                     userCard = ThankYouCard.GetCard();
                     break;
 
                 case SubmitUserRequestPayload.ResultsFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received feedback about an answer");
 
-                    smeTeamCard = SmeFeedbackCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, turnContext.Activity.LocalTimestamp);
+                    smeTeamCard = SmeFeedbackCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, message.LocalTimestamp);
                     userCard = ThankYouCard.GetCard();
                     break;
 
