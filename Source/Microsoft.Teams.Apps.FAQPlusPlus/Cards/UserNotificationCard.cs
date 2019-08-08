@@ -30,12 +30,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Returns a user notification card for the ticket.
         /// </summary>
-        /// <param name="localTimeStamp">Local time stamp of user activity.</param>
         /// <param name="message">The status message to add to the card</param>
+        /// <param name="activityLocalTimestamp">Local time stamp of user activity.</param>
         /// <returns>An adaptive card as an attachment</returns>
-        public Attachment ToAttachment(DateTimeOffset? localTimeStamp, string message)
+        public Attachment ToAttachment(string message, DateTimeOffset? activityLocalTimestamp)
         {
-            var ticketCreatedDate = CardHelper.GetLocalTimeStamp(localTimeStamp, this.ticket.DateCreated);
             var card = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -67,19 +66,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             new AdaptiveFact
                             {
                                 Title = Resource.DescriptionText,
-                                Value = CardHelper.ValidateTextIsNullorEmpty(this.ticket.Description),
+                                Value = CardHelper.ConvertNullOrEmptyToNotApplicable(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {
                                 Title = Resource.DateCreatedDisplayFactTitle,
-
-                                // We are using this format because DATE and TIME are not supported on mobile yet.
-                                Value = ticketCreatedDate,
+                                Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, activityLocalTimestamp),
                             },
                             new AdaptiveFact
                             {
                                 Title = Resource.ClosedFactTitle,
-                                Value = CardHelper.GetTicketClosedDate(this.ticket, localTimeStamp),
+                                Value = CardHelper.GetTicketClosedDate(this.ticket, activityLocalTimestamp),
                             }
                         },
                     },

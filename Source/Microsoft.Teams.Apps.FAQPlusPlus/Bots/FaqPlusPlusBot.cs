@@ -302,8 +302,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
-                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp, true);
-                    userCard = new UserNotificationCard(newTicket).ToAttachment(message.LocalTimestamp, Resource.NotificationCardContent);
+                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
+                    userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
                     break;
 
                 case SubmitUserRequestPayload.AppFeedbackAction:
@@ -415,23 +415,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (payload.Action)
             {
                 case ChangeTicketStatusPayload.ReopenAction:
-                    smeNotification = string.Format(Resource.SMEOpenedStatus, turnContext.Activity.From.Name);
+                    smeNotification = string.Format(Resource.SMEOpenedStatus, message.From.Name);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(turnContext.Activity.LocalTimestamp, Resource.ReopenedTicketUserNotification));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ReopenedTicketUserNotification, message.LocalTimestamp));
                     userNotification.Summary = Resource.ReopenedTicketUserNotification;
                     break;
 
                 case ChangeTicketStatusPayload.CloseAction:
                     smeNotification = string.Format(Resource.SMEClosedStatus, ticket.LastModifiedByName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(turnContext.Activity.LocalTimestamp, Resource.ClosedTicketUserNotification));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.ClosedTicketUserNotification, message.LocalTimestamp));
                     userNotification.Summary = Resource.ClosedTicketUserNotification;
                     break;
 
                 case ChangeTicketStatusPayload.AssignToSelfAction:
                     smeNotification = string.Format(Resource.SMEAssignedStatus, ticket.AssignedToName);
 
-                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(turnContext.Activity.LocalTimestamp, Resource.AssignedTicketUserNotification));
+                    userNotification = MessageFactory.Attachment(new UserNotificationCard(ticket).ToAttachment(Resource.AssignedTicketUserNotification, message.LocalTimestamp));
                     userNotification.Summary = Resource.AssignedTicketUserNotification;
                     break;
             }

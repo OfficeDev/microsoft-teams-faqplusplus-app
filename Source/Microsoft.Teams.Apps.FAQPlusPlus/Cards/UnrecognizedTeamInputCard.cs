@@ -33,6 +33,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     }
                 }
             };
+
             return card.ToAttachment();
         }
     }

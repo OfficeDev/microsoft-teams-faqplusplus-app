@@ -21,62 +21,62 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Create a card that represents application feedback.
         /// </summary>
-        /// <param name="titleText">Actual title text entered by the user for the given scenario.</param>
-        /// <param name="userAccountDetails">Details of the user submitting the feedback.</param>
-        /// <param name="userActivityPayload">Payload from the feedback submission.</param>
-        /// <param name="localTimeStamp">Local time stamp of the user activity.</param>
+        /// <param name="userEnteredTitle">Actual title text entered by the user for the given scenario.</param>
+        /// <param name="userAccount">Details of the user submitting the feedback.</param>
+        /// <param name="activityPayload">Payload from the feedback submission.</param>
+        /// <param name="activityLocalTimestamp">Local timestamp of the user activity.</param>
         /// <returns>The card as an attachment</returns>
         public static Attachment CreateAppFeedbackCard(
-            string titleText,
-            TeamsChannelAccount userAccountDetails,
-            SubmitUserRequestPayload userActivityPayload,
-            DateTimeOffset? localTimeStamp)
+            string userEnteredTitle,
+            TeamsChannelAccount userAccount,
+            SubmitUserRequestPayload activityPayload,
+            DateTimeOffset? activityLocalTimestamp)
         {
-            var cardSubtitleText = string.Format(Resource.FeedbackSubHeaderText, userAccountDetails.Name, Resource.AppFeedbackText);
-            return GetCard(Resource.AppFeedbackText, titleText, cardSubtitleText, userAccountDetails, userActivityPayload.SmeAnswer, userActivityPayload.UserQuestion, userActivityPayload.AppFeedback, localTimeStamp);
+            var cardSubtitle = string.Format(Resource.FeedbackSubHeaderText, userAccount.Name, Resource.AppFeedbackText);
+            return GetCard(Resource.AppFeedbackText, cardSubtitle, userEnteredTitle, activityPayload.AppFeedback, activityPayload.SmeAnswer, activityPayload.UserQuestion, userAccount, activityLocalTimestamp);
         }
 
         /// <summary>
         /// Create a card that represents result feedback.
         /// </summary>
-        /// <param name="titleText">Actual title text entered by the user for the given scenario.</param>
-        /// <param name="userAccountDetails">Details of the user submitting the feedback.</param>
-        /// <param name="userActivityPayload">Payload from the feedback submission.</param>
-        /// <param name="localTimeStamp">Local time stamp of the user activity.</param>
+        /// <param name="userEnteredTitle">Actual title text entered by the user for the given scenario.</param>
+        /// <param name="userAccount">Details of the user submitting the feedback.</param>
+        /// <param name="activityPayload">Payload from the feedback submission.</param>
+        /// <param name="activityLocalTimestamp">Local time stamp of the user activity.</param>
         /// <returns>The card as an attachment</returns>
         public static Attachment CreateResultFeedbackCard(
-            string titleText,
-            TeamsChannelAccount userAccountDetails,
-            SubmitUserRequestPayload userActivityPayload,
-            DateTimeOffset? localTimeStamp)
+            string userEnteredTitle,
+            TeamsChannelAccount userAccount,
+            SubmitUserRequestPayload activityPayload,
+            DateTimeOffset? activityLocalTimestamp)
         {
-            var cardSubtitleText = string.Format(Resource.FeedbackSubHeaderText, userAccountDetails.Name, Resource.ResultsFeedbackText);
-            return GetCard(Resource.ResultsFeedbackText, titleText, cardSubtitleText, userAccountDetails, userActivityPayload.SmeAnswer, userActivityPayload.UserQuestion, userActivityPayload.ResultsFeedback, localTimeStamp);
+            var cardSubtitle = string.Format(Resource.FeedbackSubHeaderText, userAccount.Name, Resource.ResultsFeedbackText);
+            return GetCard(Resource.ResultsFeedbackText, cardSubtitle, userEnteredTitle, activityPayload.ResultsFeedback, activityPayload.SmeAnswer, activityPayload.UserQuestion, userAccount, activityLocalTimestamp);
         }
 
         /// <summary>
         /// This method will construct the adaptive card that is sent to the SME team for feedback activity.
         /// </summary>
-        /// <param name="cardHeaderText">Title of the user activity-for feedback or ask an expert.</param>
-        /// <param name="titleText">Actual title text entered by the user for the given scenario.</param>
-        /// <param name="cardSubtitleText">Adaptive card subtitle text based on the user activity type.</param>
-        /// <param name="channelAccountDetails">Channel details to which bot post the user question.</param>
+        /// <param name="title">Title of the user activity-for feedback or ask an expert.</param>
+        /// <param name="subtitle">Adaptive card subtitle text based on the user activity type.</param>
+        /// <param name="userEnteredTitle">Actual title text entered by the user for the given scenario.</param>
+        /// <param name="userEnteredDescription">Description entered by the user.</param>
         /// <param name="kbAnswer">Answer from the Knowledgebase.</param>
-        /// <param name="userQuestion">Question asked by the user to the bot.</param>
-        /// <param name="descriptionText">Description entered by the user.</param>
-        /// <param name="localTimeStamp">Local time stamp of the user activity.</param>
+        /// <param name="userOriginalQuestion">Question asked by the user to the bot.</param>
+        /// <param name="userAccount">Channel details to which bot post the user question.</param>
+        /// <param name="activityLocalTimestamp">Local time stamp of the user activity.</param>
         /// <returns>The card JSON string.</returns>
         public static Attachment GetCard(
-            string cardHeaderText,
-            string titleText,
-            string cardSubtitleText,
-            TeamsChannelAccount channelAccountDetails,
+            string title,
+            string subtitle,
+            string userEnteredTitle,
+            string userEnteredDescription,
             string kbAnswer,
-            string userQuestion,
-            string descriptionText,
-            DateTimeOffset? localTimeStamp)
+            string userOriginalQuestion,
+            TeamsChannelAccount userAccount,
+            DateTimeOffset? activityLocalTimestamp)
         {
-            var chatTextButton = string.Format(Resource.ChatTextButton, channelAccountDetails.GivenName);
+            var chatTextButton = string.Format(Resource.ChatTextButton, userAccount.GivenName);
             kbAnswer = CardHelper.TruncateStringIfLonger(kbAnswer, CardHelper.KbAnswerMaxLength);
 
             // Constructing adaptive card that is sent to SME team.
@@ -87,12 +87,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = cardHeaderText,
+                        Text = title,
                         Color = AdaptiveTextColor.Attention,
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = cardSubtitleText,
+                        Text = subtitle,
                         Wrap = true
                     },
                     new AdaptiveFactSet
@@ -107,28 +107,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                              new AdaptiveFact
                              {
                                 Title = Resource.TitleText,
-                                Value = titleText,
+                                Value = userEnteredTitle,
                              },
                              new AdaptiveFact
                              {
                                 Title = Resource.DescriptionText,
-                                Value = descriptionText,
+                                Value = userEnteredDescription,
                              },
                              new AdaptiveFact
                              {
                                 Title = Resource.KBEntryFactTitle,
-                                Value = CardHelper.ValidateTextIsNullorEmpty(kbAnswer),
+                                Value = CardHelper.ConvertNullOrEmptyToNotApplicable(kbAnswer),
                              },
                              new AdaptiveFact
                              {
                                 Title = Resource.QuestionAskedFactTitle,
-                                Value = CardHelper.ValidateTextIsNullorEmpty(userQuestion),
+                                Value = CardHelper.ConvertNullOrEmptyToNotApplicable(userOriginalQuestion),
                              },
-
                              new AdaptiveFact
                              {
                                 Title = Resource.DateCreatedDisplayFactTitle,
-                                Value = CardHelper.GetLocalTimeStamp(localTimeStamp, DateTime.UtcNow),
+                                Value = CardHelper.GetFormattedDateInUserTimeZone(DateTime.UtcNow, activityLocalTimestamp),
                              },
                          },
                     }
@@ -138,10 +137,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveOpenUrlAction
                     {
                         Title = chatTextButton,
-                        UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={channelAccountDetails.Email}"
+                        UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(userAccount.UserPrincipalName)}"
                     }
                 }
             };
+
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,

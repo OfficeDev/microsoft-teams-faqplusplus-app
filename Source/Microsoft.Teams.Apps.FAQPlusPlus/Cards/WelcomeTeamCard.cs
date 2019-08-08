@@ -4,7 +4,6 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
-    using System;
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
@@ -53,13 +52,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             msteam = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
-                                DisplayText= Resource.TakeATeamTourButtonText,
+                                DisplayText = Resource.TakeATeamTourButtonText,
                                 Text = FaqPlusPlusBot.TeamTour
                             }
                         },
                     }
                 }
             };
+
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,
