@@ -364,4 +364,8 @@
     <value>Go to original thread</value>
     <comment>Go to original thread button available on messaging extension card.</comment>
   </data>
+  <data name="NonSmeErrorText" xml:space="preserve">
+    <value>You don't have access to this app. Please contact your IT admin.</value>
+    <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
+  </data>
 </root>

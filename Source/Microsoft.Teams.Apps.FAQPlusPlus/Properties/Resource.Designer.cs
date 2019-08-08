@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource {
@@ -241,15 +241,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rating (Required):.
-        /// </summary>
-        public static string FeedbackRatingRequired {
-            get {
-                return ResourceManager.GetString("FeedbackRatingRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to **{0}** is sharing feedback. Details as follows:.
         /// </summary>
         public static string FeedbackSubHeaderText {
@@ -318,6 +309,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string NonApplicableString {
             get {
                 return ResourceManager.GetString("NonApplicableString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have access to this app. Please contact your IT admin..
+        /// </summary>
+        public static string NonSmeErrorText {
+            get {
+                return ResourceManager.GetString("NonSmeErrorText", resourceCulture);
             }
         }
         

@@ -34,7 +34,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
             var qnaMakerClient = new QnAMakerClient(
                 new ApiKeyServiceClientCredentials(
                 ConfigurationManager.AppSettings["QnAMakerSubscriptionKey"]))
-                { Endpoint = ConfigurationManager.AppSettings["QnAMakerEndPoint"] };
+                { Endpoint = ConfigurationManager.AppSettings["QnAMakerApiEndpointUrl"] };
 
             builder.Register(c => qnaMakerClient)
                 .As<IQnAMakerClient>()
