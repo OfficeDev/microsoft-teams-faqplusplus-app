@@ -304,6 +304,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You don&apos;t have access to this app. Please contact your IT admin..
+        /// </summary>
+        public static string NonSmeErrorText {
+            get {
+                return ResourceManager.GetString("NonSmeErrorText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
         public static string NotApplicable {
