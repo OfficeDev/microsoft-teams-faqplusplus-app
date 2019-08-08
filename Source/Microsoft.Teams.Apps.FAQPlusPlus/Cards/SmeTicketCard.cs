@@ -213,7 +213,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveChoice
                     {
-                        Title = Resource.UnassignStatusTitle,
+                        Title = Resource.AssignStatusTitle,
                         Value = ChangeTicketStatusPayload.AssignToSelfAction,
                     },
                     new AdaptiveChoice

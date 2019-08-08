@@ -238,7 +238,7 @@
     <comment>Button to submit user activity.</comment>
   </data>
   <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
-    <value>**{0}** is requesting support. Details are as follows:\n{1}</value>
+    <value>**{0}** is requesting support. Details are as follows: \{1}</value>
     <comment>Text says that user is asking a question to the expert, {0} placeholder holds the name of the person and {1} is the placeholder for the description that the user provided.</comment>
   </data>
   <data name="Resultsfeedbackdetails" xml:space="preserve">

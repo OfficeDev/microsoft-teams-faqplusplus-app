@@ -46,6 +46,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     this.BuildFactSet(this.ticket, activityLocalTimestamp),
                 },
+                Actions = this.BuildActions(this.ticket),
             };
 
             return new Attachment
@@ -53,6 +54,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
             };
+        }
+
+        private List<AdaptiveAction> BuildActions(TicketEntity ticket)
+        {
+            if (ticket.Status == (int)TicketState.Closed)
+            {
+                return new List<AdaptiveAction>
+                {
+                    new AdaptiveSubmitAction
+                    {
+                        Title = Resource.AskAnExpertButtonText,
+                        Data = new
+                        {
+                            msteams = new CardAction
+                            {
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = Resource.AskAnExpertDisplayText,
+                                Text = Resource.AskAnExpertDisplayText
+                            }
+                        }
+                    }
+                };
+            }
+
+            return null;
         }
 
         private AdaptiveElement BuildFactSet(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
