@@ -35,6 +35,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly IConfiguration configuration;
         private readonly IBotFrameworkHttpAdapter adapter;
         private readonly Common.Providers.IConfigurationProvider configurationProvider;
+        private readonly string appID;
+        private readonly BotFrameworkAdapter botAdapter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
@@ -56,6 +58,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.configuration = configuration;
             this.adapter = adapter;
             this.configurationProvider = configurationProvider;
+            this.appID = this.configuration["MicrosoftAppId"];
+            this.botAdapter = (BotFrameworkAdapter)this.adapter;
         }
 
         /// <summary>
@@ -227,12 +231,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 conversationReference.Conversation = conversationAccount;
 
                 string currentUserId = turnContext.Activity.From.Id;
-                await ((BotFrameworkAdapter)this.adapter).ContinueConversationAsync(
-                    this.configuration["MicrosoftAppId"],
+                await this.botAdapter.ContinueConversationAsync(
+                    this.appID,
                     conversationReference,
                     async (newTurnContext, newCancellationToken) =>
                     {
-                        var members = await ((BotFrameworkAdapter)this.adapter).GetConversationMembersAsync(newTurnContext, default(CancellationToken));
+                        var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
 
                         foreach (var member in members)
                         {
