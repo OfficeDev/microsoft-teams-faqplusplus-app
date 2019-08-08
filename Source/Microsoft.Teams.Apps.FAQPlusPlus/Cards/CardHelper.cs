@@ -85,6 +85,25 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
+        /// Gets the ticket status for the SME ticket card.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <returns>A status string.</returns>
+        public static string GetSmeTicketStatus(TicketEntity ticket)
+        {
+            if (ticket.Status == (int)TicketState.Open)
+            {
+                return string.IsNullOrEmpty(ticket.AssignedToName) ?
+                    Resource.UnassignedStatusValue :
+                    string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
+            }
+            else
+            {
+                return string.Format(Resource.ClosedByStatusValue, ticket.LastModifiedByName);
+            }
+        }
+
+        /// <summary>
         /// Return "N/A" if the given text is null or empty, or the text unchanged, otherwise.
         /// </summary>
         /// <param name="value">String value.</param>

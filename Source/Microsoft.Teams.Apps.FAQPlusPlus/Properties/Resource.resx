@@ -238,8 +238,8 @@
     <comment>Button to submit user activity.</comment>
   </data>
   <data name="QuestionForExpertSubHeaderText" xml:space="preserve">
-    <value>**{0}** is requesting support. Details are as follows:</value>
-    <comment>Text says that user is asking a question to the expert, placeholder holds the name of the person.</comment>
+    <value>**{0}** is requesting support. Details are as follows:\n{1}</value>
+    <comment>Text says that user is asking a question to the expert, {0} placeholder holds the name of the person and {1} is the placeholder for the description that the user provided.</comment>
   </data>
   <data name="Resultsfeedbackdetails" xml:space="preserve">
     <value>Enter feedback for above result</value>
@@ -250,12 +250,12 @@
     <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
   </data>
   <data name="AssignStatusTitle" xml:space="preserve">
-    <value>Assign</value>
-    <comment>Status of the user ticket- assign</comment>
+    <value>Assign to me</value>
+    <comment>Status of the user ticket- assign - for the dropdown</comment>
   </data>
   <data name="CloseStatusText" xml:space="preserve">
     <value>Close</value>
-    <comment>Status of the user Ticket- Close.</comment>
+    <comment>Status of the user Ticket- Close</comment>
   </data>
   <data name="ChangeStatusButtonText" xml:space="preserve">
     <value>Change status</value>
@@ -330,15 +330,15 @@
     <comment>"Closed" format string, {0} is the name of the user who closed the ticket</comment>
   </data>
   <data name="SMEAssignedStatus" xml:space="preserve">
-    <value>The request is now assigned. Assigned by {0}.</value>
+    <value>This request is now assigned. Assigned to {0}.</value>
     <comment>Message posted to the thread when the ticket is assigned. {0} = name of SME who assigned the request.</comment>
   </data>
   <data name="SMEClosedStatus" xml:space="preserve">
-    <value>The request is now closed. Closed by {0}.</value>
+    <value>This request is now closed. Closed by {0}.</value>
     <comment>Message posted to the thread when the ticket is closed. {0} = name of SME who closed the request.</comment>
   </data>
   <data name="SMEOpenedStatus" xml:space="preserve">
-    <value>The request is now open. Reopened by {0}. </value>
+    <value>This request is now unassigned. Last updated by {0}. </value>
     <comment>Message posted to the thread when the ticket is reopened. {0} = name of SME who reopened the request.</comment>
   </data>
   <data name="NonApplicableString" xml:space="preserve">
@@ -376,8 +376,24 @@
     <value>Closed</value>
     <comment>The status value for the user notification when a ticket is closed by an expert.</comment>
   </data>
+  <data name="CloseStatusTitle" xml:space="preserve">
+    <value>Close</value>
+    <comment>The dropdown text for closing a ticket</comment>
+  </data>
+  <data name="UnassignedStatusValue" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>The status for the SME ticket which is default</comment>
+  </data>
   <data name="UnassignedUserNotificationStatus" xml:space="preserve">
     <value>Unassigned</value>
     <comment>The status value for the user notification when a ticket is unassigned</comment>
+  </data>
+  <data name="UnassignStatusTitle" xml:space="preserve">
+    <value>Unassign</value>
+    <comment>The dropdown text for unassigning a ticket</comment>
+  </data>
+  <data name="ReassignStatusTitle" xml:space="preserve">
+    <value>Reassign to me</value>
+    <comment>The dropdown text for reassigning a ticket that has been previously closed.</comment>
   </data>
 </root>

@@ -142,7 +142,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assign.
+        ///   Looks up a localized string similar to Assign to me.
         /// </summary>
         public static string AssignStatusTitle {
             get {
@@ -210,6 +210,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string CloseStatusText {
             get {
                 return ResourceManager.GetString("CloseStatusText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CloseStatusTitle {
+            get {
+                return ResourceManager.GetString("CloseStatusTitle", resourceCulture);
             }
         }
         
@@ -376,7 +385,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **{0}** is requesting support. Details are as follows:.
+        ///   Looks up a localized string similar to **{0}** is requesting support. Details are as follows:\n{1}.
         /// </summary>
         public static string QuestionForExpertSubHeaderText {
             get {
@@ -399,6 +408,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string QuestionLineText {
             get {
                 return ResourceManager.GetString("QuestionLineText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reassign to me.
+        /// </summary>
+        public static string ReassignStatusTitle {
+            get {
+                return ResourceManager.GetString("ReassignStatusTitle", resourceCulture);
             }
         }
         
@@ -475,7 +493,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request is now assigned. Assigned by {0}..
+        ///   Looks up a localized string similar to This request is now assigned. Assigned to {0}..
         /// </summary>
         public static string SMEAssignedStatus {
             get {
@@ -493,7 +511,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request is now closed. Closed by {0}..
+        ///   Looks up a localized string similar to This request is now closed. Closed by {0}..
         /// </summary>
         public static string SMEClosedStatus {
             get {
@@ -502,7 +520,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request is now open. Reopened by {0}. .
+        ///   Looks up a localized string similar to This request is now unassigned. Last updated by {0}. .
         /// </summary>
         public static string SMEOpenedStatus {
             get {
@@ -630,9 +648,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unassigned.
         /// </summary>
+        public static string UnassignedStatusValue {
+            get {
+                return ResourceManager.GetString("UnassignedStatusValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassigned.
+        /// </summary>
         public static string UnassignedUserNotificationStatus {
             get {
                 return ResourceManager.GetString("UnassignedUserNotificationStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassign.
+        /// </summary>
+        public static string UnassignStatusTitle {
+            get {
+                return ResourceManager.GetString("UnassignStatusTitle", resourceCulture);
             }
         }
         
