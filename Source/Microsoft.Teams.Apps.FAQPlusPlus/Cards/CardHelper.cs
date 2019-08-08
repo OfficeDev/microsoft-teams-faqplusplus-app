@@ -64,7 +64,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             if (ticket.Status == (int)TicketState.Open)
             {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ? Resource.OpenStatusTitle : string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
+                return string.IsNullOrEmpty(ticket.AssignedToName) ? Resource.CloseStatusText : string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
             }
             else
             {
