@@ -147,7 +147,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 actionsList.Add(new AdaptiveShowCardAction
                 {
-                    Title = "View article",
+                    Title = Resource.ViewArticleButtonText,
                     Card = new AdaptiveCard("1.0")
                     {
                         Body = new List<AdaptiveElement>

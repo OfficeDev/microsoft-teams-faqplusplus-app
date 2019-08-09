@@ -404,4 +404,8 @@
     <value>Question asked:</value>
     <comment>The fact set title for the question asked in the SME Ticket card.</comment>
   </data>
+  <data name="ViewArticleButtonText" xml:space="preserve">
+    <value>View article</value>
+    <comment>The necessary string for the view article button</comment>
+  </data>
 </root>
