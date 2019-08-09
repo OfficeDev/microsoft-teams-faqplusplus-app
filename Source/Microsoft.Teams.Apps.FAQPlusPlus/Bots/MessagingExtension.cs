@@ -32,7 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private const string RecentCommandId = "recents";
         private const string OpenCommandId = "openrequests";
         private const string AssignedCommandId = "assignedrequests";
-        private const string MembersCacheKey = "SmeTeamMemberKey";
+        private const string MembersCacheKey = "SmeTeamMembersKey";
 
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
