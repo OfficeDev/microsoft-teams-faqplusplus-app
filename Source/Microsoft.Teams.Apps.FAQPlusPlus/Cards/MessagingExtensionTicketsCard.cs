@@ -29,8 +29,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Method to generate the adaptive card.
         /// </summary>
+        /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <returns>Returns the attachment that will be attached to messaging extension list.</returns>
-        public Attachment ToAttachment()
+        public Attachment ToAttachment(DateTimeOffset? localTimestamp)
         {
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
             {
@@ -47,7 +48,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveFactSet
                     {
-                        Facts = this.GetAdaptiveFactsSet(this.ticketModel),
+                        Facts = this.GetAdaptiveFactsSet(this.ticketModel, localTimestamp),
                     },
                 },
                 Actions = this.GetAdaptiveActions(this.ticketModel),
@@ -70,7 +71,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         // Create adaptivefacts set which can be displayed in the card below requestor
-        private List<AdaptiveFact> GetAdaptiveFactsSet(TicketEntity ticketModel)
+        private List<AdaptiveFact> GetAdaptiveFactsSet(TicketEntity ticketModel, DateTimeOffset? localTimestamp)
         {
             List<AdaptiveFact> adaptivefacts = new List<AdaptiveFact>();
             if (!string.IsNullOrEmpty(ticketModel.Description))
@@ -78,17 +79,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 adaptivefacts.Add(new AdaptiveFact { Title = Resource.DescriptionText, Value = ticketModel.Description });
             }
 
-            adaptivefacts.Add(new AdaptiveFact { Title = Resource.StatusFactTitle, Value = this.GetTicketStatus(this.ticketModel) });
+            adaptivefacts.Add(new AdaptiveFact { Title = Resource.StatusFactTitle, Value = CardHelper.GetTicketDisplayStatusForSme(this.ticketModel) });
 
             if (!string.IsNullOrEmpty(ticketModel.UserQuestion))
             {
-                adaptivefacts.Add(new AdaptiveFact { Title = Resource.QuestionText, Value = ticketModel.UserQuestion });
+                adaptivefacts.Add(new AdaptiveFact { Title = Resource.QuestionAskedFactTitle, Value = ticketModel.UserQuestion });
             }
 
             if (ticketModel.DateClosed != null)
             {
-                string closedDate = this.GetTicketClosedDate(this.ticketModel);
-                if (closedDate != string.Empty)
+                string closedDate = CardHelper.GetTicketClosedDate(this.ticketModel, localTimestamp);
+                if (!closedDate.Equals(Resource.NonApplicableString))
                 {
                     adaptivefacts.Add(new AdaptiveFact { Title = Resource.ClosedFactTitle, Value = closedDate });
                 }
@@ -136,37 +137,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             return returnUri;
-        }
-
-        /// <summary>
-        /// Gets the ticket status currently.
-        /// </summary>
-        /// <param name="ticketModel">The current ticket information.</param>
-        /// <returns>A status string.</returns>
-        private string GetTicketStatus(TicketEntity ticketModel)
-        {
-            if (ticketModel.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticketModel.AssignedToName))
-            {
-                return Resource.UnassignedStatusText;
-            }
-            else if (ticketModel.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticketModel.AssignedToName))
-            {
-                return string.Format(Resource.AssignedToStatusValue, ticketModel.AssignedToName);
-            }
-            else
-            {
-                return Resource.MessageExtensionClosedText;
-            }
-        }
-
-        /// <summary>
-        /// Gets the closed date of the ticket.
-        /// </summary>
-        /// <param name="ticketModel">The current ticket information.</param>
-        /// <returns>The closed date of the ticket.</returns>
-        private string GetTicketClosedDate(TicketEntity ticketModel)
-        {
-            return ticketModel.Status == (int)TicketState.Closed ? ticketModel.DateClosed.Value.ToString("D") : string.Empty;
         }
     }
 }

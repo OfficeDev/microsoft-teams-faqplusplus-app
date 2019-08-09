@@ -85,7 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         {
                             Body = new MessagingExtensionResponse
                             {
-                                ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
+                                ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip, turnContext.Activity.LocalTimestamp),
                             },
                             Status = 200,
                         };
@@ -127,8 +127,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
         /// <param name="count">count for pagination.</param>
         /// <param name="skip">skip for pagination.</param>
+        /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <returns><see cref="Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? count, int? skip)
+        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? count, int? skip, DateTimeOffset? localTimestamp)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -163,48 +164,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
                     Title = ticket.Title,
-                    Text = this.GetPreviewCardText(ticket, commandId),
+                    Text = this.GetPreviewCardText(ticket, commandId, localTimestamp),
                 };
 
                 var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
-                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment().ToMessagingExtensionAttachment(previewCard.ToAttachment()));
+                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment(localTimestamp).ToMessagingExtensionAttachment(previewCard.ToAttachment()));
             }
 
             return composeExtensionResult;
         }
 
         // Get the text for the preview card for the result
-        private string GetPreviewCardText(TicketEntity ticket, string commandId)
+        private string GetPreviewCardText(TicketEntity ticket, string commandId, DateTimeOffset? localTimestamp)
         {
             var text = $@"
             <div>
-                <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.DateCreated.ToShortDateString())} | {HttpUtility.HtmlEncode(ticket.RequesterName)}</div>";
+                <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetFormattedDateInUserTimeZone(ticket.DateCreated, localTimestamp))} | {HttpUtility.HtmlEncode(ticket.RequesterName)}</div>";
             if (!commandId.Equals(OpenCommandId))
             {
-                text = text + $"<div style='white-space:nowrap'>{HttpUtility.HtmlEncode(this.GetDisplayStatus(ticket))}</div>";
+                text = text + $"<div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetTicketDisplayStatusForSme(ticket))}</div>";
             }
 
             text = text + $"</div>";
             return text.Trim();
-        }
-
-        // Construct the string to display for the status of the ticket
-        private string GetDisplayStatus(TicketEntity ticket)
-        {
-            switch (ticket.Status)
-            {
-                case (int)TicketState.Open:
-                    return string.IsNullOrEmpty(ticket.AssignedToName) ?
-                        Resource.UnassignedStatusText :
-                        string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName);
-
-                case (int)TicketState.Closed:
-                    return string.Format(CultureInfo.CurrentCulture, Resource.MessageExtensionClosedText);
-
-                default:
-                    this.telemetryClient.TrackTrace($"Unknown ticket status {ticket.Status}", ApplicationInsights.DataContracts.SeverityLevel.Warning);
-                    return string.Empty;
-            }
         }
 
         // Get the value of the searchText parameter in the ME query

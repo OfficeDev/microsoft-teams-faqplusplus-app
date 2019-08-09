@@ -368,16 +368,12 @@
     <value>You don't have access to this app. Please contact your IT admin.</value>
     <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
   </data>
-  <data name="UnassignedStatusText" xml:space="preserve">
-    <value>Unassigned</value>
-    <comment>Status of the user Ticket- Unassigned</comment>
-  </data>
-  <data name="GoToOriginalThreadButtonText" xml:space="preserve">
-    <value>Go to original thread</value>
-    <comment>Go to original thread button available on messaging extension card.</comment>
-  </data>
   <data name="MessageExtensionClosedText" xml:space="preserve">
     <value>Closed</value>
     <comment>Status of the user Ticket for message extension.</comment>
+  </data>
+  <data name="UnassignedStatusValue" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>The status for the SME ticket which is default</comment>
   </data>
 </root>

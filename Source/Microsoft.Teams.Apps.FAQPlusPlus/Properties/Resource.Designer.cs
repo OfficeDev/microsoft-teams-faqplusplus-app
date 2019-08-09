@@ -621,9 +621,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unassigned.
         /// </summary>
-        public static string UnassignedStatusText {
+        public static string UnassignedStatusValue {
             get {
-                return ResourceManager.GetString("UnassignedStatusText", resourceCulture);
+                return ResourceManager.GetString("UnassignedStatusValue", resourceCulture);
             }
         }
         

@@ -144,5 +144,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         [IsSortable]
         [JsonProperty("Timestamp")]
         public DateTimeOffset Timestamp { get; }
+
+        /// <summary>
+        /// Checks whether or not a ticket is assigned.
+        /// </summary>
+        /// <returns>Returns a bool value.</returns>
+        public bool IsAssigned()
+        {
+            return this.AssignedToName != null && this.Status == (int)TicketState.Open;
+        }
     }
 }
