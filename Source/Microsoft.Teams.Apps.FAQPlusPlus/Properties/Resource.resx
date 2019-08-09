@@ -396,4 +396,12 @@
     <value>Reassign to me</value>
     <comment>The dropdown text for reassigning a ticket that has been previously closed.</comment>
   </data>
+  <data name="SmeUserChatMessage" xml:space="preserve">
+    <value>RE: {0}</value>
+    <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
+  </data>
+  <data name="UserQuestionFactSetTitle" xml:space="preserve">
+    <value>Question asked:</value>
+    <comment>The fact set title for the question asked in the SME Ticket card.</comment>
+  </data>
 </root>

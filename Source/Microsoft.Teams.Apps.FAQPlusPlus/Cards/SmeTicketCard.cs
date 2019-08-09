@@ -49,7 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = this.ticket.RequesterName != null ?
+                        Text = this.ticket.Description != null ?
                             string.Format(Resource.QuestionForExpertSubHeaderText, this.ticket.RequesterName, this.ticket.Description) :
                             Resource.SmeAttentionText,
                         Wrap = true,
@@ -69,92 +69,88 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             };
         }
 
+        /// <summary>
+        /// Builds out the fact set for the SME Ticket card.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <param name="localTimestamp">The current timestamp.</param>
+        /// <returns>The fact set showing the necessary details.</returns>
         private List<AdaptiveFact> BuildFactSet(TicketEntity ticket, DateTimeOffset? localTimestamp)
         {
-            if (ticket.Status == (int)TicketState.Open)
+            List<AdaptiveFact> factSetList = new List<AdaptiveFact>();
+
+            factSetList.Add(new AdaptiveFact
             {
-                return new List<AdaptiveFact>
-                {
-                    new AdaptiveFact
-                    {
-                        Title = Resource.StatusFactTitle,
-                        Value = CardHelper.GetSmeTicketStatus(this.ticket),
-                    },
-                    new AdaptiveFact
-                    {
-                        Title = Resource.QuestionAskedFactTitle,
-                        Value = CardHelper.ConvertNullOrEmptyToNotApplicable(this.ticket.UserQuestion),
-                    },
-                    new AdaptiveFact
-                    {
-                        Title = Resource.DateCreatedDisplayFactTitle,
-                        Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, localTimestamp),
-                    },
-                };
-            }
-            else
+                Title = Resource.StatusFactTitle,
+                Value = CardHelper.GetTicketDisplayStatusForSme(this.ticket),
+            });
+
+            if (!string.IsNullOrEmpty(ticket.UserQuestion))
             {
-                return new List<AdaptiveFact>
+                factSetList.Add(new AdaptiveFact
                 {
-                    new AdaptiveFact
-                    {
-                        Title = Resource.StatusFactTitle,
-                        Value = CardHelper.GetSmeTicketStatus(this.ticket),
-                    },
-                    new AdaptiveFact
-                    {
-                        Title = Resource.QuestionAskedFactTitle,
-                        Value = CardHelper.ConvertNullOrEmptyToNotApplicable(this.ticket.UserQuestion),
-                    },
-                    new AdaptiveFact
-                    {
-                        Title = Resource.DateCreatedDisplayFactTitle,
-                        Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, localTimestamp),
-                    },
-                    new AdaptiveFact
-                    {
-                        Title = Resource.ClosedFactTitle,
-                        Value = CardHelper.GetTicketClosedDate(this.ticket, localTimestamp),
-                    }
-                };
+                    Title = Resource.QuestionAskedFactTitle,
+                    Value = CardHelper.TruncateStringIfLonger(ticket.Description, CardHelper.UserDescriptionMaxLength)
+                });
             }
+
+            if (ticket.Status == (int)TicketState.Closed)
+            {
+                factSetList.Add(new AdaptiveFact
+                {
+                    Title = Resource.ClosedFactTitle,
+                    Value = CardHelper.GetTicketClosedDate(this.ticket, localTimestamp),
+                });
+            }
+
+            return factSetList;
         }
 
+        /// <summary>
+        /// Making sure to build out the adaptive card actions.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <returns>Adaptive card actions.</returns>
         private List<AdaptiveAction> BuildActions(TicketEntity ticket)
         {
-            if (!string.IsNullOrEmpty(ticket.KnowledgeBaseAnswer))
+            List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
+
+            var messageToSend = string.Format(Resource.SmeUserChatMessage, ticket.Title);
+            var encodedMessage = Uri.EscapeDataString(messageToSend);
+
+            actionsList.Add(new AdaptiveOpenUrlAction
             {
-                return new List<AdaptiveAction>
+                Title = string.Format(Resource.ChatTextButton, this.ticket.RequesterGivenName),
+                Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.ticket.RequesterUserPrincipalName)}&message={encodedMessage}")
+            });
+
+            actionsList.Add(new AdaptiveShowCardAction
+            {
+                Title = Resource.ChangeStatusButtonText,
+                Card = new AdaptiveCard("1.0")
                 {
-                    new AdaptiveOpenUrlAction
+                    Body = new List<AdaptiveElement>
                     {
-                        Title = string.Format(Resource.ChatTextButton, this.ticket.RequesterGivenName),
-                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.ticket.RequesterUserPrincipalName)}&message=RE:{Uri.EscapeDataString(this.ticket.Title)}"),
+                        this.GetAdaptiveChoiceSetInput(this.ticket),
                     },
-                    new AdaptiveShowCardAction
+                    Actions = new List<AdaptiveAction>
                     {
-                        Title = Resource.ChangeStatusButtonText,
-                        Card = new AdaptiveCard("1.0")
+                        new AdaptiveSubmitAction
                         {
-                            Body = new List<AdaptiveElement>
-                            {
-                                this.GetAdaptiveChoiceSetInput(this.ticket),
-                            },
-                            Actions = new List<AdaptiveAction>
-                            {
-                                new AdaptiveSubmitAction
-                                {
-                                    Data = new ChangeTicketStatusPayload { TicketId = this.ticket.TicketId }
-                                }
-                            },
+                            Data = new ChangeTicketStatusPayload { TicketId = this.ticket.TicketId }
                         }
                     },
-                    new AdaptiveShowCardAction
+                }
+            });
+
+            if (!string.IsNullOrEmpty(ticket.KnowledgeBaseAnswer))
+            {
+                actionsList.Add(new AdaptiveShowCardAction
+                {
+                    Title = "View article",
+                    Card = new AdaptiveCard("1.0")
                     {
-                        Title = "View article",
-                        Card = new AdaptiveCard("1.0")
-                        {
-                            Body = new List<AdaptiveElement>
+                        Body = new List<AdaptiveElement>
                             {
                                 new AdaptiveTextBlock
                                 {
@@ -162,41 +158,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                     Wrap = true,
                                 }
                             },
-                        },
                     },
-                };
+                });
             }
-            else
-            {
-                return new List<AdaptiveAction>
-                {
-                    new AdaptiveOpenUrlAction
-                    {
-                        Title = string.Format(Resource.ChatTextButton, this.ticket.RequesterGivenName),
-                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.ticket.RequesterUserPrincipalName)}&message=RE:{Uri.EscapeDataString(this.ticket.Title)}"),
-                    },
-                    new AdaptiveShowCardAction
-                    {
-                        Title = Resource.ChangeStatusButtonText,
-                        Card = new AdaptiveCard("1.0")
-                        {
-                            Body = new List<AdaptiveElement>
-                            {
-                                this.GetAdaptiveChoiceSetInput(this.ticket),
-                            },
-                            Actions = new List<AdaptiveAction>
-                            {
-                                new AdaptiveSubmitAction
-                                {
-                                    Data = new ChangeTicketStatusPayload { TicketId = this.ticket.TicketId }
-                                }
-                            },
-                        }
-                    },
-                };
-            }
+
+            return actionsList;
         }
 
+        /// <summary>
+        /// Method to get the dropdown and the correct values to render.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <returns>An adaptive element which contains the dropdown choices.</returns>
         private AdaptiveElement GetAdaptiveChoiceSetInput(TicketEntity ticket)
         {
             AdaptiveChoiceSetInput choiceSet = new AdaptiveChoiceSetInput

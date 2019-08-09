@@ -529,6 +529,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to RE: {0}.
+        /// </summary>
+        public static string SmeUserChatMessage {
+            get {
+                return ResourceManager.GetString("SmeUserChatMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Status: .
         /// </summary>
         public static string StatusFactTitle {
@@ -669,6 +678,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string UnassignStatusTitle {
             get {
                 return ResourceManager.GetString("UnassignStatusTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Question asked:.
+        /// </summary>
+        public static string UserQuestionFactSetTitle {
+            get {
+                return ResourceManager.GetString("UserQuestionFactSetTitle", resourceCulture);
             }
         }
         

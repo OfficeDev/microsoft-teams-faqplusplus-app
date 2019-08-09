@@ -21,7 +21,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Maximum length of the user title
         /// </summary>
-        public const int UserTitleMaxLength = 50;
+        public const int TitleDisplayMaxLength = 50;
 
         /// <summary>
         /// Maximum length of the user description
@@ -66,17 +66,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Gets the ticket status currently.
+        /// Gets the ticket status for the user notifications.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>A status string.</returns>
-        public static string GetUserTicketStatus(TicketEntity ticket)
+        public static string GetUserTicketDisplayStatus(TicketEntity ticket)
         {
             if (ticket.Status == (int)TicketState.Open)
             {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ?
-                    Resource.UnassignedUserNotificationStatus :
-                    Resource.AssignedUserNotificationStatus;
+                return ticket.IsAssigned() ?
+                    Resource.AssignedUserNotificationStatus :
+                    Resource.UnassignedUserNotificationStatus;
             }
             else
             {
@@ -85,17 +85,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Gets the ticket status for the SME ticket card.
+        /// Gets the ticket status for the SME ticket card. Here the status will also
+        /// the SME who updated the specific ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>A status string.</returns>
-        public static string GetSmeTicketStatus(TicketEntity ticket)
+        public static string GetTicketDisplayStatusForSme(TicketEntity ticket)
         {
             if (ticket.Status == (int)TicketState.Open)
             {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ?
-                    Resource.UnassignedStatusValue :
-                    string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
+                return ticket.IsAssigned() ?
+                    string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName) :
+                    Resource.UnassignedStatusValue;
             }
             else
             {

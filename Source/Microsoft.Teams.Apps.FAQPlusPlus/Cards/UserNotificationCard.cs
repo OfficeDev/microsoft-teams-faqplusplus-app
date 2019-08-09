@@ -44,7 +44,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Text = message,
                         Wrap = true,
                     },
-                    this.BuildFactSet(this.ticket, activityLocalTimestamp),
+                    new AdaptiveFactSet
+                    {
+                      Facts = this.BuildFactSet(this.ticket, activityLocalTimestamp)
+                    },
                 },
                 Actions = this.BuildActions(this.ticket),
             };
@@ -56,6 +59,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             };
         }
 
+        /// <summary>
+        /// Having the necessary adaptive actions built.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <returns>A list of adaptive card actions.</returns>
         private List<AdaptiveAction> BuildActions(TicketEntity ticket)
         {
             if (ticket.Status == (int)TicketState.Closed)
@@ -81,75 +89,52 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             return null;
         }
 
-        private AdaptiveElement BuildFactSet(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
+        /// <summary>
+        /// Making sure to build the fact set.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <param name="activityLocalTimestamp">The local timestamp.</param>
+        /// <returns>The adaptive facts.</returns>
+        private List<AdaptiveFact> BuildFactSet(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
         {
-            if (ticket.Status == (int)TicketState.Open)
+            List<AdaptiveFact> factList = new List<AdaptiveFact>();
+            factList.Add(new AdaptiveFact
             {
-                return new AdaptiveFactSet
-                {
-                    Facts = new List<AdaptiveFact>
-                    {
-                        new AdaptiveFact
-                        {
-                            Title = Resource.StatusFactTitle,
-                            Value = CardHelper.GetUserTicketStatus(this.ticket),
-                        },
-                        new AdaptiveFact
-                        {
-                            Title = Resource.TitleText,
-                            Value = CardHelper.TruncateStringIfLonger(this.ticket.Title, CardHelper.UserTitleMaxLength),
-                        },
-                        new AdaptiveFact
-                        {
-                            Title = Resource.DescriptionText,
-                            Value = CardHelper.TruncateStringIfLonger(
-                                CardHelper.ConvertNullOrEmptyToNotApplicable(this.ticket.Description),
-                                CardHelper.UserDescriptionMaxLength),
-                        },
-                        new AdaptiveFact
-                        {
-                            Title = Resource.DateCreatedDisplayFactTitle,
-                            Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, activityLocalTimestamp),
-                        },
-                    },
-                };
-            }
-            else
+                Title = Resource.StatusFactTitle,
+                Value = CardHelper.GetUserTicketDisplayStatus(this.ticket),
+            });
+
+            factList.Add(new AdaptiveFact
             {
-                return new AdaptiveFactSet
+                Title = Resource.TitleText,
+                Value = CardHelper.TruncateStringIfLonger(this.ticket.Title, CardHelper.TitleDisplayMaxLength),
+            });
+
+            if (!string.IsNullOrEmpty(ticket.Description))
+            {
+                factList.Add(new AdaptiveFact
                 {
-                    Facts = new List<AdaptiveFact>
-                    {
-                        new AdaptiveFact
-                        {
-                            Title = Resource.StatusFactTitle,
-                            Value = CardHelper.GetUserTicketStatus(this.ticket),
-                        },
-                        new AdaptiveFact
-                        {
-                            Title = Resource.TitleText,
-                            Value = CardHelper.TruncateStringIfLonger(this.ticket.Title, CardHelper.UserTitleMaxLength),
-                        },
-                        new AdaptiveFact
-                        {
-                            Title = Resource.DescriptionText,
-                            Value = CardHelper.TruncateStringIfLonger(
-                                CardHelper.ConvertNullOrEmptyToNotApplicable(this.ticket.Description),
-                                CardHelper.UserDescriptionMaxLength),
-                        },
-                        new AdaptiveFact
-                        {
-                            Title = Resource.DateCreatedDisplayFactTitle,
-                            Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, activityLocalTimestamp),
-                        },
-                        new AdaptiveFact
-                        {
-                            Title = Resource.ClosedFactTitle,
-                            Value = CardHelper.GetTicketClosedDate(this.ticket, activityLocalTimestamp),
-                        }
-                    },
-                };
+                    Title = Resource.DescriptionText,
+                    Value = CardHelper.TruncateStringIfLonger(this.ticket.Description, CardHelper.UserDescriptionMaxLength),
+                });
             }
+
+            factList.Add(new AdaptiveFact
+            {
+                Title = Resource.DateCreatedDisplayFactTitle,
+                Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, activityLocalTimestamp),
+            });
+
+            if (ticket.Status == (int)TicketState.Closed)
+            {
+                factList.Add(new AdaptiveFact
+                {
+                    Title = Resource.ClosedFactTitle,
+                    Value = CardHelper.GetTicketClosedDate(this.ticket, activityLocalTimestamp),
+                });
+            }
+
+            return factList;
         }
     }
 }
