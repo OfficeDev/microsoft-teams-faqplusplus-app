@@ -61,6 +61,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
             services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<MessagingExtension>();
+            services.AddMemoryCache();
         }
 
         /// <summary>
