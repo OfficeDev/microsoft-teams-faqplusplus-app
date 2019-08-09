@@ -2,10 +2,11 @@
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
+    using System;
     using System.Collections.Generic;
-    using global::AdaptiveCards;
+    using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
@@ -30,8 +31,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         /// Returns a user notification card for the ticket.
         /// </summary>
         /// <param name="message">The status message to add to the card</param>
+        /// <param name="activityLocalTimestamp">Local time stamp of user activity.</param>
         /// <returns>An adaptive card as an attachment</returns>
-        public Attachment ToAttachment(string message)
+        public Attachment ToAttachment(string message, DateTimeOffset? activityLocalTimestamp)
         {
             var card = new AdaptiveCard("1.0")
             {
@@ -53,28 +55,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                         {
                             new AdaptiveFact
                             {
-                                Title = "Status:",
-                                Value = this.GetTicketStatus(this.ticket),
+                                Title = Resource.StatusFactTitle,
+                                Value = CardHelper.GetTicketStatus(this.ticket),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Title:",
+                                Title = Resource.TitleText,
                                 Value = this.ticket.Title,
                             },
                             new AdaptiveFact
                             {
-                                Title = "Description:",
-                                Value = this.ticket.Description,
+                                Title = Resource.DescriptionText,
+                                Value = CardHelper.ConvertNullOrEmptyToNotApplicable(this.ticket.Description),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Created:",
-                                Value = "{{DATE(" + this.ticket.DateCreated.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + this.ticket.DateCreated.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}",
+                                Title = Resource.DateCreatedDisplayFactTitle,
+                                Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, activityLocalTimestamp),
                             },
                             new AdaptiveFact
                             {
-                                Title = "Closed:",
-                                Value = this.GetTicketClosedDate(this.ticket),
+                                Title = Resource.ClosedFactTitle,
+                                Value = CardHelper.GetTicketClosedDate(this.ticket, activityLocalTimestamp),
                             }
                         },
                     },
@@ -86,41 +88,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
             };
-        }
-
-        /// <summary>
-        /// Gets the ticket status currently.
-        /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
-        /// <returns>A status string.</returns>
-        private string GetTicketStatus(TicketEntity ticket)
-        {
-            if (ticket.Status == (int)TicketState.Open)
-            {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ? "Open" : "Assigned";
-            }
-            else
-            {
-                return "Closed";
-            }
-        }
-
-        /// <summary>
-        /// Gets the closed date of the ticket.
-        /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
-        /// <returns>The closed date of the ticket.</returns>
-        private string GetTicketClosedDate(TicketEntity ticket)
-        {
-            if (ticket.Status == (int)TicketState.Closed)
-            {
-                var dateClosed = ticket.DateClosed.Value;
-                return "{{DATE(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ", SHORT)}} {{TIME(" + dateClosed.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ssZ") + ")}}";
-            }
-            else
-            {
-                return Resource.NotApplicable;
-            }
         }
     }
 }

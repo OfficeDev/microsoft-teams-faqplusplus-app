@@ -1,17 +1,18 @@
-﻿// <copyright file="UnrecognizedTeamInput.cs" company="Microsoft">
+﻿// <copyright file="UnrecognizedTeamInputCard.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
-namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
+namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
     using System.Collections.Generic;
     using Microsoft.Bot.Schema;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class handles unrecognized input sent by the team member-sending random text to bot.
     /// </summary>
-    public class UnrecognizedTeamInput
+    public class UnrecognizedTeamInputCard
     {
         /// <summary>
         /// Construct the card to render when there's an unrecognized input in a channel.
@@ -28,10 +29,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.BotHelperMethods.AdaptiveCards
                     {
                         Title = Resource.TakeATeamTourButtonText,
                         DisplayText = Resource.TakeATeamTourButtonText,
-                        Text = "team tour",
+                        Text = FaqPlusPlusBot.TeamTour,
                     }
                 }
             };
+
             return card.ToAttachment();
         }
     }
