@@ -49,8 +49,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = this.ticket.Description != null ?
-                            string.Format(Resource.QuestionForExpertSubHeaderText, this.ticket.RequesterName, this.ticket.Description) :
+                        Text = this.ticket.RequesterName != null ?
+                            string.Format(Resource.QuestionForExpertSubHeaderText, this.ticket.RequesterName) :
                             Resource.SmeAttentionText,
                         Wrap = true,
                     },
@@ -79,20 +79,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             List<AdaptiveFact> factSetList = new List<AdaptiveFact>();
 
-            factSetList.Add(new AdaptiveFact
+            if (!string.IsNullOrEmpty(ticket.Description))
             {
-                Title = Resource.StatusFactTitle,
-                Value = CardHelper.GetTicketDisplayStatusForSme(this.ticket),
-            });
+                factSetList.Add(new AdaptiveFact
+                {
+                    Title = Resource.DescriptionText,
+                    Value = CardHelper.TruncateStringIfLonger(ticket.Description, CardHelper.UserDescriptionMaxLength)
+                });
+            }
 
             if (!string.IsNullOrEmpty(ticket.UserQuestion))
             {
                 factSetList.Add(new AdaptiveFact
                 {
                     Title = Resource.QuestionAskedFactTitle,
-                    Value = CardHelper.TruncateStringIfLonger(ticket.Description, CardHelper.UserDescriptionMaxLength)
+                    Value = ticket.Description
                 });
             }
+
+            factSetList.Add(new AdaptiveFact
+            {
+                Title = Resource.StatusFactTitle,
+                Value = CardHelper.GetTicketDisplayStatusForSme(this.ticket),
+            });
 
             if (ticket.Status == (int)TicketState.Closed)
             {
@@ -151,13 +160,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     Card = new AdaptiveCard("1.0")
                     {
                         Body = new List<AdaptiveElement>
+                        {
+                            new AdaptiveTextBlock
                             {
-                                new AdaptiveTextBlock
-                                {
-                                    Text = ticket.KnowledgeBaseAnswer,
-                                    Wrap = true,
-                                }
-                            },
+                                Text = ticket.KnowledgeBaseAnswer,
+                                Wrap = true,
+                            }
+                        },
                     },
                 });
             }
