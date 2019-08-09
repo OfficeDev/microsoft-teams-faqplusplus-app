@@ -38,20 +38,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
                 {
                     new AdaptiveFactSet
                     {
-                        Facts = this.GetAdaptiveFactSetForTitle(this.ticketModel),
+                        Facts = this.GetAdaptiveFactsSetForTitle(this.ticketModel),
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = this.ticketModel.RequesterName != null ?
-                         string.Format(Resource.QuestionForExpertSubHeaderText, this.ticketModel.RequesterName) : string.Empty,
+                        Text = string.Format(Resource.QuestionForExpertSubHeaderText, this.ticketModel.RequesterName),
                         Wrap = true,
                     },
                     new AdaptiveFactSet
                     {
-                        Facts = this.GetAdaptiveFactSet(this.ticketModel),
+                        Facts = this.GetAdaptiveFactsSet(this.ticketModel),
                     },
                 },
-                Actions = this.GetAdaptiveAction(this.ticketModel),
+                Actions = this.GetAdaptiveActions(this.ticketModel),
             };
 
             return new Attachment
@@ -61,73 +60,65 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
             };
         }
 
-        // Create adaptivefactset for the title
-        private List<AdaptiveFact> GetAdaptiveFactSetForTitle(TicketEntity ticketModel)
+        // Create adaptivefactsset for the title
+        private List<AdaptiveFact> GetAdaptiveFactsSetForTitle(TicketEntity ticketModel)
         {
-            List<AdaptiveFact> adaptivefact = new List<AdaptiveFact>();
-            if (!string.IsNullOrEmpty(ticketModel.Title) && !ticketModel.Title.Equals(Resource.NonApplicableString))
-            {
-                adaptivefact.Add(new AdaptiveFact { Title = Resource.TitleText, Value = ticketModel.Title });
-            }
+            List<AdaptiveFact> adaptivefacts = new List<AdaptiveFact>();
+            adaptivefacts.Add(new AdaptiveFact { Title = Resource.TitleText, Value = ticketModel.Title });
 
-            return adaptivefact;
+            return adaptivefacts;
         }
 
-        // Create adaptivefact set which can be displayed in the card below requestor
-        private List<AdaptiveFact> GetAdaptiveFactSet(TicketEntity ticketModel)
+        // Create adaptivefacts set which can be displayed in the card below requestor
+        private List<AdaptiveFact> GetAdaptiveFactsSet(TicketEntity ticketModel)
         {
-            List<AdaptiveFact> adaptivefact = new List<AdaptiveFact>();
-            if (!string.IsNullOrEmpty(ticketModel.Description) && !ticketModel.Description.Equals(Resource.NonApplicableString))
+            List<AdaptiveFact> adaptivefacts = new List<AdaptiveFact>();
+            if (!string.IsNullOrEmpty(ticketModel.Description))
             {
-                adaptivefact.Add(new AdaptiveFact { Title = Resource.DescriptionText, Value = ticketModel.Description });
+                adaptivefacts.Add(new AdaptiveFact { Title = Resource.DescriptionText, Value = ticketModel.Description });
             }
 
-            adaptivefact.Add(new AdaptiveFact { Title = Resource.StatusFactTitle, Value = this.GetTicketStatus(this.ticketModel) });
+            adaptivefacts.Add(new AdaptiveFact { Title = Resource.StatusFactTitle, Value = this.GetTicketStatus(this.ticketModel) });
 
-            if (!string.IsNullOrEmpty(ticketModel.UserQuestion) && !ticketModel.UserQuestion.Equals(Resource.NonApplicableString))
+            if (!string.IsNullOrEmpty(ticketModel.UserQuestion))
             {
-                adaptivefact.Add(new AdaptiveFact { Title = Resource.QuestionText, Value = ticketModel.UserQuestion });
+                adaptivefacts.Add(new AdaptiveFact { Title = Resource.QuestionText, Value = ticketModel.UserQuestion });
             }
 
             if (ticketModel.DateClosed != null)
             {
                 string closedDate = this.GetTicketClosedDate(this.ticketModel);
-                if (!string.IsNullOrEmpty(closedDate))
+                if (closedDate != string.Empty)
                 {
-                    adaptivefact.Add(new AdaptiveFact { Title = Resource.ClosedFactTitle, Value = closedDate });
+                    adaptivefacts.Add(new AdaptiveFact { Title = Resource.ClosedFactTitle, Value = closedDate });
                 }
             }
 
-            return adaptivefact;
+            return adaptivefacts;
         }
 
-        // Create adaptiveaction buttons for invoking chat and go to thread button action
-        private List<AdaptiveAction> GetAdaptiveAction(TicketEntity ticketModel)
+        // Create adaptiveactions buttons for invoking chat and go to thread button action
+        private List<AdaptiveAction> GetAdaptiveActions(TicketEntity ticketModel)
         {
-            List<AdaptiveAction> adaptiveAction = new List<AdaptiveAction>();
-            if (!string.IsNullOrEmpty(ticketModel.RequesterGivenName))
-            {
-                adaptiveAction.Add(
-                    new AdaptiveOpenUrlAction
-                    {
-                        Type = "Action.OpenUrl",
-                        Title = $"{string.Format(Resource.ChatTextButton, ticketModel.RequesterGivenName)}",
-                        Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={ticketModel.RequesterUserPrincipalName}"),
-                    });
-            }
+            List<AdaptiveAction> adaptiveActions = new List<AdaptiveAction>();
+            adaptiveActions.Add(
+                new AdaptiveOpenUrlAction
+                {
+                    Title = $"{string.Format(Resource.ChatTextButton, ticketModel.RequesterGivenName)}",
+                    Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(ticketModel.RequesterUserPrincipalName)}"),
+                });
 
             if (!string.IsNullOrEmpty(ticketModel.SmeThreadConversationId))
             {
-                adaptiveAction.Add(
+                adaptiveActions.Add(
                     new AdaptiveOpenUrlAction
                     {
-                        Type = "Action.OpenUrl",
                         Title = $"{Resource.GoToOriginalThreadButtonText}",
                         Url = new Uri(this.GetGoToThreadUri(ticketModel.SmeThreadConversationId))
                     });
             }
 
-            return adaptiveAction;
+            return adaptiveActions;
         }
 
         /// <summary>
@@ -156,15 +147,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.AdaptiveCards
         {
             if (ticketModel.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
-                return $"{Resource.UnassignedStatusText}";
+                return Resource.UnassignedStatusText;
             }
             else if (ticketModel.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticketModel.AssignedToName))
             {
-                return $"{string.Format(Resource.AssignedToStatusValue, ticketModel.AssignedToName)}";
+                return string.Format(Resource.AssignedToStatusValue, ticketModel.AssignedToName);
             }
             else
             {
-                return $"{Resource.CloseStatusText}";
+                return Resource.MessageExtensionClosedText;
             }
         }
 

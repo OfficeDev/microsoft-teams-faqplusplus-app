@@ -29,6 +29,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     {
         private const int TextTrimLengthForThumbnailCard = 45;
         private const string SearchTextParameterName = "searchText";        // parameter name in the manifest file
+        private const string RecentCommandId = "recents";
+        private const string OpenCommandId = "openrequests";
+        private const string AssignedCommandId = "assignedrequests";
 
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
@@ -142,15 +145,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             // commandId should be equal to Id mentioned in Manifest file under composeExtensions section
             switch (commandId)
             {
-                case "recents":
+                case RecentCommandId:
                     searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.RecentTickets, query, count, skip);
                     break;
 
-                case "openrequests":
+                case OpenCommandId:
                     searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.OpenTickets, query, count, skip);
                     break;
 
-                case "assignedrequests":
+                case AssignedCommandId:
                     searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.AssignedTickets, query, count, skip);
                     break;
             }
@@ -176,7 +179,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             var text = $@"
             <div>
                 <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.DateCreated.ToShortDateString())} | {HttpUtility.HtmlEncode(ticket.RequesterName)}</div>";
-            if (!commandId.Equals("openrequests"))
+            if (!commandId.Equals(OpenCommandId))
             {
                 text = text + $"<div style='white-space:nowrap'>{HttpUtility.HtmlEncode(this.GetDisplayStatus(ticket))}</div>";
             }
@@ -196,7 +199,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName);
 
                 case (int)TicketState.Closed:
-                    return string.Format(CultureInfo.CurrentCulture, Resource.CloseStatusText);
+                    return string.Format(CultureInfo.CurrentCulture, Resource.MessageExtensionClosedText);
 
                 default:
                     this.telemetryClient.TrackTrace($"Unknown ticket status {ticket.Status}", ApplicationInsights.DataContracts.SeverityLevel.Warning);

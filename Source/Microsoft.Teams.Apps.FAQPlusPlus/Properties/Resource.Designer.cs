@@ -187,7 +187,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closed.
+        ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string CloseStatusText {
             get {
@@ -300,6 +300,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string MandatoryFieldText {
             get {
                 return ResourceManager.GetString("MandatoryFieldText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed.
+        /// </summary>
+        public static string MessageExtensionClosedText {
+            get {
+                return ResourceManager.GetString("MessageExtensionClosedText", resourceCulture);
             }
         }
         

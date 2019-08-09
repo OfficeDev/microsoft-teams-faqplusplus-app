@@ -254,7 +254,7 @@
     <comment>Status of the user ticket- assign</comment>
   </data>
   <data name="CloseStatusText" xml:space="preserve">
-    <value>Closed</value>
+    <value>Close</value>
     <comment>Status of the user Ticket- Close.</comment>
   </data>
   <data name="ChangeStatusButtonText" xml:space="preserve">
@@ -371,5 +371,9 @@
   <data name="GoToOriginalThreadButtonText" xml:space="preserve">
     <value>Go to original thread</value>
     <comment>Go to original thread button available on messaging extension card.</comment>
+  </data>
+  <data name="MessageExtensionClosedText" xml:space="preserve">
+    <value>Closed</value>
+    <comment>Status of the user Ticket for message extension.</comment>
   </data>
 </root>
