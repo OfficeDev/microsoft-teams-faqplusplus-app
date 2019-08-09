@@ -20,7 +20,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="botDisplayName">Name of the bot.</param>
         /// <param name="teamName">Name of the team to which bot is added to. </param>
-        /// <returns>Card attachment as Json string.</returns>
+        /// <returns>Team welcome card.</returns>
         public static Attachment GetCard(string botDisplayName, string teamName = null)
         {
             var welcomeTeamCardTitleText = string.Format(Resource.WelcomeTeamCardTitleText, teamName);

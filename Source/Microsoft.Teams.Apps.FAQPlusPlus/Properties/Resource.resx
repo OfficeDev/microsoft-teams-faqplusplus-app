@@ -218,7 +218,7 @@
     <comment>Introduces Welcome, with team name where placeholder {0} holds the name of the team bot is being added to.</comment>
   </data>
   <data name="WelcomeTeamCardContent" xml:space="preserve">
-    <value>Hi! I am {0}, thank you for having me in your SME team!. I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using status fields like open assign and close.</value>
+    <value>Hi! I am {0}, thank you for having me in your SME team!. I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot. Can Self assign the tickets raised by the users. Can directly chat with end user using chat buttons. Your team can keep track of all the user queries using status fields like open assign and close.</value>
     <comment>Welcome message when bot is added to a new team.</comment>
   </data>
   <data name="CustomMessage" xml:space="preserve">
@@ -298,7 +298,7 @@
     <comment>This text is used as title for results feedback card.</comment>
   </data>
   <data name="FeedbackSubHeaderText" xml:space="preserve">
-    <value>**{0}** is sharing feedback. Details as follows:</value>
+    <value>**{0}** has shared feedback : {1}</value>
     <comment>The sub header for the incoming app feedback adaptive card. The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
   </data>
   <data name="ShareFeedbackTitleText" xml:space="preserve">
@@ -312,10 +312,6 @@
   <data name="ShareFeedbackDisplayText" xml:space="preserve">
     <value>Share feedback</value>
     <comment>Share feedback display text: text sent to the bot when share feedback button is clicked.</comment>
-  </data>
-  <data name="OpenStatusTitle" xml:space="preserve">
-    <value>Open</value>
-    <comment>Status value is open which is used in notification cards to both SME team and user.</comment>
   </data>
   <data name="AssignedToStatusValue" xml:space="preserve">
     <value>Assigned to {0}</value>
@@ -367,5 +363,44 @@
   <data name="TakeATourButtonText" xml:space="preserve">
     <value>Take a tour</value>
     <comment>Take a tour button provided in the user welcome card which enables the user to take a tour on what the bot does in personal scope.</comment>
+  </data>
+  <data name="FeedbackRatingRequired" xml:space="preserve">
+    <value>Rating (Required):</value>
+  </data>
+  <data name="OpenStatusTitle" xml:space="preserve">
+    <value>Open</value>
+    <comment>Open - status of the user ticket, unless it is assigned or closed by sme team , ticket status remains open.</comment>
+  </data>
+  <data name="HelpfulRatingText" xml:space="preserve">
+    <value>Helpful</value>
+    <comment>Helpful- Available rating in Select rating drop down menu in feedback card.</comment>
+  </data>
+  <data name="NeedsImprovementRatingText" xml:space="preserve">
+    <value>Needs Improvement</value>
+    <comment>Needs Improvement- Available rating in Select rating drop down menu in feedback card.</comment>
+  </data>
+  <data name="UnhelpfulRatingText" xml:space="preserve">
+    <value>Unhelpful </value>
+    <comment>Unhelpful- Available rating in Select rating drop down menu in feedback card.</comment>
+  </data>
+  <data name="AskAnExpertSubheaderText" xml:space="preserve">
+    <value>The expert will respond to you directly with a chat message</value>
+    <comment>Ask an expert UI card sub header text.</comment>
+  </data>
+  <data name="TitleRequiredText" xml:space="preserve">
+    <value>Title (Required):</value>
+    <comment>Title text box label text.</comment>
+  </data>
+  <data name="RatingFactTitle" xml:space="preserve">
+    <value>Rating:</value>
+    <comment>Rating given by the user is shown in cards.</comment>
+  </data>
+  <data name="RatingMandatoryFieldText" xml:space="preserve">
+    <value>Rating is required</value>
+    <comment>Rating is required: attention to the users when rating is not given through the feedbck cards.</comment>
+  </data>
+  <data name="ViewArticleButtonText" xml:space="preserve">
+    <value>View article</value>
+    <comment>View articke show card available to hold the KB answer.</comment>
   </data>
 </root>

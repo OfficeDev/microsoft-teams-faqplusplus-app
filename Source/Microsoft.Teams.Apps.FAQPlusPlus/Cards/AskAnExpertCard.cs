@@ -10,15 +10,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    ///  This class process Ask An Expert function : A feature available in bot menu commands in 1:1 scope.
+    ///  This class process Ask an expert function : A feature available in bot menu commands in 1:1 scope.
     /// </summary>
-    public class AskAnExpertCard
+    public static class AskAnExpertCard
     {
         /// <summary>
-        /// This method will construct the adaptive card for ask an expert bot menu.
+        /// This method will construct the card for ask an expert bot menu.
         /// </summary>
-        /// <returns>Ask an Expert as an Attachment.</returns>
-        public static Attachment GetCard()
+        /// <param name="isTitleMandatory">Flag to determine title value.</param>
+        /// <param name="userQuestionText">Question asked by the user to bot.</param>
+        /// <returns>Ask an expert card.</returns>
+        public static Attachment GetCard(bool isTitleMandatory = false, string userQuestionText = "")
         {
             AdaptiveCard askAnExpertCard = new AdaptiveCard("1.0")
             {
@@ -28,25 +30,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.AskAnExpertText1,
+                        Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = Resource.AskAnExpertPlaceholderText,
+                        Text = Resource.AskAnExpertSubheaderText,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = Resource.TitleText,
+                        Text = Resource.TitleRequiredText,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = Resource.MandatoryFieldText,
-                        Color = AdaptiveTextColor.Attention,
-                        Spacing = AdaptiveSpacing.Small,
-                        Wrap = true
+                       Text = isTitleMandatory ? Resource.MandatoryFieldText : string.Empty,
+                       Color = AdaptiveTextColor.Attention,
+                       Spacing = AdaptiveSpacing.Small,
+                       Wrap = true
                     },
                     new AdaptiveTextInput
                     {
@@ -64,7 +67,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                         Placeholder = Resource.AskAnExpertPlaceholderText,
-                        IsMultiline = true
+                        IsMultiline = true,
+                        Value = !string.IsNullOrWhiteSpace(userQuestionText) ? userQuestionText : string.Empty,
                     }
                 },
                 Actions = new List<AdaptiveAction>

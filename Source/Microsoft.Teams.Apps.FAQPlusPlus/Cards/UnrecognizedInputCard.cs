@@ -7,7 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -18,9 +18,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// This method will construct the adaptive card when unrecognized input is sent by the user.
         /// </summary>
-        /// <param name="question">The question that the user asks the bot.</param>
-        /// <returns>Card attachment as Json string.</returns>
-        public static Attachment GetCard(string question)
+        /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
+        /// <returns>UnrecognizedInput Card.</returns>
+        public static Attachment GetCard(string userQuestion)
         {
             AdaptiveCard unrecognizedInputCard = new AdaptiveCard("1.0")
             {
@@ -34,63 +34,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 },
                 Actions = new List<AdaptiveAction>
                 {
-                    new AdaptiveShowCardAction
+                    new AdaptiveSubmitAction
                     {
                         Title = Resource.AskAnExpertButtonText,
-                        Card = new AdaptiveCard("1.0")
+                        Data = new
                         {
-                            Body = new List<AdaptiveElement>
+                            msteams = new CardAction
                             {
-                                new AdaptiveTextBlock
-                                {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Text = Resource.TitleText,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextBlock
-                                {
-                                    Text = Resource.MandatoryFieldText,
-                                    Color = AdaptiveTextColor.Attention,
-                                    Spacing = AdaptiveSpacing.Small,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextInput
-                                {
-                                    Placeholder = Resource.ShowCardTitleText,
-                                    Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
-                                    IsMultiline = false
-                                },
-                                new AdaptiveTextBlock
-                                {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Text = Resource.DescriptionText,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextInput
-                                {
-                                    Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
-                                    Value = question,
-                                    IsMultiline = true
-                                }
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = Resource.AskAnExpertDisplayText,
+                                Text = FaqPlusPlusBot.AskAnExpert
                             },
-                            Actions = new List<AdaptiveAction>
-                            {
-                                new AdaptiveSubmitAction
-                                {
-                                    Title = Resource.SubmitButtonText,
-                                    Data = new
-                                    {
-                                        msteams = new CardAction
-                                        {
-                                            Type = ActionTypes.MessageBack,
-                                            DisplayText = Resource.AskAnExpertDisplayText,
-                                            Text = SubmitUserRequestPayload.QuestionForExpertAction
-                                        },
-                                        UserQuestion = question,
-                                    },
-                                }
-                            }
-                        }
+                             UserQuestion = userQuestion
+                        },
                     }
                 }
             };

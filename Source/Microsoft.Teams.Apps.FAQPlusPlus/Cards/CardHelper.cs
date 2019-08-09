@@ -14,9 +14,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class CardHelper
     {
         /// <summary>
-        /// Maximum length of the knowledge base answer to show
+        /// Maximum length of the knowledge base answer to show.
         /// </summary>
         public const int KbAnswerMaxLength = 500;
+
+        /// <summary>
+        /// Maximum length of the description text to show.
+        /// </summary>
+        public const int DescriptionText = 200;
+
+        /// <summary>
+        /// Maximum length of title text to show.
+        /// </summary>
+        public const int Title = 50;
 
         private const string Ellipsis = "...";
 
@@ -64,7 +74,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             if (ticket.Status == (int)TicketState.Open)
             {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ? Resource.CloseStatusText : string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
+                return string.IsNullOrEmpty(ticket.AssignedToName) ? Resource.OpenStatusTitle : string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
             }
             else
             {

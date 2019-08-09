@@ -42,8 +42,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// TakeAtour - text that triggers take a tour action for the user.
         /// </summary>
         public const string TakeATour = "take a tour";
-        private const string AskAnExpert = "ask an expert";
-        private const string Feedback = "share feedback";
+
+        /// <summary>
+        /// AskAnExpert - text that renders the ask an expert card.
+        /// </summary>
+        public const string AskAnExpert = "ask an expert";
+
+        /// <summary>
+        /// Feedback - text that renders share feedback card.
+        /// </summary>
+        public const string Feedback = "share feedback";
 
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
@@ -285,7 +293,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var payload = ((JObject)message.Value).ToObject<SubmitUserRequestPayload>();
 
-            if (!await UserInputValidations.Validate(payload, turnContext, cancellationToken))
+            // Validation is skipped when ask an expert submit action is through response card(QnA response).
+            if (string.IsNullOrWhiteSpace(payload?.UserQuestion) && !await UserInputValidations.Validate(payload, message.Text, turnContext, cancellationToken))
             {
                 return;
             }
@@ -298,6 +307,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
             switch (message.Text)
             {
+                case AskAnExpert:
+                    this.telemetryClient.TrackTrace("Sending user ask an expert card");
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(false, payload.UserQuestion)));
+                    break;
+
+                case Feedback:
+                    this.telemetryClient.TrackTrace("Sending user ask an expert card");
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, payload.UserQuestion, payload.SmeAnswer)));
+                    break;
+
                 case SubmitUserRequestPayload.QuestionForExpertAction:
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
@@ -309,15 +328,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case SubmitUserRequestPayload.AppFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
 
-                    smeTeamCard = SmeFeedbackCard.CreateAppFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, message.LocalTimestamp);
-                    userCard = ThankYouCard.GetCard();
-                    break;
-
-                case SubmitUserRequestPayload.ResultsFeedbackAction:
-                    this.telemetryClient.TrackTrace($"Received feedback about an answer");
-
-                    smeTeamCard = SmeFeedbackCard.CreateResultFeedbackCard(payload.FeedbackUserTitleText, userDetails, payload, message.LocalTimestamp);
-                    userCard = ThankYouCard.GetCard();
+                    smeTeamCard = SmeFeedbackCard.GetCard(payload, userDetails);
+                    await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
                     break;
 
                 default:

@@ -11,15 +11,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
-    ///  This class process a Share feedback Card function - A feature available in bot menu commands in 1:1 scope.
+    ///  This class process a Share feedback function - A feature available in bot menu commands in 1:1 scope.
     /// </summary>
-    public class ShareFeedbackCard
+    public static class ShareFeedbackCard
     {
         /// <summary>
         /// This method will construct the share feedback adaptive card through bot menu.
         /// </summary>
-        /// <returns>Feedback as an Attachment.</returns>
-        public static Attachment GetCard()
+        /// <param name="isRatingRequired">Flag to determine rating value.</param>
+        /// <param name="userQuestionText">Question asked by the user to bot.</param>
+        /// <param name="qnaAswerText">The response that the bot retrieves after querying the knowledge base.</param>
+        /// <returns>Share feedback card.</returns>
+        public static Attachment GetCard(bool isRatingRequired = false, string userQuestionText = "", string qnaAswerText = "")
         {
             AdaptiveCard shareFeedbackCard = new AdaptiveCard("1.0")
             {
@@ -28,33 +31,46 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = Resource.FeedbackHeaderText,
+                        Text = Resource.ShareFeedbackTitleText,
+                        Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = Resource.FeedbackText1,
+                        Text = Resource.FeedbackRatingRequired,
                         Wrap = true
                     },
-                    new AdaptiveTextBlock
+                     new AdaptiveTextBlock
                     {
-                        Weight = AdaptiveTextWeight.Bolder,
-                        Text = Resource.TitleText,
-                        Wrap = true
+                       Text = isRatingRequired ? Resource.RatingMandatoryFieldText : string.Empty,
+                       Color = AdaptiveTextColor.Attention,
+                       Spacing = AdaptiveSpacing.Small,
+                       Wrap = true
                     },
-                    new AdaptiveTextBlock
+                    new AdaptiveChoiceSetInput
                     {
-                        Text = Resource.MandatoryFieldText,
-                        Color = AdaptiveTextColor.Attention,
-                        Spacing = AdaptiveSpacing.Small,
-                        Wrap = true
-                    },
-                    new AdaptiveTextInput
-                    {
-                        Id = nameof(SubmitUserRequestPayload.FeedbackUserTitleText),
-                        Placeholder = Resource.ShowCardTitleText,
-                        IsMultiline = false
+                         Id = nameof(SubmitUserRequestPayload.FeedbackRatingAction),
+                         IsMultiSelect = false,
+                         Style = AdaptiveChoiceInputStyle.Compact,
+                         Choices = new List<AdaptiveChoice>
+                         {
+                            new AdaptiveChoice
+                            {
+                                Title = Resource.HelpfulRatingText,
+                                Value = SubmitUserRequestPayload.HelpfulRatingAction,
+                            },
+                            new AdaptiveChoice
+                            {
+                                Title = Resource.NeedsImprovementRatingText,
+                                Value = SubmitUserRequestPayload.NeedsImprovementRatingAction,
+                            },
+                            new AdaptiveChoice
+                            {
+                                Title = Resource.UnhelpfulRatingText,
+                                Value = SubmitUserRequestPayload.UnhelpfulRatingAction,
+                            },
+                         }
                     },
                     new AdaptiveTextBlock
                     {
@@ -64,9 +80,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextInput
                     {
-                        Id = nameof(SubmitUserRequestPayload.AppFeedback),
+                        Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                         Placeholder = Resource.FeedbackDescriptionPlaceholderText,
-                        IsMultiline = true
+                        IsMultiline = true,
+                        Value = !string.IsNullOrWhiteSpace(userQuestionText) ? userQuestionText : string.Empty,
                     }
                 },
                 Actions = new List<AdaptiveAction>
@@ -81,7 +98,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Resource.ShareFeedbackDisplayText,
                                 Text = SubmitUserRequestPayload.AppFeedbackAction
-                            }
+                            },
+                           UserQuestion = !string.IsNullOrWhiteSpace(userQuestionText) ? userQuestionText : string.Empty,
+                           SmeAnswer = !string.IsNullOrWhiteSpace(qnaAswerText) ? qnaAswerText : string.Empty,
                         },
                     }
                 }

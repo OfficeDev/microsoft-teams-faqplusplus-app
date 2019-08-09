@@ -4,8 +4,6 @@
 
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
 {
-    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
-
     /// <summary>
     /// This model class is responsible to model user activity with bot-
     /// asking a question or providing feedback on app or on results given by the bot to the user.
@@ -18,14 +16,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
         public const string AppFeedbackAction = "AppFeedback";
 
         /// <summary>
-        /// Text associated with results feedback command
+        /// Text associated with ask an expert command
         /// </summary>
-        public const string ResultsFeedbackAction = "ResultsFeedback";
+        public const string QuestionForExpertAction = "QuestionForExpert";
+
+        /// <summary>
+        /// Action that submits helpful rating.
+        /// </summary>
+        public const string HelpfulRatingAction = "Helpful";
+
+        /// <summary>
+        /// Action that submits needs improvement rating.
+        /// </summary>
+        public const string NeedsImprovementRatingAction = "Needs improvement";
 
         /// <summary>
         /// Text associated with ask an expert command
         /// </summary>
-        public const string QuestionForExpertAction = "QuestionForExpert";
+        public const string UnhelpfulRatingAction = "Unhelpful";
 
         /// <summary>
         /// Gets or sets the bot feedback.
@@ -50,18 +58,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
         public string SmeAnswer { get; set; }
 
         /// <summary>
-        /// Gets or sets the results feedback.
-        /// </summary>
-        public string ResultsFeedback { get; set; }
-
-        /// <summary>
         /// Gets or sets the user title text for ask an expert button.
         /// </summary>
         public string QuestionUserTitleText { get; set; }
 
         /// <summary>
-        /// Gets or sets the User title text for feedback button.
+        /// Gets or sets the action when user submits feedback rating.
         /// </summary>
-        public string FeedbackUserTitleText { get; set; }
+        public string FeedbackRatingAction { get; set; }
     }
 }
