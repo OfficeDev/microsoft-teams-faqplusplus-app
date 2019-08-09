@@ -90,7 +90,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Making sure to build the fact set.
+        /// Building the fact set to render out the user facing details.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <param name="activityLocalTimestamp">The local timestamp.</param>
