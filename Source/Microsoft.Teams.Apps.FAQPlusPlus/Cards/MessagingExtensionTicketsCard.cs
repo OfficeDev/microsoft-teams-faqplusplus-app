@@ -86,7 +86,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 adaptivefacts.Add(new AdaptiveFact { Title = Resource.QuestionAskedFactTitle, Value = ticketModel.UserQuestion });
             }
 
-            if (ticketModel.DateClosed != null)
+            if (ticketModel.DateClosed != null && ticketModel.Status == (int)TicketState.Closed)
             {
                 string closedDate = CardHelper.GetTicketClosedDate(this.ticketModel, localTimestamp);
                 adaptivefacts.Add(new AdaptiveFact { Title = Resource.ClosedFactTitle, Value = closedDate });
