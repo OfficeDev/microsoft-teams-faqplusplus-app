@@ -21,12 +21,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Maximum length of the description text to show.
         /// </summary>
-        public const int DescriptionText = 200;
-
-        /// <summary>
-        /// Maximum length of title text to show.
-        /// </summary>
-        public const int Title = 50;
+        public const int UserDescriptionMaxLength = 200;
 
         private const string Ellipsis = "...";
 
