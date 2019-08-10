@@ -27,7 +27,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         public static Attachment GetCard(SubmitUserRequestPayload payload, TeamsChannelAccount userDetails)
         {
             payload.QuestionForExpert = CardHelper.TruncateStringIfLonger(payload.QuestionForExpert, CardHelper.DescriptionText);
-
+            payload.SmeAnswer = CardHelper.TruncateStringIfLonger(payload.SmeAnswer, CardHelper.KbAnswerMaxLength);
             var chatTextButton = string.Format(Resource.ChatTextButton, userDetails.GivenName);
 
             // Constructing adaptive card that is sent to SME team.
@@ -39,17 +39,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                          Facts = new List<AdaptiveFact>
                          {
-                             new AdaptiveFact
+                             new AdaptiveFact()
                              {
                                 Title = Resource.RatingFactTitle,
                                 Value = payload.FeedbackRatingAction
-                             },
-                             new AdaptiveFact
-                             {
-                                Title = Resource.DescriptionText,
-                                Value = string.Format(Resource.FeedbackSubHeaderText, userDetails.Name, payload.QuestionForExpert)
                              }
                          },
+                    },
+                    new AdaptiveTextBlock()
+                    {
+                        Text = string.Format(Resource.FeedbackAlertText, userDetails.Name, payload.QuestionForExpert),
+                        Wrap = true
                     }
                 },
                 Actions = new List<AdaptiveAction>
@@ -62,7 +62,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 }
             };
 
-            if (!string.IsNullOrEmpty(payload.UserQuestion) && !string.IsNullOrEmpty(payload.SmeAnswer))
+            // Description fact is available in the card only when user enters description text.
+            if (!string.IsNullOrWhiteSpace(payload.QuestionForExpert))
+            {
+                smeFeedbackCard.Body.Add(new AdaptiveFactSet
+                {
+                    Facts = new List<AdaptiveFact>
+                    {
+                        new AdaptiveFact()
+                        {
+                            Title = Resource.DescriptionText,
+                            Value = payload.QuestionForExpert
+                        },
+                    }
+                });
+            }
+
+            // Question asked fact and view article show card is available when feedback is on QnA maker response.
+            if (!string.IsNullOrWhiteSpace(payload.SmeAnswer) && !string.IsNullOrWhiteSpace(payload.UserQuestion))
             {
                 smeFeedbackCard.Body.Add(new AdaptiveFactSet
                 {

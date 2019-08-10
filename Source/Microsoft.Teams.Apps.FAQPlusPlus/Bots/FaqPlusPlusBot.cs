@@ -293,8 +293,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var payload = ((JObject)message.Value).ToObject<SubmitUserRequestPayload>();
 
-            // Validation is skipped when ask an expert submit action is through response card(QnA response).
-            if (string.IsNullOrWhiteSpace(payload?.UserQuestion) && !await UserInputValidations.Validate(payload, message.Text, turnContext, cancellationToken))
+            // Validation is skipped when ask an expert / share feedback on submit action in both bot menu and QnA response card.
+            if ((!string.IsNullOrWhiteSpace(payload?.UserQuestion) || (string.IsNullOrWhiteSpace(payload?.QuestionUserTitleText) || string.IsNullOrWhiteSpace(payload?.FeedbackRatingAction))) && !await UserInputValidations.Validate(payload, message.Text, turnContext, cancellationToken))
             {
                 return;
             }

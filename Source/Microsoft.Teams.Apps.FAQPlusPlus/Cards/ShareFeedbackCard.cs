@@ -24,6 +24,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Share feedback card.</returns>
         public static Attachment GetCard(bool isRatingRequired = false, string userQuestionText = "", string qnaAswerText = "")
         {
+            string cardTitleText = !string.IsNullOrWhiteSpace(userQuestionText) ? Resource.ResultsFeedbackText : Resource.ShareFeedbackTitleText;
+
             AdaptiveCard shareFeedbackCard = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -31,13 +33,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = Resource.ShareFeedbackTitleText,
+                        Text = cardTitleText,
                         Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
                     new AdaptiveTextBlock
                     {
-                        Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.FeedbackRatingRequired,
                         Wrap = true
                     },
@@ -46,6 +47,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                        Text = isRatingRequired ? Resource.RatingMandatoryFieldText : string.Empty,
                        Color = AdaptiveTextColor.Attention,
                        Spacing = AdaptiveSpacing.Small,
+                       HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
                        Wrap = true
                     },
                     new AdaptiveChoiceSetInput
@@ -76,10 +78,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.DescriptionText,
-                        Wrap = true
+                        Wrap = true,
+                        Spacing = AdaptiveSpacing.Small
                     },
                     new AdaptiveTextInput
                     {
+                        Spacing = AdaptiveSpacing.None,
                         Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                         Placeholder = Resource.FeedbackDescriptionPlaceholderText,
                         IsMultiline = true,

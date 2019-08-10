@@ -232,6 +232,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to **{0}** is sharing feedback..
+        /// </summary>
+        public static string FeedbackAlertText {
+            get {
+                return ResourceManager.GetString("FeedbackAlertText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter your feedback and supporting details here..
         /// </summary>
         public static string FeedbackDescriptionPlaceholderText {
@@ -250,20 +259,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rating (Required):.
+        ///   Looks up a localized string similar to Rating (*Required*).
         /// </summary>
         public static string FeedbackRatingRequired {
             get {
                 return ResourceManager.GetString("FeedbackRatingRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to **{0}** has shared feedback : {1}.
-        /// </summary>
-        public static string FeedbackSubHeaderText {
-            get {
-                return ResourceManager.GetString("FeedbackSubHeaderText", resourceCulture);
             }
         }
         
@@ -493,7 +493,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Share feedback.
+        ///   Looks up a localized string similar to Share app feedback.
         /// </summary>
         public static string ShareFeedbackTitleText {
             get {
@@ -655,7 +655,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title (Required):.
+        ///   Looks up a localized string similar to Title (*Required*).
         /// </summary>
         public static string TitleRequiredText {
             get {

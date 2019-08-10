@@ -3,9 +3,7 @@
 // </copyright>
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 {
-    using System;
     using System.Collections.Generic;
-    using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
@@ -39,42 +37,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             return new List<Attachment>()
             {
                 GetCard(Resource.FunctionCardText1, Resource.FunctionCardText2, appBaseUri + "/content/Askaquestion.png"),
-                GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, appBaseUri + "/content/Askanexpert.png"),
+                GetCard(Resource.AskAnExpertText1, Resource.AskAnExpertText2, appBaseUri + "/content/Expertinquiry.png"),
                 GetCard(Resource.ShareFeedbackTitleText, Resource.FeedbackText1, appBaseUri + "/content/Sharefeedback.png"),
             };
         }
 
         private static Attachment GetCard(string title, string text, string imageUri)
         {
-            AdaptiveCard tourCarouselCard = new AdaptiveCard("1.0")
+            HeroCard tourCarouselCard = new HeroCard()
             {
-                Body = new List<AdaptiveElement>
+                Title = title,
+                Text = text,
+                Images = new List<CardImage>()
                 {
-                    new AdaptiveTextBlock
-                    {
-                        Weight = AdaptiveTextWeight.Bolder,
-                        Text = title,
-                        Wrap = true
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        Text = text,
-                        Wrap = true
-                    },
-                    new AdaptiveImage
-                    {
-                        HorizontalAlignment = AdaptiveHorizontalAlignment.Center,
-                        Url = new Uri(imageUri),
-                        Size = AdaptiveImageSize.Large
-                    }
+                    new CardImage(imageUri),
                 }
             };
 
-            return new Attachment
-            {
-                ContentType = AdaptiveCard.ContentType,
-                Content = tourCarouselCard,
-            };
+            return tourCarouselCard.ToAttachment();
         }
     }
 }

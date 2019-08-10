@@ -32,6 +32,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Validations
             payload.QuestionUserTitleText = payload.QuestionUserTitleText ?? string.Empty;
             payload.FeedbackRatingAction = payload.FeedbackRatingAction ?? string.Empty;
             payload.UserQuestion = payload.UserQuestion ?? string.Empty;
+            payload.SmeAnswer = payload?.SmeAnswer ?? string.Empty;
 
             var userDescriptionText = payload.QuestionForExpert == string.Empty ? payload.UserQuestion : payload.QuestionForExpert;
             if (string.IsNullOrWhiteSpace(payload.QuestionUserTitleText) && descriptionText == SubmitUserRequestPayload.QuestionForExpertAction)
@@ -42,7 +43,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Validations
 
             if (string.IsNullOrWhiteSpace(payload.FeedbackRatingAction) && descriptionText == SubmitUserRequestPayload.AppFeedbackAction)
             {
-                await turnContext.UpdateActivityAsync(GetCardActivity(turnContext, ShareFeedbackCard.GetCard(true, userDescriptionText), cancellationToken), cancellationToken);
+                await turnContext.UpdateActivityAsync(GetCardActivity(turnContext, ShareFeedbackCard.GetCard(true, userDescriptionText, payload.SmeAnswer), cancellationToken), cancellationToken);
                 return false;
             }
 

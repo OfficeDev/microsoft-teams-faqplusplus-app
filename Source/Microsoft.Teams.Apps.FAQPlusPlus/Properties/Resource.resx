@@ -297,12 +297,12 @@
     <value>Results feedback</value>
     <comment>This text is used as title for results feedback card.</comment>
   </data>
-  <data name="FeedbackSubHeaderText" xml:space="preserve">
-    <value>**{0}** has shared feedback : {1}</value>
-    <comment>The sub header for the incoming app feedback adaptive card. The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
+  <data name="FeedbackAlertText" xml:space="preserve">
+    <value>**{0}** is sharing feedback.</value>
+    <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
   </data>
   <data name="ShareFeedbackTitleText" xml:space="preserve">
-    <value>Share feedback</value>
+    <value>Share app feedback</value>
     <comment>Title text of share feedback user carousel card.</comment>
   </data>
   <data name="AskAnExpertDisplayText" xml:space="preserve">
@@ -365,7 +365,7 @@
     <comment>Take a tour button provided in the user welcome card which enables the user to take a tour on what the bot does in personal scope.</comment>
   </data>
   <data name="FeedbackRatingRequired" xml:space="preserve">
-    <value>Rating (Required):</value>
+    <value>Rating (*Required*)</value>
   </data>
   <data name="OpenStatusTitle" xml:space="preserve">
     <value>Open</value>
@@ -388,7 +388,7 @@
     <comment>Ask an expert UI card sub header text.</comment>
   </data>
   <data name="TitleRequiredText" xml:space="preserve">
-    <value>Title (Required):</value>
+    <value>Title (*Required*)</value>
     <comment>Title text box label text.</comment>
   </data>
   <data name="RatingFactTitle" xml:space="preserve">
