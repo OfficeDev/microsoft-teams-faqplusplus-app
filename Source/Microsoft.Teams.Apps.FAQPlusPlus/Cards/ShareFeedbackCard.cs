@@ -46,7 +46,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                        Text = isRatingRequired ? Resource.RatingMandatoryFieldText : string.Empty,
                        Color = AdaptiveTextColor.Attention,
-                       Spacing = AdaptiveSpacing.Small,
                        HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
                        Wrap = true
                     },
@@ -79,11 +78,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.DescriptionText,
                         Wrap = true,
-                        Spacing = AdaptiveSpacing.Small
                     },
                     new AdaptiveTextInput
                     {
-                        Spacing = AdaptiveSpacing.None,
+                        Spacing = AdaptiveSpacing.Small,
                         Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                         Placeholder = Resource.FeedbackDescriptionPlaceholderText,
                         IsMultiline = true,

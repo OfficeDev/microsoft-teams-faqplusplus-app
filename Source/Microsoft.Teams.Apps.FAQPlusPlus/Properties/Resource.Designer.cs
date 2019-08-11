@@ -223,7 +223,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description: .
+        ///   Looks up a localized string similar to Description:.
+        /// </summary>
+        public static string DescriptionFact {
+            get {
+                return ResourceManager.GetString("DescriptionFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string DescriptionText {
             get {
@@ -655,20 +664,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Title:.
+        /// </summary>
+        public static string TitleFact {
+            get {
+                return ResourceManager.GetString("TitleFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Title (*Required*).
         /// </summary>
         public static string TitleRequiredText {
             get {
                 return ResourceManager.GetString("TitleRequiredText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Title: .
-        /// </summary>
-        public static string TitleText {
-            get {
-                return ResourceManager.GetString("TitleText", resourceCulture);
             }
         }
         

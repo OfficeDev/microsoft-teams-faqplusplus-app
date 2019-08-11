@@ -40,7 +40,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
-                        Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.TitleRequiredText,
                         Wrap = true
                     },
@@ -48,14 +47,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                        Text = isTitleMandatory ? Resource.MandatoryFieldText : string.Empty,
                        Color = AdaptiveTextColor.Attention,
-                       Spacing = AdaptiveSpacing.Small,
+                       HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
                        Wrap = true
                     },
                     new AdaptiveTextInput
                     {
                         Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
                         Placeholder = Resource.ShowCardTitleText,
-                        IsMultiline = false
+                        IsMultiline = false,
+                        Spacing = AdaptiveSpacing.Small
                     },
                     new AdaptiveTextBlock
                     {
@@ -68,6 +68,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                         Placeholder = Resource.AskAnExpertPlaceholderText,
                         IsMultiline = true,
+                        Spacing = AdaptiveSpacing.Small,
                         Value = !string.IsNullOrWhiteSpace(userQuestionText) ? userQuestionText : string.Empty,
                     }
                 },

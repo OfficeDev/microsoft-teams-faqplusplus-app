@@ -60,12 +60,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             new AdaptiveFact
                             {
-                                Title = Resource.TitleText,
+                                Title = Resource.TitleFact,
                                 Value = this.ticket.Title,
                             },
                             new AdaptiveFact
                             {
-                                Title = Resource.DescriptionText,
+                                Title = Resource.DescriptionFact,
                                 Value = CardHelper.ConvertNullOrEmptyToNotApplicable(this.ticket.Description),
                             },
                             new AdaptiveFact

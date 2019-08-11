@@ -71,7 +71,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         new AdaptiveFact()
                         {
-                            Title = Resource.DescriptionText,
+                            Title = Resource.DescriptionFact,
                             Value = payload.QuestionForExpert
                         },
                     }

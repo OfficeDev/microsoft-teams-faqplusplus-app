@@ -54,7 +54,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                             new AdaptiveFact
                             {
-                                Title = Resource.TitleText,
+                                Title = Resource.TitleFact,
                                 Value = this.ticketModel.Title,
                             },
                             new AdaptiveFact

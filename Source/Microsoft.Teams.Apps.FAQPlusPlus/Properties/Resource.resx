@@ -146,7 +146,7 @@
     <comment>Button text for share feedback show card in QnA response card.</comment>
   </data>
   <data name="DescriptionText" xml:space="preserve">
-    <value>Description: </value>
+    <value>Description</value>
     <comment>Description text is the label of description text box.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
@@ -273,10 +273,6 @@
     <value>Enter short title here</value>
     <comment>Label text where users enters title for his question or feedback. </comment>
   </data>
-  <data name="TitleText" xml:space="preserve">
-    <value>Title: </value>
-    <comment>Title: title where user enters title for their request.</comment>
-  </data>
   <data name="KBEntryFactTitle" xml:space="preserve">
     <value>Knowledge base entry:</value>
     <comment>Answer from the QnA maker.</comment>
@@ -402,5 +398,13 @@
   <data name="ViewArticleButtonText" xml:space="preserve">
     <value>View article</value>
     <comment>View articke show card available to hold the KB answer.</comment>
+  </data>
+  <data name="DescriptionFact" xml:space="preserve">
+    <value>Description:</value>
+    <comment>Description, a fact available in UI cards.</comment>
+  </data>
+  <data name="TitleFact" xml:space="preserve">
+    <value>Title:</value>
+    <comment>Ttile, a fact available in UI cards.</comment>
   </data>
 </root>
