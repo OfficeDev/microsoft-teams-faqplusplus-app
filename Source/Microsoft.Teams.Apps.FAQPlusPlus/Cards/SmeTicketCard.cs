@@ -84,7 +84,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factSetList.Add(new AdaptiveFact
                 {
                     Title = Resource.DescriptionText,
-                    Value = CardHelper.TruncateStringIfLonger(ticket.Description, CardHelper.UserDescriptionMaxLength)
+                    Value = ticket.Description,
                 });
             }
 
@@ -93,7 +93,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factSetList.Add(new AdaptiveFact
                 {
                     Title = Resource.QuestionAskedFactTitle,
-                    Value = ticket.Description
+                    Value = ticket.UserQuestion
                 });
             }
 
