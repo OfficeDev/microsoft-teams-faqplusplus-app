@@ -183,7 +183,7 @@
   </data>
   <data name="NotificationCardTitleText" xml:space="preserve">
     <value>Notification</value>
-    <comment>Confirmation Card Header Text.</comment>
+    <comment>Confirmation card header text.</comment>
   </data>
   <data name="TeamChatHeaderText" xml:space="preserve">
     <value>Initiate chat with end users</value>
@@ -218,7 +218,7 @@
     <comment>Introduces Welcome, with team name where placeholder {0} holds the name of the team bot is being added to.</comment>
   </data>
   <data name="WelcomeTeamCardContent" xml:space="preserve">
-    <value>Hi! I am {0}, thank you for having me in your SME team!. I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot. Can Self assign the tickets raised by the users. Can directly chat with end user using chat buttons. Your team can keep track of all the user queries using status fields like open assign and close.</value>
+    <value>Hi! I am {0}, thank you for having me in your SME team! I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot. Can Self assign the tickets raised by the users. Can directly chat with end user using chat buttons. Your team can keep track of all the user queries using status fields like open assign and close.</value>
     <comment>Welcome message when bot is added to a new team.</comment>
   </data>
   <data name="CustomMessage" xml:space="preserve">
@@ -281,7 +281,7 @@
     <value>App feedback</value>
     <comment>This text is used as title for app feedback type card.</comment>
   </data>
-  <data name="MandatoryFieldText" xml:space="preserve">
+  <data name="MandatoryTitleFieldText" xml:space="preserve">
     <value>Title field is mandatory.</value>
     <comment>Text that suggest users to fill mandatory fields.</comment>
   </data>
@@ -362,10 +362,11 @@
   </data>
   <data name="FeedbackRatingRequired" xml:space="preserve">
     <value>Rating (*Required*)</value>
+    <comment>Rating Required is the label text for rating dropdown in share feedback card.</comment>
   </data>
   <data name="OpenStatusTitle" xml:space="preserve">
     <value>Open</value>
-    <comment>Open - status of the user ticket, unless it is assigned or closed by sme team , ticket status remains open.</comment>
+    <comment>Open - status of the user ticket, unless it is assigned or closed by sme team, ticket status remains open.</comment>
   </data>
   <data name="HelpfulRatingText" xml:space="preserve">
     <value>Helpful</value>
@@ -391,13 +392,13 @@
     <value>Rating:</value>
     <comment>Rating given by the user is shown in cards.</comment>
   </data>
-  <data name="RatingMandatoryFieldText" xml:space="preserve">
+  <data name="RatingMandatoryText" xml:space="preserve">
     <value>Rating is required</value>
-    <comment>Rating is required: attention to the users when rating is not given through the feedbck cards.</comment>
+    <comment>Rating is required: attention to the users when rating is not given through the feedback cards.</comment>
   </data>
   <data name="ViewArticleButtonText" xml:space="preserve">
     <value>View article</value>
-    <comment>View articke show card available to hold the KB answer.</comment>
+    <comment>View article show card available to hold the KB answer.</comment>
   </data>
   <data name="DescriptionFact" xml:space="preserve">
     <value>Description:</value>
@@ -405,6 +406,6 @@
   </data>
   <data name="TitleFact" xml:space="preserve">
     <value>Title:</value>
-    <comment>Ttile, a fact available in UI cards.</comment>
+    <comment>Title, a fact available in UI cards.</comment>
   </data>
 </root>

@@ -38,17 +38,36 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Text = Resource.AskAnExpertSubheaderText,
                         Wrap = true
                     },
-                    new AdaptiveTextBlock
+                    new AdaptiveColumnSet
                     {
-                        Text = Resource.TitleRequiredText,
-                        Wrap = true
-                    },
-                    new AdaptiveTextBlock
-                    {
-                       Text = isTitleMandatory ? Resource.MandatoryFieldText : string.Empty,
-                       Color = AdaptiveTextColor.Attention,
-                       HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                       Wrap = true
+                        Columns = new List<AdaptiveColumn>
+                        {
+                            new AdaptiveColumn
+                            {
+                                Width = AdaptiveColumnWidth.Auto,
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = Resource.TitleRequiredText,
+                                        Wrap = true
+                                    }
+                                }
+                            },
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = isTitleMandatory ? Resource.MandatoryTitleFieldText : string.Empty,
+                                        Color = AdaptiveTextColor.Attention,
+                                        HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                        Wrap = true
+                                    }
+                                }
+                            }
+                        },
                     },
                     new AdaptiveTextInput
                     {

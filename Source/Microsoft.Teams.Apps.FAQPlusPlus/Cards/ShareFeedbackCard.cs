@@ -37,18 +37,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
-                    new AdaptiveTextBlock
-                    {
-                        Text = Resource.FeedbackRatingRequired,
-                        Wrap = true
-                    },
-                     new AdaptiveTextBlock
-                    {
-                       Text = isRatingRequired ? Resource.RatingMandatoryFieldText : string.Empty,
-                       Color = AdaptiveTextColor.Attention,
-                       HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
-                       Wrap = true
-                    },
+                      new AdaptiveColumnSet
+                      {
+                        Columns = new List<AdaptiveColumn>
+                        {
+                            new AdaptiveColumn
+                            {
+                                Width = AdaptiveColumnWidth.Auto,
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = Resource.FeedbackRatingRequired,
+                                        Wrap = true
+                                    }
+                                }
+                            },
+                            new AdaptiveColumn
+                            {
+                                Items = new List<AdaptiveElement>
+                                {
+                                    new AdaptiveTextBlock
+                                    {
+                                        Text = isRatingRequired ? Resource.RatingMandatoryText : string.Empty,
+                                        Color = AdaptiveTextColor.Attention,
+                                        HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
+                                        Wrap = true
+                                    }
+                                }
+                            }
+                        },
+                      },
                     new AdaptiveChoiceSetInput
                     {
                          Id = nameof(SubmitUserRequestPayload.FeedbackRatingAction),

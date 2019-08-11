@@ -333,9 +333,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Title field is mandatory..
         /// </summary>
-        public static string MandatoryFieldText {
+        public static string MandatoryTitleFieldText {
             get {
-                return ResourceManager.GetString("MandatoryFieldText", resourceCulture);
+                return ResourceManager.GetString("MandatoryTitleFieldText", resourceCulture);
             }
         }
         
@@ -441,9 +441,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Rating is required.
         /// </summary>
-        public static string RatingMandatoryFieldText {
+        public static string RatingMandatoryText {
             get {
-                return ResourceManager.GetString("RatingMandatoryFieldText", resourceCulture);
+                return ResourceManager.GetString("RatingMandatoryText", resourceCulture);
             }
         }
         
@@ -700,7 +700,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!. I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot. Can Self assign the tickets raised by the users. Can directly chat with end user using chat buttons. Your team can keep track of all the user queries using status fields like open assign and close..
+        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team! I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot. Can Self assign the tickets raised by the users. Can directly chat with end user using chat buttons. Your team can keep track of all the user queries using status fields like open assign and close..
         /// </summary>
         public static string WelcomeTeamCardContent {
             get {
