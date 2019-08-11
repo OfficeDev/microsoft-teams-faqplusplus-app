@@ -367,7 +367,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **{0}** is requesting support. Details are as follows:.
+        ///   Looks up a localized string similar to **{0}** is requesting support..
         /// </summary>
         public static string QuestionForExpertSubHeaderText {
             get {
