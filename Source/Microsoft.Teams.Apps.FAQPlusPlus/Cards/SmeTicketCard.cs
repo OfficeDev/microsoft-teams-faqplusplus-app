@@ -163,7 +163,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveTextBlock
                             {
-                                Text = ticket.KnowledgeBaseAnswer,
+                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KbAnswerMaxLength),
                                 Wrap = true,
                             }
                         },
