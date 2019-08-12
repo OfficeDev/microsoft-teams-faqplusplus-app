@@ -49,9 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = this.ticket.RequesterName != null ?
-                            string.Format(Resource.QuestionForExpertSubHeaderText, this.ticket.RequesterName) :
-                            Resource.SmeAttentionText,
+                        Text = string.Format(Resource.QuestionForExpertSubHeaderText, this.ticket.RequesterName),
                         Wrap = true,
                     },
                     new AdaptiveFactSet
@@ -163,7 +161,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveTextBlock
                             {
-                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KbAnswerMaxLength),
+                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KbAnswerMaxDisplayLength),
                                 Wrap = true,
                             }
                         },

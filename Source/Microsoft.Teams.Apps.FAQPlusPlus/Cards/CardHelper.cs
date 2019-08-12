@@ -16,17 +16,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Maximum length of the knowledge base answer to show
         /// </summary>
-        public const int KbAnswerMaxLength = 500;
+        public const int KbAnswerMaxDisplayLength = 500;
 
         /// <summary>
         /// Maximum length of the user title
         /// </summary>
-        public const int TitleDisplayMaxLength = 50;
+        public const int TitleMaxDisplayLength = 50;
 
         /// <summary>
         /// Maximum length of the user description
         /// </summary>
-        public const int UserDescriptionMaxLength = 200;
+        public const int DescriptionMaxDisplayLength = 200;
 
         private const string Ellipsis = "...";
 
