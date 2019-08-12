@@ -5,7 +5,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
@@ -14,6 +13,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
+    using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -40,6 +40,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly Common.Providers.IConfigurationProvider configurationProvider;
         private readonly string appID;
         private readonly BotFrameworkAdapter botAdapter;
+        private readonly IMemoryCache memoryCache;
+        private readonly int cacheExpiryInDays;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
@@ -49,12 +51,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="configuration">configuration DI.</param>
         /// <param name="adapter">adapter DI.</param>
         /// <param name="configurationProvider">configurationProvider DI.</param>
+        /// <param name="memoryCache">IMemoryCache DI.</param>
         public MessagingExtension(
             ISearchService searchService,
             TelemetryClient telemetryClient,
             IConfiguration configuration,
             IBotFrameworkHttpAdapter adapter,
-            Common.Providers.IConfigurationProvider configurationProvider)
+            Common.Providers.IConfigurationProvider configurationProvider,
+            IMemoryCache memoryCache)
         {
             this.searchService = searchService;
             this.telemetryClient = telemetryClient;
@@ -63,6 +67,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.configurationProvider = configurationProvider;
             this.appID = this.configuration["MicrosoftAppId"];
             this.botAdapter = (BotFrameworkAdapter)this.adapter;
+            this.memoryCache = memoryCache;
+            this.cacheExpiryInDays = Convert.ToInt32(this.configuration["CacheExpiryInDays"]);
         }
 
         /// <summary>
@@ -225,15 +231,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conversationReference,
                     async (newTurnContext, newCancellationToken) =>
                     {
-                        var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
-
-                        foreach (var member in members)
+                        // Check for current user id in cache and add id of current user to cache if they are not added before
+                        // once they are validated againt sme roster
+                        if (!this.memoryCache.TryGetValue(currentUserId, out string membersCacheEntry))
                         {
-                            if (member.Id.Equals(currentUserId))
+                            var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
+                            foreach (var member in members)
                             {
-                                isUserPartOfRoster = true;
-                                break;
+                                if (member.Id.Equals(currentUserId))
+                                {
+                                    membersCacheEntry = member.Id;
+                                    isUserPartOfRoster = true;
+
+                                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(this.cacheExpiryInDays));
+                                    this.memoryCache.Set(currentUserId, membersCacheEntry, cacheEntryOptions);
+                                    break;
+                                }
                             }
+                        }
+                        else
+                        {
+                            isUserPartOfRoster = true;
                         }
                     },
                 default(CancellationToken));
