@@ -243,8 +243,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                                     membersCacheEntry = member.Id;
                                     isUserPartOfRoster = true;
 
-                                    var cacheEntryOptions = new MemoryCacheEntryOptions()
-                                    .SetSlidingExpiration(TimeSpan.FromDays(this.cacheExpiryInDays));
+                                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(this.cacheExpiryInDays));
                                     this.memoryCache.Set(currentUserId, membersCacheEntry, cacheEntryOptions);
                                     break;
                                 }
