@@ -30,7 +30,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Method to generate the adaptive card.
+        /// Returns an attachment based on the state and information of the ticket.
         /// </summary>
         /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
@@ -70,7 +70,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Builds out the fact set for the SME Ticket card.
+        /// Return the appropriate fact set based on the state and information in the ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <param name="localTimestamp">The current timestamp.</param>
@@ -116,7 +116,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Making sure to build out the adaptive card actions.
+        /// Return the appropriate set of card actions based on the state and information in the ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>Adaptive card actions.</returns>
@@ -175,7 +175,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Method to get the dropdown and the correct values to render.
+        /// Return the appropriate status choices based on the state and information in the ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>An adaptive element which contains the dropdown choices.</returns>
@@ -195,12 +195,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveChoice
                     {
-                        Title = Resource.AssignStatusTitle,
+                        Title = Resource.AssignToMeActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.AssignToSelfAction,
                     },
                     new AdaptiveChoice
                     {
-                        Title = Resource.CloseStatusTitle,
+                        Title = Resource.CloseActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.CloseAction,
                     },
                 };
@@ -212,17 +212,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveChoice
                     {
-                        Title = Resource.UnassignStatusTitle,
+                        Title = Resource.UnassignActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.ReopenAction,
                     },
                     new AdaptiveChoice
                     {
-                        Title = Resource.AssignStatusTitle,
+                        Title = Resource.AssignToMeActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.AssignToSelfAction,
                     },
                     new AdaptiveChoice
                     {
-                        Title = Resource.CloseStatusTitle,
+                        Title = Resource.CloseActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.CloseAction,
                     },
                 };
@@ -234,12 +234,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveChoice
                     {
-                        Title = Resource.UnassignStatusTitle,
+                        Title = Resource.ReopenActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.ReopenAction,
                     },
                     new AdaptiveChoice
                     {
-                        Title = Resource.ReassignStatusTitle,
+                        Title = Resource.ReopenAssignToMeActionChoiceTitle,
                         Value = ChangeTicketStatusPayload.AssignToSelfAction,
                     },
                 };

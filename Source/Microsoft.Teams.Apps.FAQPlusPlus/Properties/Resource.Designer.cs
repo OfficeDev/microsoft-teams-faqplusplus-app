@@ -151,6 +151,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assign to me.
+        /// </summary>
+        public static string AssignToMeActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("AssignToMeActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change status.
         /// </summary>
         public static string ChangeStatusButtonText {
@@ -165,6 +174,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string ChatTextButton {
             get {
                 return ResourceManager.GetString("ChatTextButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CloseActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("CloseActionChoiceTitle", resourceCulture);
             }
         }
         
@@ -421,6 +439,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reopen.
+        /// </summary>
+        public static string ReopenActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("ReopenActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reopen and assign to me.
+        /// </summary>
+        public static string ReopenAssignToMeActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("ReopenAssignToMeActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your request is open again. An expert will directly send you a chat message..
         /// </summary>
         public static string ReopenedTicketUserNotification {
@@ -651,6 +687,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string TitleText {
             get {
                 return ResourceManager.GetString("TitleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassign.
+        /// </summary>
+        public static string UnassignActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("UnassignActionChoiceTitle", resourceCulture);
             }
         }
         

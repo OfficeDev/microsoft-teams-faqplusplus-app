@@ -408,4 +408,24 @@
     <value>View article</value>
     <comment>The necessary string for the view article button</comment>
   </data>
+  <data name="AssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>Assign to me</value>
+    <comment>The dropdown choice for "Assign to me" for the SME ticket status is being updated</comment>
+  </data>
+  <data name="CloseActionChoiceTitle" xml:space="preserve">
+    <value>Close</value>
+    <comment>The dropdown choice for "Close" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="ReopenActionChoiceTitle" xml:space="preserve">
+    <value>Reopen</value>
+    <comment>The dropdown choice for "Reopen" for when the SME ticket status is being updated from the closed status.</comment>
+  </data>
+  <data name="ReopenAssignToMeActionChoiceTitle" xml:space="preserve">
+    <value>Reopen and assign to me</value>
+    <comment>The dropdown choice for "Reopen and assign to me" for when the SME ticket status is being updated from the closed state.</comment>
+  </data>
+  <data name="UnassignActionChoiceTitle" xml:space="preserve">
+    <value>Unassign</value>
+    <comment>The dropdown choice for "Unassign" for when the SME ticket status is being updated</comment>
+  </data>
 </root>
