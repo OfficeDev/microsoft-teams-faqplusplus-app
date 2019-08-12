@@ -293,12 +293,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             var payload = ((JObject)message.Value).ToObject<SubmitUserRequestPayload>();
 
-            // Validation is skipped when ask an expert / share feedback on submit action in both bot menu and QnA response card.
-            if ((!string.IsNullOrWhiteSpace(payload?.UserQuestion) || (string.IsNullOrWhiteSpace(payload?.QuestionUserTitleText) || string.IsNullOrWhiteSpace(payload?.FeedbackRatingAction))) && !await UserInputValidations.Validate(payload, message.Text, turnContext, cancellationToken))
-            {
-                return;
-            }
-
             Attachment smeTeamCard = null;      // Notification to SME team
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
@@ -308,17 +302,33 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (message.Text)
             {
                 case AskAnExpert:
+                    if (string.IsNullOrWhiteSpace(payload?.UserQuestion)
+                        && !await UserInputValidations.ValidateQuestionForExpert(payload, turnContext, cancellationToken))
+                    {
+                        return;
+                    }
+
                     this.telemetryClient.TrackTrace("Sending user ask an expert card");
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(false, payload.UserQuestion)));
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
                     break;
 
                 case Feedback:
-                    this.telemetryClient.TrackTrace("Sending user ask an expert card");
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, payload.UserQuestion, payload.SmeAnswer)));
+                    if (string.IsNullOrWhiteSpace(payload?.UserQuestion)
+                        && !await UserInputValidations.ValidateFeedback(payload, turnContext, cancellationToken))
+                    {
+                        return;
+                    }
+
+                    this.telemetryClient.TrackTrace("Sending user share feedback card");
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
                     break;
 
                 case SubmitUserRequestPayload.QuestionForExpertAction:
                     this.telemetryClient.TrackTrace($"Received question for expert");
+                    if (!await UserInputValidations.ValidateQuestionForExpert(payload, turnContext, cancellationToken))
+                    {
+                        return;
+                    }
 
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
                     smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
@@ -327,6 +337,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case SubmitUserRequestPayload.AppFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
+
+                    if (!await UserInputValidations.ValidateFeedback(payload, turnContext, cancellationToken))
+                    {
+                        return;
+                    }
 
                     smeTeamCard = SmeFeedbackCard.GetCard(payload, userDetails);
                     await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));

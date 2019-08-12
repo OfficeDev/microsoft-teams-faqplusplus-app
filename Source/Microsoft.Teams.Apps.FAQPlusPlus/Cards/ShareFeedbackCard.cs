@@ -16,16 +16,19 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class ShareFeedbackCard
     {
         /// <summary>
-        /// This method will construct the share feedback adaptive card through bot menu.
+        /// This method will construct the card  for share feedback bot menu.
         /// </summary>
         /// <param name="isRatingRequired">Flag to determine rating value.</param>
         /// <param name="userQuestionText">Question asked by the user to bot.</param>
+        /// <param name="userDescriptionText">User activity text.</param>
         /// <param name="qnaAswerText">The response that the bot retrieves after querying the knowledge base.</param>
         /// <returns>Share feedback card.</returns>
-        public static Attachment GetCard(bool isRatingRequired = false, string userQuestionText = "", string qnaAswerText = "")
+        public static Attachment GetCard(bool isRatingRequired = false, string userQuestionText = "", string userDescriptionText = "", string qnaAswerText = "")
         {
             string cardTitleText = !string.IsNullOrWhiteSpace(userQuestionText) ? Resource.ResultsFeedbackText : Resource.ShareFeedbackTitleText;
-
+            userDescriptionText = userDescriptionText ?? string.Empty;
+            userQuestionText = userQuestionText ?? string.Empty;
+            qnaAswerText = qnaAswerText ?? string.Empty;
             AdaptiveCard shareFeedbackCard = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -37,8 +40,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
-                      new AdaptiveColumnSet
-                      {
+                    new AdaptiveColumnSet
+                    {
                         Columns = new List<AdaptiveColumn>
                         {
                             new AdaptiveColumn
@@ -67,7 +70,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 }
                             }
                         },
-                      },
+                    },
                     new AdaptiveChoiceSetInput
                     {
                          Id = nameof(SubmitUserRequestPayload.FeedbackRatingAction),
@@ -104,7 +107,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                         Placeholder = Resource.FeedbackDescriptionPlaceholderText,
                         IsMultiline = true,
-                        Value = !string.IsNullOrWhiteSpace(userQuestionText) ? userQuestionText : string.Empty,
+                        Value = string.IsNullOrWhiteSpace(userDescriptionText) ? userQuestionText : userDescriptionText,
                     }
                 },
                 Actions = new List<AdaptiveAction>
@@ -122,6 +125,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             },
                            UserQuestion = !string.IsNullOrWhiteSpace(userQuestionText) ? userQuestionText : string.Empty,
                            SmeAnswer = !string.IsNullOrWhiteSpace(qnaAswerText) ? qnaAswerText : string.Empty,
+                           QuestionForExpert = !string.IsNullOrWhiteSpace(userDescriptionText) ? userDescriptionText : string.Empty,
                         },
                     }
                 }

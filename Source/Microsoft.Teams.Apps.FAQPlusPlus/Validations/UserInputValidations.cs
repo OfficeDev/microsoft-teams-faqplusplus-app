@@ -18,32 +18,39 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Validations
     public static class UserInputValidations
     {
         /// <summary>
-        ///  Validates the user fields in cards.
+        ///  Validates the user on submit action for ask an expert scenario.
         /// </summary>
         /// <param name="payload">The adaptive card payload.</param>
-        /// <param name="descriptionText">Description entered by user.</param>
         /// <param name="turnContext">The current turn.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Return bool value.</returns>
-        public static async Task<bool> Validate(SubmitUserRequestPayload payload, string descriptionText, ITurnContext turnContext, CancellationToken cancellationToken)
+        public static async Task<bool> ValidateQuestionForExpert(SubmitUserRequestPayload payload, ITurnContext turnContext, CancellationToken cancellationToken)
         {
-            payload.AppFeedback = payload.AppFeedback ?? string.Empty;
-            payload.QuestionForExpert = payload.QuestionForExpert ?? string.Empty;
             payload.QuestionUserTitleText = payload.QuestionUserTitleText ?? string.Empty;
-            payload.FeedbackRatingAction = payload.FeedbackRatingAction ?? string.Empty;
-            payload.UserQuestion = payload.UserQuestion ?? string.Empty;
-            payload.SmeAnswer = payload?.SmeAnswer ?? string.Empty;
 
-            var userDescriptionText = payload.QuestionForExpert == string.Empty ? payload.UserQuestion : payload.QuestionForExpert;
-            if (string.IsNullOrWhiteSpace(payload.QuestionUserTitleText) && descriptionText == SubmitUserRequestPayload.QuestionForExpertAction)
+            if (string.IsNullOrWhiteSpace(payload.QuestionUserTitleText))
             {
-                await turnContext.UpdateActivityAsync(GetCardActivity(turnContext, AskAnExpertCard.GetCard(true, userDescriptionText), cancellationToken), cancellationToken);
+                await turnContext.UpdateActivityAsync(GetCardActivity(turnContext, AskAnExpertCard.GetCard(true, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer), cancellationToken), cancellationToken);
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(payload.FeedbackRatingAction) && descriptionText == SubmitUserRequestPayload.AppFeedbackAction)
+            return true;
+        }
+
+        /// <summary>
+        ///  Validates the user on submit action for share feedback scenario.
+        /// </summary>
+        /// <param name="payload">The adaptive card payload.</param>
+        /// <param name="turnContext">The current turn.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Return bool value.</returns>
+        public static async Task<bool> ValidateFeedback(SubmitUserRequestPayload payload, ITurnContext turnContext, CancellationToken cancellationToken)
+        {
+            payload.FeedbackRatingAction = payload.FeedbackRatingAction ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(payload.FeedbackRatingAction))
             {
-                await turnContext.UpdateActivityAsync(GetCardActivity(turnContext, ShareFeedbackCard.GetCard(true, userDescriptionText, payload.SmeAnswer), cancellationToken), cancellationToken);
+                await turnContext.UpdateActivityAsync(GetCardActivity(turnContext, ShareFeedbackCard.GetCard(true, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer), cancellationToken), cancellationToken);
                 return false;
             }
 

@@ -19,7 +19,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public class SmeFeedbackCard
     {
         /// <summary>
-        /// Method to generate the adaptive card.
+        /// This method will construct the card for SME team which will have the
+        /// feedback details given by the user.
         /// </summary>
         /// <param name="payload">user activity payload</param>
         /// <param name="userDetails">User details.</param>
@@ -34,32 +35,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             AdaptiveCard smeFeedbackCard = new AdaptiveCard("1.0")
             {
                Body = new List<AdaptiveElement>
-                {
-                    new AdaptiveFactSet
-                    {
-                         Facts = new List<AdaptiveFact>
-                         {
-                             new AdaptiveFact()
-                             {
-                                Title = Resource.RatingFactTitle,
-                                Value = payload.FeedbackRatingAction
-                             }
-                         },
-                    },
+               {
+                   new AdaptiveFactSet
+                   {
+                       Facts = new List<AdaptiveFact>
+                       {
+                           new AdaptiveFact()
+                           {
+                               Title = Resource.RatingFactTitle,
+                               Value = payload.FeedbackRatingAction
+                           }
+                       },
+                   },
                     new AdaptiveTextBlock()
                     {
                         Text = string.Format(Resource.FeedbackAlertText, userDetails.Name, payload.QuestionForExpert),
                         Wrap = true
                     }
-                },
-                Actions = new List<AdaptiveAction>
-                {
-                    new AdaptiveOpenUrlAction
-                    {
-                        Title = chatTextButton,
-                        UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(userDetails.UserPrincipalName)}"
-                    }
-                }
+               },
+               Actions = new List<AdaptiveAction>
+               {
+                   new AdaptiveOpenUrlAction
+                   {
+                       Title = chatTextButton,
+                       UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(userDetails.UserPrincipalName)}"
+                   }
+               }
             };
 
             // Description fact is available in the card only when user enters description text.
@@ -78,7 +79,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 });
             }
 
-            // Question asked fact and view article show card is available when feedback is on QnA maker response.
+            // Question asked fact and view article show card is available when feedback is on QnA Maker response.
             if (!string.IsNullOrWhiteSpace(payload.SmeAnswer) && !string.IsNullOrWhiteSpace(payload.UserQuestion))
             {
                 smeFeedbackCard.Body.Add(new AdaptiveFactSet

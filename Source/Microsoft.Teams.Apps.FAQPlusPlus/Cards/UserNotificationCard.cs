@@ -31,7 +31,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Returns a user notification card for the ticket.
         /// </summary>
         /// <param name="message">The status message to add to the card</param>
-        /// <param name="activityLocalTimestamp">Local time stamp of user activity.</param>
+        /// <param name="activityLocalTimestamp">Local timestamp of user activity.</param>
         /// <returns>An adaptive card as an attachment</returns>
         public Attachment ToAttachment(string message, DateTimeOffset? activityLocalTimestamp)
         {

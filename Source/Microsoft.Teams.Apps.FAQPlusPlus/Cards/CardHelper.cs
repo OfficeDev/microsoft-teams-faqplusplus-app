@@ -45,7 +45,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Gets the closed date of the ticket.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
-        /// <param name="activityLocalTimestamp">Local time stamp of the user activity.</param>
+        /// <param name="activityLocalTimestamp">Local timestamp of the user activity.</param>
         /// <returns>The closed date of the ticket.</returns>
         public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
         {

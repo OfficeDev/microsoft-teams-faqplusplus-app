@@ -30,7 +30,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
                         Size = AdaptiveTextSize.Small,
-                        Spacing = AdaptiveSpacing.Small,
                         Text = welcomeText,
                         Wrap = true
                     }

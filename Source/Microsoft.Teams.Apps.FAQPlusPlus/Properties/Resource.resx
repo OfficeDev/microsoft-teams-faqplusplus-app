@@ -259,7 +259,7 @@
   </data>
   <data name="ResponseHeaderText" xml:space="preserve">
     <value>Here is what I found:</value>
-    <comment>Response header-letting the user know that a response is generated to their request from QnA maker.</comment>
+    <comment>Response header-letting the user know that a response is generated to their request from QnA Maker.</comment>
   </data>
   <data name="ClosedFactTitle" xml:space="preserve">
     <value>Closed: </value>
@@ -275,7 +275,7 @@
   </data>
   <data name="KBEntryFactTitle" xml:space="preserve">
     <value>Knowledge base entry:</value>
-    <comment>Answer from the QnA maker.</comment>
+    <comment>Answer from the QnA Maker.</comment>
   </data>
   <data name="AppFeedbackText" xml:space="preserve">
     <value>App feedback</value>

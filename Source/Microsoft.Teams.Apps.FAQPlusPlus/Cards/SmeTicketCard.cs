@@ -30,9 +30,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Method to generate the adaptive card.
+        /// This method will construct the card for SME team which will have the details for the user inquiry.
         /// </summary>
-        /// <param name="activityLocalTimestamp">Local time stamp of the user activity.</param>
+        /// <param name="activityLocalTimestamp">Local timestamp of the user activity.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
         public Attachment ToAttachment(DateTimeOffset? activityLocalTimestamp)
         {

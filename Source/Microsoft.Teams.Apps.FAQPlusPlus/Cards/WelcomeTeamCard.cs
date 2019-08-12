@@ -16,12 +16,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class WelcomeTeamCard
     {
         /// <summary>
-        /// This method will construct the adaptive card used to welcome a team when bot is added to the team.
+        /// This method will construct the welcome team card when bot is added to the team.
         /// </summary>
         /// <param name="botDisplayName">Name of the bot.</param>
         /// <param name="teamName">Name of the team to which bot is added to. </param>
         /// <returns>Team welcome card.</returns>
-        public static Attachment GetCard(string botDisplayName, string teamName = null)
+        public static Attachment GetCard(string botDisplayName, string teamName)
         {
             var welcomeTeamCardTitleText = string.Format(Resource.WelcomeTeamCardTitleText, teamName);
             var welcomeTeamCardContent = string.Format(Resource.WelcomeTeamCardContent, botDisplayName, teamName);

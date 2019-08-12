@@ -16,7 +16,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class UnrecognizedInputCard
     {
         /// <summary>
-        /// This method will construct the adaptive card when unrecognized input is sent by the user.
+        /// This method will construct the card when unrecognized input is sent by the user.
         /// </summary>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
         /// <returns>UnrecognizedInput Card.</returns>
