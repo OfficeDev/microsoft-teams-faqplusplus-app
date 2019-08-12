@@ -77,11 +77,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>The fact set showing the necessary details.</returns>
         private List<AdaptiveFact> BuildFactSet(TicketEntity ticket, DateTimeOffset? localTimestamp)
         {
-            List<AdaptiveFact> factSetList = new List<AdaptiveFact>();
+            List<AdaptiveFact> factList = new List<AdaptiveFact>();
 
             if (!string.IsNullOrEmpty(ticket.Description))
             {
-                factSetList.Add(new AdaptiveFact
+                factList.Add(new AdaptiveFact
                 {
                     Title = Resource.DescriptionText,
                     Value = ticket.Description,
@@ -90,14 +90,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
             if (!string.IsNullOrEmpty(ticket.UserQuestion))
             {
-                factSetList.Add(new AdaptiveFact
+                factList.Add(new AdaptiveFact
                 {
                     Title = Resource.QuestionAskedFactTitle,
                     Value = ticket.UserQuestion
                 });
             }
 
-            factSetList.Add(new AdaptiveFact
+            factList.Add(new AdaptiveFact
             {
                 Title = Resource.StatusFactTitle,
                 Value = CardHelper.GetTicketDisplayStatusForSme(this.ticket),
@@ -105,14 +105,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
             if (ticket.Status == (int)TicketState.Closed)
             {
-                factSetList.Add(new AdaptiveFact
+                factList.Add(new AdaptiveFact
                 {
                     Title = Resource.ClosedFactTitle,
                     Value = CardHelper.GetTicketClosedDate(this.ticket, localTimestamp),
                 });
             }
 
-            return factSetList;
+            return factList;
         }
 
         /// <summary>
