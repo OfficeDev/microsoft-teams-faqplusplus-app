@@ -32,7 +32,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private const string RecentCommandId = "recents";
         private const string OpenCommandId = "openrequests";
         private const string AssignedCommandId = "assignedrequests";
-        private const string MembersCacheKey = "SmeTeamMembersKey";
 
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
@@ -232,26 +231,28 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conversationReference,
                     async (newTurnContext, newCancellationToken) =>
                     {
-                        // Check for members details in cache and add them to cache if they are not added before
-                        if (!this.memoryCache.TryGetValue(MembersCacheKey, out IList<ChannelAccount> membersCacheEntry))
+                        // Check for current user id in cache and add id of current user to cache if they are not added before
+                        // once they are validated againt sme roster
+                        if (!this.memoryCache.TryGetValue(currentUserId, out string membersCacheEntry))
                         {
-                            if (membersCacheEntry == null)
+                            var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
+                            foreach (var member in members)
                             {
-                                membersCacheEntry = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
+                                if (member.Id.Equals(currentUserId))
+                                {
+                                    membersCacheEntry = member.Id;
+                                    isUserPartOfRoster = true;
+                                    break;
+                                }
                             }
                             var cacheEntryOptions = new MemoryCacheEntryOptions()
                                 .SetSlidingExpiration(TimeSpan.FromHours(this.cacheExpiryInDays));
 
-                            this.memoryCache.Set(MembersCacheKey, membersCacheEntry, cacheEntryOptions);
+                            this.memoryCache.Set(currentUserId, membersCacheEntry, cacheEntryOptions);
                         }
-
-                        foreach (var member in membersCacheEntry)
+                        else
                         {
-                            if (member.Id.Equals(currentUserId))
-                            {
-                                isUserPartOfRoster = true;
-                                break;
-                            }
+                            isUserPartOfRoster = true;
                         }
                     },
                 default(CancellationToken));
