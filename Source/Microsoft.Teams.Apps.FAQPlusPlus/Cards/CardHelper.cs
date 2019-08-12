@@ -85,8 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Gets the ticket status for the SME ticket card. Here the status will also
-        /// the SME who updated the specific ticket.
+        /// Gets the current status of the ticket to display in the SME team.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>A status string.</returns>
