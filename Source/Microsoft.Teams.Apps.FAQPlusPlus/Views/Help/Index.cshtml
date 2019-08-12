@@ -1,7 +1,37 @@
 ﻿@model string;
+<head>
+    <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/microsoft-teams/dist/MicrosoftTeams.min.js"></script>
+</head>
 
-<div class="helpTab">@Html.Raw(Model)</div>
+<body>
+    <div class="helpTab">@Html.Raw(Model)</div>
 
+    <script>
+        microsoftTeams.initialize();
+
+        // Get the active theme
+        microsoftTeams.getContext(function (context) {
+            setTheme(context.theme);
+        });
+
+        // Set appropriate dark/contrast/default theme for the controls based on current theme
+        function setTheme(currentTheme) {
+            debugger;
+            if (currentTheme === "dark" || currentTheme === "contrast") {
+                $("p").css("color", "#fff");
+                $("ul").css("color", "#fff");
+            }
+            else {
+                $("p").css("color", "#252423");
+                $("ul").css("color", "#252423");
+            }
+        }
+
+        // Listen for theme changes
+        microsoftTeams.registerOnThemeChangeHandler(setTheme);
+    </script>
+</body>
 <style>
     .helpTab {
         font-family: 'Segoe UI', Tahoma, Helvetica, sans-serif;
