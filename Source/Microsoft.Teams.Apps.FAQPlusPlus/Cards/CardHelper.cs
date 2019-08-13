@@ -99,7 +99,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
             else
             {
-                return string.Format(Resource.ClosedByStatusValue, ticket.LastModifiedByName);
+                return Resource.ClosedUserNotificationStatus;
             }
         }
 
