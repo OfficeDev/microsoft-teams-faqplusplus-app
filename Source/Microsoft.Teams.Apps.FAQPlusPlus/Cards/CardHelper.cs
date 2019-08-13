@@ -16,12 +16,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Maximum length of the knowledge base answer to show.
         /// </summary>
-        public const int KbAnswerMaxLength = 500;
+        public const int KnowledgeBaseAnswerMaxDisplayLength = 500;
 
         /// <summary>
-        /// Maximum length of the description text to show.
+        /// Maximum length of the user title
         /// </summary>
-        public const int UserDescriptionMaxLength = 200;
+        public const int TitleMaxDisplayLength = 50;
+
+        /// <summary>
+        /// Maximum length of the user description
+        /// </summary>
+        public const int DescriptionMaxDisplayLength = 200;
 
         private const string Ellipsis = "...";
 
@@ -42,38 +47,40 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Gets the closed date of the ticket.
+        /// Gets the ticket status for the user notifications.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
-        /// <param name="activityLocalTimestamp">Local timestamp of the user activity.</param>
-        /// <returns>The closed date of the ticket.</returns>
-        public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
+        /// <returns>A status string.</returns>
+        public static string GetUserTicketDisplayStatus(TicketEntity ticket)
         {
-            if (ticket.Status == (int)TicketState.Closed)
+            if (ticket.Status == (int)TicketState.Open)
             {
-                // We are using this format because DATE and TIME are not supported on mobile yet.
-                return GetFormattedDateInUserTimeZone(ticket.DateClosed.Value, activityLocalTimestamp);
+                return ticket.IsAssigned() ?
+                    Resource.AssignedUserNotificationStatus :
+                    Resource.UnassignedUserNotificationStatus;
             }
             else
             {
-                return Resource.NonApplicableString;
+                return Resource.ClosedUserNotificationStatus;
             }
         }
 
         /// <summary>
-        /// Gets the ticket status currently.
+        /// Gets the current status of the ticket to display in the SME team.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
         /// <returns>A status string.</returns>
-        public static string GetTicketStatus(TicketEntity ticket)
+        public static string GetTicketDisplayStatusForSme(TicketEntity ticket)
         {
             if (ticket.Status == (int)TicketState.Open)
             {
-                return string.IsNullOrEmpty(ticket.AssignedToName) ? Resource.OpenStatusTitle : string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName);
+                return ticket.IsAssigned() ?
+                    string.Format(Resource.SMETicketAssignedStatus, ticket.AssignedToName) :
+                    Resource.SMETicketUnassignedStatus;
             }
             else
             {
-                return string.Format(Resource.ClosedByStatusValue, ticket.LastModifiedByName);
+                return Resource.SMETicketClosedStatus;
             }
         }
 

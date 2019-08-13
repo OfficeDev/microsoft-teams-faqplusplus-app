@@ -5,7 +5,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
@@ -14,6 +13,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Bot.Builder.Integration.AspNet.Core;
     using Microsoft.Bot.Schema;
     using Microsoft.Bot.Schema.Teams;
+    using Microsoft.Extensions.Caching.Memory;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
@@ -29,6 +29,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     {
         private const int TextTrimLengthForThumbnailCard = 45;
         private const string SearchTextParameterName = "searchText";        // parameter name in the manifest file
+        private const string RecentCommandId = "recents";
+        private const string OpenCommandId = "openrequests";
+        private const string AssignedCommandId = "assignedrequests";
 
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
@@ -37,6 +40,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly Common.Providers.IConfigurationProvider configurationProvider;
         private readonly string appID;
         private readonly BotFrameworkAdapter botAdapter;
+        private readonly IMemoryCache memoryCache;
+        private readonly int cacheExpiryInDays;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
@@ -46,12 +51,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="configuration">configuration DI.</param>
         /// <param name="adapter">adapter DI.</param>
         /// <param name="configurationProvider">configurationProvider DI.</param>
+        /// <param name="memoryCache">IMemoryCache DI.</param>
         public MessagingExtension(
             ISearchService searchService,
             TelemetryClient telemetryClient,
             IConfiguration configuration,
             IBotFrameworkHttpAdapter adapter,
-            Common.Providers.IConfigurationProvider configurationProvider)
+            Common.Providers.IConfigurationProvider configurationProvider,
+            IMemoryCache memoryCache)
         {
             this.searchService = searchService;
             this.telemetryClient = telemetryClient;
@@ -60,6 +67,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.configurationProvider = configurationProvider;
             this.appID = this.configuration["MicrosoftAppId"];
             this.botAdapter = (BotFrameworkAdapter)this.adapter;
+            this.memoryCache = memoryCache;
+            this.cacheExpiryInDays = Convert.ToInt32(this.configuration["CacheExpiryInDays"]);
         }
 
         /// <summary>
@@ -82,7 +91,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         {
                             Body = new MessagingExtensionResponse
                             {
-                                ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip),
+                                ComposeExtension = await this.GetSearchResultAsync(searchQuery, messageExtensionQuery.CommandId, messageExtensionQuery.QueryOptions.Count, messageExtensionQuery.QueryOptions.Skip, turnContext.Activity.LocalTimestamp),
                             },
                             Status = 200,
                         };
@@ -95,7 +104,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             {
                                 ComposeExtension = new MessagingExtensionResult
                                 {
-                                    Text = Resource.NonSmeErrorText,
+                                    Text = Resource.NonSMEErrorText,
                                     Type = "message"
                                 },
                             },
@@ -124,8 +133,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="commandId">commandId to determine which tab in message extension has been invoked.</param>
         /// <param name="count">count for pagination.</param>
         /// <param name="skip">skip for pagination.</param>
+        /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <returns><see cref="Task"/> returns MessagingExtensionResult which will be used for providing the card.</returns>
-        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? count, int? skip)
+        public async Task<MessagingExtensionResult> GetSearchResultAsync(string query, string commandId, int? count, int? skip, DateTimeOffset? localTimestamp)
         {
             MessagingExtensionResult composeExtensionResult = new MessagingExtensionResult
             {
@@ -142,15 +152,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             // commandId should be equal to Id mentioned in Manifest file under composeExtensions section
             switch (commandId)
             {
-                case "recents":
+                case RecentCommandId:
                     searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.RecentTickets, query, count, skip);
                     break;
 
-                case "openrequests":
+                case OpenCommandId:
                     searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.OpenTickets, query, count, skip);
                     break;
 
-                case "assignedrequests":
+                case AssignedCommandId:
                     searchServiceResults = await this.searchService.SearchTicketsAsync(TicketSearchScope.AssignedTickets, query, count, skip);
                     break;
             }
@@ -160,44 +170,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 ThumbnailCard previewCard = new ThumbnailCard
                 {
                     Title = ticket.Title,
-                    Text = this.GetPreviewCardText(ticket),
+                    Text = this.GetPreviewCardText(ticket, commandId, localTimestamp),
                 };
 
                 var selectedTicketAdaptiveCard = new MessagingExtensionTicketsCard(ticket);
-                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment().ToMessagingExtensionAttachment(previewCard.ToAttachment()));
+                composeExtensionResult.Attachments.Add(selectedTicketAdaptiveCard.ToAttachment(localTimestamp).ToMessagingExtensionAttachment(previewCard.ToAttachment()));
             }
 
             return composeExtensionResult;
         }
 
         // Get the text for the preview card for the result
-        private string GetPreviewCardText(TicketEntity ticket)
+        private string GetPreviewCardText(TicketEntity ticket, string commandId, DateTimeOffset? localTimestamp)
         {
             var text = $@"
-<div>
-  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.DateCreated.ToShortDateString())} | {HttpUtility.HtmlEncode(this.GetDisplayStatus(ticket))}</div>
-  <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(ticket.RequesterName)}</div>
-</div>";
-            return text.Trim();
-        }
-
-        // Construct the string to display for the status of the ticket
-        private string GetDisplayStatus(TicketEntity ticket)
-        {
-            switch (ticket.Status)
+            <div>
+                <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetFormattedDateInUserTimeZone(ticket.DateCreated, localTimestamp))} | {HttpUtility.HtmlEncode(ticket.RequesterName)}</div>";
+            if (!commandId.Equals(OpenCommandId))
             {
-                case (int)TicketState.Open:
-                    return string.IsNullOrEmpty(ticket.AssignedToName) ?
-                        Resource.SMEOpenedStatus :
-                        string.Format(CultureInfo.CurrentCulture, Resource.AssignedToStatusValue, ticket.AssignedToName);
-
-                case (int)TicketState.Closed:
-                    return string.Format(CultureInfo.CurrentCulture, Resource.ClosedByStatusValue, ticket.LastModifiedByName);
-
-                default:
-                    this.telemetryClient.TrackTrace($"Unknown ticket status {ticket.Status}", ApplicationInsights.DataContracts.SeverityLevel.Warning);
-                    return string.Empty;
+                text = text + $"<div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetTicketDisplayStatusForSme(ticket))}</div>";
             }
+
+            text = text + $"</div>";
+            return text.Trim();
         }
 
         // Get the value of the searchText parameter in the ME query
@@ -236,15 +231,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     conversationReference,
                     async (newTurnContext, newCancellationToken) =>
                     {
-                        var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
-
-                        foreach (var member in members)
+                        // Check for current user id in cache and add id of current user to cache if they are not added before
+                        // once they are validated againt sme roster
+                        if (!this.memoryCache.TryGetValue(currentUserId, out string membersCacheEntry))
                         {
-                            if (member.Id.Equals(currentUserId))
+                            var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
+                            foreach (var member in members)
                             {
-                                isUserPartOfRoster = true;
-                                break;
+                                if (member.Id.Equals(currentUserId))
+                                {
+                                    membersCacheEntry = member.Id;
+                                    isUserPartOfRoster = true;
+
+                                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(this.cacheExpiryInDays));
+                                    this.memoryCache.Set(currentUserId, membersCacheEntry, cacheEntryOptions);
+                                    break;
+                                }
                             }
+                        }
+                        else
+                        {
+                            isUserPartOfRoster = true;
                         }
                     },
                 default(CancellationToken));
