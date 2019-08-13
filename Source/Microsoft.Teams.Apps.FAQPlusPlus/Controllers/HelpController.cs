@@ -29,9 +29,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Controllers
         /// <summary>
         /// Display help tab.
         /// </summary>
+        /// <param name="theme">Current theme from manifest theme parameter</param>
         /// <returns>Help tab view</returns>
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string theme)
         {
+            this.ViewBag.Theme = theme;
             string helpTabText = await this.configurationProvider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
 
             var marked = new MarkedNet.Marked();
