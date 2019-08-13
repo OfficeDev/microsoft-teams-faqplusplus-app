@@ -360,9 +360,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to You don&apos;t have access to this app. Please contact your IT admin..
         /// </summary>
-        public static string NonSmeErrorText {
+        public static string NonSMEErrorText {
             get {
-                return ResourceManager.GetString("NonSmeErrorText", resourceCulture);
+                return ResourceManager.GetString("NonSMEErrorText", resourceCulture);
             }
         }
         
@@ -540,9 +540,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Everyone there is a new request coming in, please see the details below:.
         /// </summary>
-        public static string SmeAttentionText {
+        public static string SMEAttentionText {
             get {
-                return ResourceManager.GetString("SmeAttentionText", resourceCulture);
+                return ResourceManager.GetString("SMEAttentionText", resourceCulture);
             }
         }
         
@@ -565,11 +565,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assigned to {0}.
+        /// </summary>
+        public static string SMETicketAssignedStatus {
+            get {
+                return ResourceManager.GetString("SMETicketAssignedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed.
+        /// </summary>
+        public static string SMETicketClosedStatus {
+            get {
+                return ResourceManager.GetString("SMETicketClosedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassigned.
+        /// </summary>
+        public static string SMETicketUnassignedStatus {
+            get {
+                return ResourceManager.GetString("SMETicketUnassignedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to RE: {0}.
         /// </summary>
-        public static string SmeUserChatMessage {
+        public static string SMEUserChatMessage {
             get {
-                return ResourceManager.GetString("SmeUserChatMessage", resourceCulture);
+                return ResourceManager.GetString("SMEUserChatMessage", resourceCulture);
             }
         }
         

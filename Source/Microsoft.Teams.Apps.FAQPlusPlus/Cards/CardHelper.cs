@@ -94,12 +94,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             if (ticket.Status == (int)TicketState.Open)
             {
                 return ticket.IsAssigned() ?
-                    string.Format(Resource.AssignedToStatusValue, ticket.AssignedToName) :
-                    Resource.UnassignedStatusValue;
+                    string.Format(Resource.SMETicketAssignedStatus, ticket.AssignedToName) :
+                    Resource.SMETicketUnassignedStatus;
             }
             else
             {
-                return Resource.ClosedUserNotificationStatus;
+                return Resource.SMETicketClosedStatus;
             }
         }
 

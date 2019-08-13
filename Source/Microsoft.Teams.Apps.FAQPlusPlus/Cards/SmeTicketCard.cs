@@ -122,7 +122,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
 
-            var messageToSend = string.Format(Resource.SmeUserChatMessage, ticket.Title);
+            var messageToSend = string.Format(Resource.SMEUserChatMessage, ticket.Title);
             var encodedMessage = Uri.EscapeDataString(messageToSend);
 
             actionsList.Add(new AdaptiveOpenUrlAction

@@ -357,14 +357,14 @@
     <value>Your request is open again. An expert will directly send you a chat message.</value>
     <comment>Notification text sent to the user who opened a ticket, when the ticket is reopened.</comment>
   </data>
-  <data name="SmeAttentionText" xml:space="preserve">
+  <data name="SMEAttentionText" xml:space="preserve">
     <value>Everyone there is a new request coming in, please see the details below:</value>
   </data>
   <data name="GoToOriginalThreadButtonText" xml:space="preserve">
     <value>Go to original thread</value>
     <comment>Go to original thread button available on messaging extension card.</comment>
   </data>
-  <data name="NonSmeErrorText" xml:space="preserve">
+  <data name="NonSMEErrorText" xml:space="preserve">
     <value>You don't have access to this app. Please contact your IT admin.</value>
     <comment>Error message when a user of non-SME team tries to access messaging extension application</comment>
   </data>
@@ -396,7 +396,7 @@
     <value>Reassign to me</value>
     <comment>The dropdown text for reassigning a ticket that has been previously closed.</comment>
   </data>
-  <data name="SmeUserChatMessage" xml:space="preserve">
+  <data name="SMEUserChatMessage" xml:space="preserve">
     <value>RE: {0}</value>
     <comment>The {0} is the placeholder for the title that the user had provided when asking an expert.</comment>
   </data>
@@ -427,5 +427,17 @@
   <data name="UnassignActionChoiceTitle" xml:space="preserve">
     <value>Unassign</value>
     <comment>The dropdown choice for "Unassign" for when the SME ticket status is being updated</comment>
+  </data>
+  <data name="SMETicketAssignedStatus" xml:space="preserve">
+    <value>Assigned to {0}</value>
+    <comment>This value represents the SME Ticket in the Assigned status - {0} represents the SME User to whom a ticket has been assigned</comment>
+  </data>
+  <data name="SMETicketClosedStatus" xml:space="preserve">
+    <value>Closed</value>
+    <comment>This value represents the SME Ticket in the Closed status</comment>
+  </data>
+  <data name="SMETicketUnassignedStatus" xml:space="preserve">
+    <value>Unassigned</value>
+    <comment>This value represents the SME Ticket in the Unassigned status</comment>
   </data>
 </root>

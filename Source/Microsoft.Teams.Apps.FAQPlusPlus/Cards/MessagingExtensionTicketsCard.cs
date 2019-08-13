@@ -40,7 +40,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Text = this.ticketModel.RequesterName != null ?
                          string.Format(Resource.QuestionForExpertSubHeaderText, this.ticketModel.RequesterName) :
-                        Resource.SmeAttentionText,
+                        Resource.SMEAttentionText,
                         Wrap = true,
                     },
                     new AdaptiveFactSet
