@@ -241,7 +241,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **{0}** is sharing feedback..
+        ///   Looks up a localized string similar to **{0}** has shared the feedback..
         /// </summary>
         public static string FeedbackAlertText {
             get {
@@ -594,9 +594,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Click chat with user button to initiate a direct chat..
         /// </summary>
-        public static string TeamChatCardContent {
+        public static string TeamChatContent {
             get {
-                return ResourceManager.GetString("TeamChatCardContent", resourceCulture);
+                return ResourceManager.GetString("TeamChatContent", resourceCulture);
             }
         }
         
@@ -610,7 +610,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi SME Team, you are supposed to take questions from the user. If you want to ask me a question, please install me in your personal scope. To know better about me please do team tour..
+        ///   Looks up a localized string similar to Hello, I don&apos;t support bot commands in the Team. Here is a quick tour of how I can help..
         /// </summary>
         public static string TeamCustomMessage {
             get {
@@ -619,38 +619,38 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can see what users need help with.
+        ///   Looks up a localized string similar to You can see what users need help with..
         /// </summary>
-        public static string TeamFunctionCardContent {
+        public static string TeamNotificationContent {
             get {
-                return ResourceManager.GetString("TeamFunctionCardContent", resourceCulture);
+                return ResourceManager.GetString("TeamNotificationContent", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Receive notifications from end users.
         /// </summary>
-        public static string TeamFunctionCardHeaderText {
+        public static string TeamNotificationHeaderText {
             get {
-                return ResourceManager.GetString("TeamFunctionCardHeaderText", resourceCulture);
+                return ResourceManager.GetString("TeamNotificationHeaderText", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Mark requests assigned or closed to keep track of queries..
         /// </summary>
-        public static string TeamQueryCardContent {
+        public static string TeamTicketSystemContent {
             get {
-                return ResourceManager.GetString("TeamQueryCardContent", resourceCulture);
+                return ResourceManager.GetString("TeamTicketSystemContent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ticket system.
+        ///   Looks up a localized string similar to Manage queries.
         /// </summary>
-        public static string TeamQueryHeaderText {
+        public static string TeamTicketSystemHeaderText {
             get {
-                return ResourceManager.GetString("TeamQueryHeaderText", resourceCulture);
+                return ResourceManager.GetString("TeamTicketSystemHeaderText", resourceCulture);
             }
         }
         
@@ -700,7 +700,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team! I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot. Can Self assign the tickets raised by the users. Can directly chat with end user using chat buttons. Your team can keep track of all the user queries using status fields like open assign and close..
+        ///   Looks up a localized string similar to Hello team,   
+        ///
+        ///I am your friendly Q&amp;A bot that helps you provide support to people who interact with me and need more assistance..
         /// </summary>
         public static string WelcomeTeamCardContent {
             get {

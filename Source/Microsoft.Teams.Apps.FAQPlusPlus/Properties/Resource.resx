@@ -189,23 +189,23 @@
     <value>Initiate chat with end users</value>
     <comment>Team carousel chat card header-title of the chat card.</comment>
   </data>
-  <data name="TeamChatCardContent" xml:space="preserve">
+  <data name="TeamChatContent" xml:space="preserve">
     <value>Click chat with user button to initiate a direct chat.</value>
     <comment>Team carousel chat card content- SME team members can chat directly with the end users.</comment>
   </data>
-  <data name="TeamFunctionCardHeaderText" xml:space="preserve">
+  <data name="TeamNotificationHeaderText" xml:space="preserve">
     <value>Receive notifications from end users</value>
     <comment>Team carousel function card content- title of the chat card.</comment>
   </data>
-  <data name="TeamFunctionCardContent" xml:space="preserve">
-    <value>You can see what users need help with</value>
+  <data name="TeamNotificationContent" xml:space="preserve">
+    <value>You can see what users need help with.</value>
     <comment>Team carousel function card content- team can take the question from the end users through bot.</comment>
   </data>
-  <data name="TeamQueryHeaderText" xml:space="preserve">
-    <value>Ticket system</value>
+  <data name="TeamTicketSystemHeaderText" xml:space="preserve">
+    <value>Manage queries</value>
     <comment>Title of the query carousel card- ticket system.</comment>
   </data>
-  <data name="TeamQueryCardContent" xml:space="preserve">
+  <data name="TeamTicketSystemContent" xml:space="preserve">
     <value>Mark requests assigned or closed to keep track of queries.</value>
     <comment>Team carousel query card content- team can keep track of the user request.</comment>
   </data>
@@ -218,7 +218,9 @@
     <comment>Introduces Welcome, with team name where placeholder {0} holds the name of the team bot is being added to.</comment>
   </data>
   <data name="WelcomeTeamCardContent" xml:space="preserve">
-    <value>Hi! I am {0}, thank you for having me in your SME team! I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot. Can Self assign the tickets raised by the users. Can directly chat with end user using chat buttons. Your team can keep track of all the user queries using status fields like open assign and close.</value>
+    <value>Hello team,   
+
+I am your friendly Q&amp;A bot that helps you provide support to people who interact with me and need more assistance.</value>
     <comment>Welcome message when bot is added to a new team.</comment>
   </data>
   <data name="CustomMessage" xml:space="preserve">
@@ -242,7 +244,7 @@
     <comment>Label for share feedback show card where user enters feedback on the displayed results in QnA response card.</comment>
   </data>
   <data name="TeamCustomMessage" xml:space="preserve">
-    <value>Hi SME Team, you are supposed to take questions from the user. If you want to ask me a question, please install me in your personal scope. To know better about me please do team tour.</value>
+    <value>Hello, I don't support bot commands in the Team. Here is a quick tour of how I can help.</value>
     <comment>When SME team member asks bot a questions- a message appears saying that team member is supposed to install the bot in personal scope.</comment>
   </data>
   <data name="AssignStatusTitle" xml:space="preserve">
@@ -294,7 +296,7 @@
     <comment>This text is used as title for results feedback card.</comment>
   </data>
   <data name="FeedbackAlertText" xml:space="preserve">
-    <value>**{0}** is sharing feedback.</value>
+    <value>**{0}** has shared the feedback.</value>
     <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
   </data>
   <data name="ShareFeedbackTitleText" xml:space="preserve">

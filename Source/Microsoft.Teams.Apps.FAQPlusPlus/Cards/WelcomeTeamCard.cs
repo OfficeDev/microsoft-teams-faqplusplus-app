@@ -49,7 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Title = Resource.TakeATeamTourButtonText,
                         Data = new
                         {
-                            msteam = new CardAction
+                            msteams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Resource.TakeATeamTourButtonText,

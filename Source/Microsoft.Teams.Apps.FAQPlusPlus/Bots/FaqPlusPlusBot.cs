@@ -302,29 +302,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (message.Text)
             {
                 case AskAnExpert:
-                    if (string.IsNullOrWhiteSpace(payload?.UserQuestion)
-                        && !await UserInputValidations.ValidateQuestionForExpert(payload, turnContext, cancellationToken))
-                    {
-                        return;
-                    }
-
                     this.telemetryClient.TrackTrace("Sending user ask an expert card");
+
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
                     break;
 
                 case Feedback:
-                    if (string.IsNullOrWhiteSpace(payload?.UserQuestion)
-                        && !await UserInputValidations.ValidateFeedback(payload, turnContext, cancellationToken))
-                    {
-                        return;
-                    }
-
                     this.telemetryClient.TrackTrace("Sending user share feedback card");
+
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
                     break;
 
                 case SubmitUserRequestPayload.QuestionForExpertAction:
                     this.telemetryClient.TrackTrace($"Received question for expert");
+
                     if (!await UserInputValidations.ValidateQuestionForExpert(payload, turnContext, cancellationToken))
                     {
                         return;

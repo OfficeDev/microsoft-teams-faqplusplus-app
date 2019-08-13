@@ -21,9 +21,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         {
             return new List<Attachment>()
             {
-                GetCard(Resource.TeamFunctionCardHeaderText, Resource.TeamFunctionCardContent, appBaseUri + "/content/Alert.png"),
-                GetCard(Resource.TeamChatHeaderText, Resource.TeamChatCardContent, appBaseUri + "/content/Userchat.png"),
-                GetCard(Resource.TeamQueryHeaderText, Resource.TeamQueryCardContent, appBaseUri + "/content/Ticket.png"),
+                GetCard(Resource.TeamNotificationHeaderText, Resource.TeamNotificationContent, appBaseUri + "/content/Notifications.png"),
+                GetCard(Resource.TeamChatHeaderText, Resource.TeamChatContent, appBaseUri + "/content/Enduserchat.png"),
+                GetCard(Resource.TeamTicketSystemHeaderText, Resource.TeamTicketSystemContent, appBaseUri + "/content/Ticketsystem.png"),
             };
         }
 
