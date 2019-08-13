@@ -151,7 +151,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// <returns>Returns a bool value.</returns>
         public bool IsAssigned()
         {
-            return this.AssignedToName != null && this.Status == (int)TicketState.Open;
+            return this.AssignedToObjectId != null && this.Status == (int)TicketState.Open;
         }
     }
 }

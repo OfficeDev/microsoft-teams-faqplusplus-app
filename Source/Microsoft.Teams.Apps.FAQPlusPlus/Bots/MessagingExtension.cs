@@ -98,7 +98,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                             {
                                 ComposeExtension = new MessagingExtensionResult
                                 {
-                                    Text = Resource.NonSmeErrorText,
+                                    Text = Resource.NonSMEErrorText,
                                     Type = "message"
                                 },
                             },
