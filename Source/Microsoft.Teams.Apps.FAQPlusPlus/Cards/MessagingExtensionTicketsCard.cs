@@ -37,9 +37,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 Body = new List<AdaptiveElement>
                 {
-                    new AdaptiveFactSet
+                    new AdaptiveTextBlock
                     {
-                        Facts = this.GetAdaptiveFactsSetForTitle(this.ticketModel),
+                        Text = this.ticketModel.Title,
+                        Size = AdaptiveTextSize.Large,
+                        Weight = AdaptiveTextWeight.Bolder,
+                        Wrap = true,
                     },
                     new AdaptiveTextBlock
                     {
@@ -61,15 +64,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             };
         }
 
-        // Create adaptivefactsset for the title
-        private List<AdaptiveFact> GetAdaptiveFactsSetForTitle(TicketEntity ticketModel)
-        {
-            List<AdaptiveFact> adaptivefacts = new List<AdaptiveFact>();
-            adaptivefacts.Add(new AdaptiveFact { Title = Resource.TitleText, Value = ticketModel.Title });
-
-            return adaptivefacts;
-        }
-
         // Create adaptivefacts set which can be displayed in the card below requestor
         private List<AdaptiveFact> GetAdaptiveFactsSet(TicketEntity ticketModel, DateTimeOffset? localTimestamp)
         {
@@ -79,14 +73,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 adaptivefacts.Add(new AdaptiveFact { Title = Resource.DescriptionText, Value = ticketModel.Description });
             }
 
-            adaptivefacts.Add(new AdaptiveFact { Title = Resource.StatusFactTitle, Value = CardHelper.GetTicketDisplayStatusForSme(this.ticketModel) });
-
             if (!string.IsNullOrEmpty(ticketModel.UserQuestion))
             {
                 adaptivefacts.Add(new AdaptiveFact { Title = Resource.QuestionAskedFactTitle, Value = ticketModel.UserQuestion });
             }
 
-            if (ticketModel.DateClosed != null)
+            adaptivefacts.Add(new AdaptiveFact { Title = Resource.StatusFactTitle, Value = CardHelper.GetTicketDisplayStatusForSme(this.ticketModel) });
+
+            if (ticketModel.DateClosed != null && ticketModel.Status == (int)TicketState.Closed)
             {
                 string closedDate = CardHelper.GetFormattedDateInUserTimeZone(this.ticketModel.DateClosed.Value, localTimestamp);
                 adaptivefacts.Add(new AdaptiveFact { Title = Resource.ClosedFactTitle, Value = closedDate });
