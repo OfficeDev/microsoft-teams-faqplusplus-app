@@ -30,6 +30,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
+        /// Gets the ticket that is the basis for the information in this card
+        /// </summary>
+        protected TicketEntity Ticket => this.ticket;
+
+        /// <summary>
         /// Returns an attachment based on the state and information of the ticket.
         /// </summary>
         /// <param name="localTimestamp">Local timestamp of the user activity.</param>
@@ -42,28 +47,96 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveTextBlock
                     {
-                        Text = this.ticket.Title,
+                        Text = this.Ticket.Title,
                         Size = AdaptiveTextSize.Large,
                         Weight = AdaptiveTextWeight.Bolder,
                         Wrap = true,
                     },
                     new AdaptiveTextBlock
                     {
-                        Text = string.Format(Resource.QuestionForExpertSubHeaderText, this.ticket.RequesterName),
+                        Text = string.Format(Resource.QuestionForExpertSubHeaderText, this.Ticket.RequesterName),
                         Wrap = true,
                     },
                     new AdaptiveFactSet
                     {
-                        Facts = this.BuildFactSet(this.ticket, localTimestamp),
+                        Facts = this.BuildFactSet(this.Ticket, localTimestamp),
                     },
                 },
-                Actions = this.BuildActions(this.ticket),
+                Actions = this.BuildActions(this.Ticket),
             };
 
             return new Attachment
             {
                 ContentType = AdaptiveCard.ContentType,
                 Content = card,
+            };
+        }
+
+        /// <summary>
+        /// Return the appropriate set of card actions based on the state and information in the ticket.
+        /// </summary>
+        /// <param name="ticket">The current ticket information.</param>
+        /// <returns>Adaptive card actions.</returns>
+        protected virtual List<AdaptiveAction> BuildActions(TicketEntity ticket)
+        {
+            List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
+
+            actionsList.Add(this.CreateChatWithUserAction());
+
+            actionsList.Add(new AdaptiveShowCardAction
+            {
+                Title = Resource.ChangeStatusButtonText,
+                Card = new AdaptiveCard("1.0")
+                {
+                    Body = new List<AdaptiveElement>
+                    {
+                        this.GetAdaptiveChoiceSetInput(this.Ticket),
+                    },
+                    Actions = new List<AdaptiveAction>
+                    {
+                        new AdaptiveSubmitAction
+                        {
+                            Data = new ChangeTicketStatusPayload { TicketId = this.Ticket.TicketId }
+                        }
+                    },
+                }
+            });
+
+            if (!string.IsNullOrEmpty(ticket.KnowledgeBaseAnswer))
+            {
+                actionsList.Add(new AdaptiveShowCardAction
+                {
+                    Title = Resource.ViewArticleButtonText,
+                    Card = new AdaptiveCard("1.0")
+                    {
+                        Body = new List<AdaptiveElement>
+                        {
+                            new AdaptiveTextBlock
+                            {
+                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
+                                Wrap = true,
+                            }
+                        },
+                    },
+                });
+            }
+
+            return actionsList;
+        }
+
+        /// <summary>
+        /// Create an adaptive card action that starts a chat with the user.
+        /// </summary>
+        /// <returns>Adaptive card action for starting chat with user</returns>
+        protected AdaptiveAction CreateChatWithUserAction()
+        {
+            var messageToSend = string.Format(Resource.SMEUserChatMessage, this.Ticket.Title);
+            var encodedMessage = Uri.EscapeDataString(messageToSend);
+
+            return new AdaptiveOpenUrlAction
+            {
+                Title = string.Format(Resource.ChatTextButton, this.Ticket.RequesterGivenName),
+                Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.Ticket.RequesterUserPrincipalName)}&message={encodedMessage}")
             };
         }
 
@@ -98,7 +171,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             factList.Add(new AdaptiveFact
             {
                 Title = Resource.StatusFactTitle,
-                Value = CardHelper.GetTicketDisplayStatusForSme(this.ticket),
+                Value = CardHelper.GetTicketDisplayStatusForSme(this.Ticket),
             });
 
             if (ticket.Status == (int)TicketState.Closed)
@@ -106,70 +179,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Resource.ClosedFactTitle,
-                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateClosed.Value, localTimestamp),
+                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.Ticket.DateClosed.Value, localTimestamp),
                 });
             }
 
             return factList;
-        }
-
-        /// <summary>
-        /// Return the appropriate set of card actions based on the state and information in the ticket.
-        /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
-        /// <returns>Adaptive card actions.</returns>
-        private List<AdaptiveAction> BuildActions(TicketEntity ticket)
-        {
-            List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
-
-            var messageToSend = string.Format(Resource.SMEUserChatMessage, ticket.Title);
-            var encodedMessage = Uri.EscapeDataString(messageToSend);
-
-            actionsList.Add(new AdaptiveOpenUrlAction
-            {
-                Title = string.Format(Resource.ChatTextButton, this.ticket.RequesterGivenName),
-                Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(this.ticket.RequesterUserPrincipalName)}&message={encodedMessage}")
-            });
-
-            actionsList.Add(new AdaptiveShowCardAction
-            {
-                Title = Resource.ChangeStatusButtonText,
-                Card = new AdaptiveCard("1.0")
-                {
-                    Body = new List<AdaptiveElement>
-                    {
-                        this.GetAdaptiveChoiceSetInput(this.ticket),
-                    },
-                    Actions = new List<AdaptiveAction>
-                    {
-                        new AdaptiveSubmitAction
-                        {
-                            Data = new ChangeTicketStatusPayload { TicketId = this.ticket.TicketId }
-                        }
-                    },
-                }
-            });
-
-            if (!string.IsNullOrEmpty(ticket.KnowledgeBaseAnswer))
-            {
-                actionsList.Add(new AdaptiveShowCardAction
-                {
-                    Title = Resource.ViewArticleButtonText,
-                    Card = new AdaptiveCard("1.0")
-                    {
-                        Body = new List<AdaptiveElement>
-                        {
-                            new AdaptiveTextBlock
-                            {
-                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
-                                Wrap = true,
-                            }
-                        },
-                    },
-                });
-            }
-
-            return actionsList;
         }
 
         /// <summary>

@@ -6,111 +6,41 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System;
     using System.Collections.Generic;
     using AdaptiveCards;
-    using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     /// Implements messaging extension tickets card.
     /// </summary>
-    public class MessagingExtensionTicketsCard
+    public class MessagingExtensionTicketsCard : SmeTicketCard
     {
-        private readonly TicketEntity ticketModel;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtensionTicketsCard"/> class.
         /// </summary>
         /// <param name="ticket">The ticket model with the latest details.</param>
         public MessagingExtensionTicketsCard(TicketEntity ticket)
+            : base(ticket)
         {
-            this.ticketModel = ticket;
         }
 
-        /// <summary>
-        /// Method to generate the adaptive card.
-        /// </summary>
-        /// <param name="localTimestamp">Local timestamp of the user activity.</param>
-        /// <returns>Returns the attachment that will be attached to messaging extension list.</returns>
-        public Attachment ToAttachment(DateTimeOffset? localTimestamp)
+        /// <inheritdoc/>
+        protected override List<AdaptiveAction> BuildActions(TicketEntity ticket)
         {
-            var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 0))
+            List<AdaptiveAction> actions = new List<AdaptiveAction>();
+
+            actions.Add(this.CreateChatWithUserAction());
+
+            if (!string.IsNullOrEmpty(this.Ticket.SmeThreadConversationId))
             {
-                Body = new List<AdaptiveElement>
-                {
-                    new AdaptiveTextBlock
-                    {
-                        Text = this.ticketModel.Title,
-                        Size = AdaptiveTextSize.Large,
-                        Weight = AdaptiveTextWeight.Bolder,
-                        Wrap = true,
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        Text = string.Format(Resource.QuestionForExpertSubHeaderText, this.ticketModel.RequesterName),
-                        Wrap = true,
-                    },
-                    new AdaptiveFactSet
-                    {
-                        Facts = this.GetAdaptiveFactsSet(this.ticketModel, localTimestamp),
-                    },
-                },
-                Actions = this.GetAdaptiveActions(this.ticketModel),
-            };
-
-            return new Attachment
-            {
-                ContentType = AdaptiveCard.ContentType,
-                Content = card,
-            };
-        }
-
-        // Create adaptivefacts set which can be displayed in the card below requestor
-        private List<AdaptiveFact> GetAdaptiveFactsSet(TicketEntity ticketModel, DateTimeOffset? localTimestamp)
-        {
-            List<AdaptiveFact> adaptivefacts = new List<AdaptiveFact>();
-            if (!string.IsNullOrEmpty(ticketModel.Description))
-            {
-                adaptivefacts.Add(new AdaptiveFact { Title = Resource.DescriptionText, Value = ticketModel.Description });
-            }
-
-            if (!string.IsNullOrEmpty(ticketModel.UserQuestion))
-            {
-                adaptivefacts.Add(new AdaptiveFact { Title = Resource.QuestionAskedFactTitle, Value = ticketModel.UserQuestion });
-            }
-
-            adaptivefacts.Add(new AdaptiveFact { Title = Resource.StatusFactTitle, Value = CardHelper.GetTicketDisplayStatusForSme(this.ticketModel) });
-
-            if (ticketModel.DateClosed != null && ticketModel.Status == (int)TicketState.Closed)
-            {
-                string closedDate = CardHelper.GetFormattedDateInUserTimeZone(this.ticketModel.DateClosed.Value, localTimestamp);
-                adaptivefacts.Add(new AdaptiveFact { Title = Resource.ClosedFactTitle, Value = closedDate });
-            }
-
-            return adaptivefacts;
-        }
-
-        // Create adaptiveactions buttons for invoking chat and go to thread button action
-        private List<AdaptiveAction> GetAdaptiveActions(TicketEntity ticketModel)
-        {
-            List<AdaptiveAction> adaptiveActions = new List<AdaptiveAction>();
-            adaptiveActions.Add(
-                new AdaptiveOpenUrlAction
-                {
-                    Title = $"{string.Format(Resource.ChatTextButton, ticketModel.RequesterGivenName)}",
-                    Url = new Uri($"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(ticketModel.RequesterUserPrincipalName)}"),
-                });
-
-            if (!string.IsNullOrEmpty(ticketModel.SmeThreadConversationId))
-            {
-                adaptiveActions.Add(
+                actions.Add(
                     new AdaptiveOpenUrlAction
                     {
-                        Title = $"{Resource.GoToOriginalThreadButtonText}",
-                        Url = new Uri(this.GetGoToThreadUri(ticketModel.SmeThreadConversationId))
+                        Title = Resource.GoToOriginalThreadButtonText,
+                        Url = new Uri(CreateDeeplinkToThread(this.Ticket.SmeThreadConversationId))
                     });
             }
 
-            return adaptiveActions;
+            return actions;
         }
 
         /// <summary>
@@ -118,16 +48,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="threadConversationId">The thread along with message Id stored in storage table.</param>
         /// <returns>original thread uri.</returns>
-        private string GetGoToThreadUri(string threadConversationId)
+        private static string CreateDeeplinkToThread(string threadConversationId)
         {
-            string returnUri = $"https://teams.microsoft.com/l/message/";
-            if (!string.IsNullOrEmpty(threadConversationId) && threadConversationId.Contains(";"))
-            {
-                string[] threadAndMessageId = threadConversationId.Split(";");
-                return returnUri + $"{threadAndMessageId[0]}/{threadAndMessageId[1].Split("=")[1]}";
-            }
-
-            return returnUri;
+            string[] threadAndMessageId = threadConversationId.Split(";");
+            var threadId = threadAndMessageId[0];
+            var messageId = threadAndMessageId[1].Split("=")[1];
+            return $"https://teams.microsoft.com/l/message/{threadId}/{messageId}";
         }
     }
 }
