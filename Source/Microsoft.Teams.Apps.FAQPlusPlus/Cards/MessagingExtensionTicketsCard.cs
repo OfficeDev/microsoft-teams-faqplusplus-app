@@ -24,7 +24,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <inheritdoc/>
-        protected override List<AdaptiveAction> BuildActions(TicketEntity ticket)
+        protected override List<AdaptiveAction> BuildActions()
         {
             List<AdaptiveAction> actions = new List<AdaptiveAction>();
 

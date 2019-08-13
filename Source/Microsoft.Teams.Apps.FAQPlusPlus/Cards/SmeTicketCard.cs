@@ -59,10 +59,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveFactSet
                     {
-                        Facts = this.BuildFactSet(this.Ticket, localTimestamp),
+                        Facts = this.BuildFactSet(localTimestamp),
                     },
                 },
-                Actions = this.BuildActions(this.Ticket),
+                Actions = this.BuildActions(),
             };
 
             return new Attachment
@@ -75,9 +75,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Return the appropriate set of card actions based on the state and information in the ticket.
         /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
         /// <returns>Adaptive card actions.</returns>
-        protected virtual List<AdaptiveAction> BuildActions(TicketEntity ticket)
+        protected virtual List<AdaptiveAction> BuildActions()
         {
             List<AdaptiveAction> actionsList = new List<AdaptiveAction>();
 
@@ -90,7 +89,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     Body = new List<AdaptiveElement>
                     {
-                        this.GetAdaptiveChoiceSetInput(this.Ticket),
+                        this.GetAdaptiveChoiceSetInput(),
                     },
                     Actions = new List<AdaptiveAction>
                     {
@@ -102,7 +101,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 }
             });
 
-            if (!string.IsNullOrEmpty(ticket.KnowledgeBaseAnswer))
+            if (!string.IsNullOrEmpty(this.Ticket.KnowledgeBaseAnswer))
             {
                 actionsList.Add(new AdaptiveShowCardAction
                 {
@@ -113,7 +112,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveTextBlock
                             {
-                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
+                                Text = CardHelper.TruncateStringIfLonger(this.Ticket.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
                                 Wrap = true,
                             }
                         },
@@ -143,28 +142,27 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Return the appropriate fact set based on the state and information in the ticket.
         /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
         /// <param name="localTimestamp">The current timestamp.</param>
         /// <returns>The fact set showing the necessary details.</returns>
-        private List<AdaptiveFact> BuildFactSet(TicketEntity ticket, DateTimeOffset? localTimestamp)
+        private List<AdaptiveFact> BuildFactSet(DateTimeOffset? localTimestamp)
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
 
-            if (!string.IsNullOrEmpty(ticket.Description))
+            if (!string.IsNullOrEmpty(this.Ticket.Description))
             {
                 factList.Add(new AdaptiveFact
                 {
                     Title = Resource.DescriptionText,
-                    Value = ticket.Description,
+                    Value = this.Ticket.Description,
                 });
             }
 
-            if (!string.IsNullOrEmpty(ticket.UserQuestion))
+            if (!string.IsNullOrEmpty(this.Ticket.UserQuestion))
             {
                 factList.Add(new AdaptiveFact
                 {
                     Title = Resource.QuestionAskedFactTitle,
-                    Value = ticket.UserQuestion
+                    Value = this.Ticket.UserQuestion
                 });
             }
 
@@ -174,7 +172,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Value = CardHelper.GetTicketDisplayStatusForSme(this.Ticket),
             });
 
-            if (ticket.Status == (int)TicketState.Closed)
+            if (this.Ticket.Status == (int)TicketState.Closed)
             {
                 factList.Add(new AdaptiveFact
                 {
@@ -189,9 +187,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Return the appropriate status choices based on the state and information in the ticket.
         /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
         /// <returns>An adaptive element which contains the dropdown choices.</returns>
-        private AdaptiveElement GetAdaptiveChoiceSetInput(TicketEntity ticket)
+        private AdaptiveChoiceSetInput GetAdaptiveChoiceSetInput()
         {
             AdaptiveChoiceSetInput choiceSet = new AdaptiveChoiceSetInput
             {
@@ -200,46 +197,49 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 Style = AdaptiveChoiceInputStyle.Compact
             };
 
-            if (ticket.Status == (int)TicketState.Open && string.IsNullOrEmpty(ticket.AssignedToName))
+            if (this.Ticket.Status == (int)TicketState.Open)
             {
-                choiceSet.Value = ChangeTicketStatusPayload.AssignToSelfAction;
-                choiceSet.Choices = new List<AdaptiveChoice>
+                if (!this.Ticket.IsAssigned())
                 {
-                    new AdaptiveChoice
+                    choiceSet.Value = ChangeTicketStatusPayload.AssignToSelfAction;
+                    choiceSet.Choices = new List<AdaptiveChoice>
                     {
-                        Title = Resource.AssignToMeActionChoiceTitle,
-                        Value = ChangeTicketStatusPayload.AssignToSelfAction,
-                    },
-                    new AdaptiveChoice
-                    {
-                        Title = Resource.CloseActionChoiceTitle,
-                        Value = ChangeTicketStatusPayload.CloseAction,
-                    },
-                };
-            }
-            else if (ticket.Status == (int)TicketState.Open && !string.IsNullOrEmpty(ticket.AssignedToName))
-            {
-                choiceSet.Value = ChangeTicketStatusPayload.CloseAction;
-                choiceSet.Choices = new List<AdaptiveChoice>
+                        new AdaptiveChoice
+                        {
+                            Title = Resource.AssignToMeActionChoiceTitle,
+                            Value = ChangeTicketStatusPayload.AssignToSelfAction,
+                        },
+                        new AdaptiveChoice
+                        {
+                            Title = Resource.CloseActionChoiceTitle,
+                            Value = ChangeTicketStatusPayload.CloseAction,
+                        },
+                    };
+                }
+                else
                 {
-                    new AdaptiveChoice
+                    choiceSet.Value = ChangeTicketStatusPayload.CloseAction;
+                    choiceSet.Choices = new List<AdaptiveChoice>
                     {
-                        Title = Resource.UnassignActionChoiceTitle,
-                        Value = ChangeTicketStatusPayload.ReopenAction,
-                    },
-                    new AdaptiveChoice
-                    {
-                        Title = Resource.AssignToMeActionChoiceTitle,
-                        Value = ChangeTicketStatusPayload.AssignToSelfAction,
-                    },
-                    new AdaptiveChoice
-                    {
-                        Title = Resource.CloseActionChoiceTitle,
-                        Value = ChangeTicketStatusPayload.CloseAction,
-                    },
-                };
+                        new AdaptiveChoice
+                        {
+                            Title = Resource.UnassignActionChoiceTitle,
+                            Value = ChangeTicketStatusPayload.ReopenAction,
+                        },
+                        new AdaptiveChoice
+                        {
+                            Title = Resource.AssignToMeActionChoiceTitle,
+                            Value = ChangeTicketStatusPayload.AssignToSelfAction,
+                        },
+                        new AdaptiveChoice
+                        {
+                            Title = Resource.CloseActionChoiceTitle,
+                            Value = ChangeTicketStatusPayload.CloseAction,
+                        },
+                    };
+                }
             }
-            else if (ticket.Status == (int)TicketState.Closed)
+            else if (this.Ticket.Status == (int)TicketState.Closed)
             {
                 choiceSet.Value = ChangeTicketStatusPayload.ReopenAction;
                 choiceSet.Choices = new List<AdaptiveChoice>
