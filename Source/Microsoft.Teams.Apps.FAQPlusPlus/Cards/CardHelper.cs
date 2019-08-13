@@ -16,7 +16,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Maximum length of the knowledge base answer to show
         /// </summary>
-        public const int KbAnswerMaxDisplayLength = 500;
+        public const int KnowledgeBaseAnswerMaxDisplayLength = 500;
 
         /// <summary>
         /// Maximum length of the user title
@@ -44,25 +44,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             }
 
             return text;
-        }
-
-        /// <summary>
-        /// Gets the closed date of the ticket.
-        /// </summary>
-        /// <param name="ticket">The current ticket information.</param>
-        /// <param name="activityLocalTimestamp">Local time stamp of the user activity.</param>
-        /// <returns>The closed date of the ticket.</returns>
-        public static string GetTicketClosedDate(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
-        {
-            if (ticket.Status == (int)TicketState.Closed)
-            {
-                // We are using this format because DATE and TIME are not supported on mobile yet.
-                return GetFormattedDateInUserTimeZone(ticket.DateClosed.Value, activityLocalTimestamp);
-            }
-            else
-            {
-                return Resource.NonApplicableString;
-            }
         }
 
         /// <summary>

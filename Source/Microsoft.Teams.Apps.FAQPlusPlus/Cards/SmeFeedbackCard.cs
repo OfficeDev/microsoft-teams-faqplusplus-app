@@ -77,7 +77,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             DateTimeOffset? activityLocalTimestamp)
         {
             var chatTextButton = string.Format(Resource.ChatTextButton, userAccount.GivenName);
-            kbAnswer = CardHelper.TruncateStringIfLonger(kbAnswer, CardHelper.KbAnswerMaxDisplayLength);
+            kbAnswer = CardHelper.TruncateStringIfLonger(kbAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength);
 
             // Constructing adaptive card that is sent to SME team.
             AdaptiveCard smeFeedbackCard = new AdaptiveCard("1.0")

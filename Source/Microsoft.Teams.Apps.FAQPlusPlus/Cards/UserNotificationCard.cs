@@ -130,7 +130,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Resource.ClosedFactTitle,
-                    Value = CardHelper.GetTicketClosedDate(this.ticket, activityLocalTimestamp),
+                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateClosed.Value, activityLocalTimestamp),
                 });
             }
 

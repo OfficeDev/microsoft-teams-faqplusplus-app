@@ -106,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Resource.ClosedFactTitle,
-                    Value = CardHelper.GetTicketClosedDate(this.ticket, localTimestamp),
+                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateClosed.Value, localTimestamp),
                 });
             }
 
@@ -161,7 +161,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         {
                             new AdaptiveTextBlock
                             {
-                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KbAnswerMaxDisplayLength),
+                                Text = CardHelper.TruncateStringIfLonger(ticket.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
                                 Wrap = true,
                             }
                         },
