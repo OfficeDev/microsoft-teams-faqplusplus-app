@@ -31,6 +31,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
         private readonly TelemetryClient telemetryClient;
         private readonly SearchServiceClient searchServiceClient;
         private readonly SearchIndexClient searchIndexClient;
+        private readonly int searchIndexingIntervalInMinutes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchService"/> class.
@@ -48,6 +49,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
                 configuration["SearchServiceName"],
                 TicketsIndexName,
                 new SearchCredentials(configuration["SearchServiceQueryApiKey"]));
+            this.searchIndexingIntervalInMinutes = Convert.ToInt32(configuration["SearchIndexingIntervalInMinutes"]);
 
             this.initializeTask = new Lazy<Task>(() => this.InitializeAsync(configuration["StorageConnectionString"]));
         }
@@ -83,7 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
             searchParam.Top = count ?? DefaultSearchResultCount;
             searchParam.Skip = skip ?? 0;
             searchParam.IncludeTotalResultCount = false;
-            searchParam.Select = new[] { "Timestamp", "Title", "Status", "AssignedToName", "DateCreated", "RequesterName", "RequesterUserPrincipalName", "Description", "RequesterGivenName", "SmeThreadConversationId", "DateAssigned", "DateClosed", "LastModifiedByName", "UserQuestion", "KnowledgeBaseAnswer" };
+            searchParam.Select = new[] { "Timestamp", "Title", "Status", "AssignedToName", "AssignedToObjectId", "DateCreated", "RequesterName", "RequesterUserPrincipalName", "Description", "RequesterGivenName", "SmeThreadConversationId", "DateAssigned", "DateClosed", "LastModifiedByName", "UserQuestion", "KnowledgeBaseAnswer" };
 
             var docs = await this.searchIndexClient.Documents.SearchAsync<TicketEntity>(searchQuery, searchParam);
             if (docs != null)
@@ -167,7 +169,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Services
                     Name = TicketsIndexerName,
                     DataSourceName = TicketsDataSourceName,
                     TargetIndexName = TicketsIndexName,
-                    Schedule = new IndexingSchedule(TimeSpan.FromHours(1))
+                    Schedule = new IndexingSchedule(TimeSpan.FromMinutes(this.searchIndexingIntervalInMinutes))
                 };
 
                 await this.searchServiceClient.Indexers.CreateAsync(indexer);
