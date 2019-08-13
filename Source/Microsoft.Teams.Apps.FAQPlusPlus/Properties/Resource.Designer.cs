@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource {
@@ -115,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request has been assigned to an expert. They will directly send you a chat message..
+        ///   Looks up a localized string similar to Your question has been assigned to an expert. They&apos;ll respond to you directly with a chat message..
         /// </summary>
         public static string AssignedTicketUserNotification {
             get {
@@ -133,11 +133,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Assign.
+        ///   Looks up a localized string similar to Assigned.
+        /// </summary>
+        public static string AssignedUserNotificationStatus {
+            get {
+                return ResourceManager.GetString("AssignedUserNotificationStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assign to me.
         /// </summary>
         public static string AssignStatusTitle {
             get {
                 return ResourceManager.GetString("AssignStatusTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assign to me.
+        /// </summary>
+        public static string AssignToMeActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("AssignToMeActionChoiceTitle", resourceCulture);
             }
         }
         
@@ -160,6 +178,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CloseActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("CloseActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Closed by {0}.
         /// </summary>
         public static string ClosedByStatusValue {
@@ -178,11 +205,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request has been closed. Please ask an expert again if you still need more assistance or have a new request..
+        ///   Looks up a localized string similar to This request has been closed. Ask an expert again if you still need more assistance..
         /// </summary>
         public static string ClosedTicketUserNotification {
             get {
                 return ResourceManager.GetString("ClosedTicketUserNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed.
+        /// </summary>
+        public static string ClosedUserNotificationStatus {
+            get {
+                return ResourceManager.GetString("ClosedUserNotificationStatus", resourceCulture);
             }
         }
         
@@ -192,6 +228,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string CloseStatusText {
             get {
                 return ResourceManager.GetString("CloseStatusText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string CloseStatusTitle {
+            get {
+                return ResourceManager.GetString("CloseStatusTitle", resourceCulture);
             }
         }
         
@@ -315,14 +360,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to You don&apos;t have access to this app. Please contact your IT admin..
         /// </summary>
-        public static string NonSmeErrorText {
+        public static string NonSMEErrorText {
             get {
-                return ResourceManager.GetString("NonSmeErrorText", resourceCulture);
+                return ResourceManager.GetString("NonSMEErrorText", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request below has been shared with the SME team. They will directly send you a chat message. .
+        ///   Looks up a localized string similar to I&apos;ve shared your question with the related experts. They&apos;ll respond to you directly with a chat message..
         /// </summary>
         public static string NotificationCardContent {
             get {
@@ -340,7 +385,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open.
+        ///   Looks up a localized string similar to Unassigned.
         /// </summary>
         public static string OpenStatusTitle {
             get {
@@ -358,7 +403,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **{0}** is requesting support. Details are as follows:.
+        ///   Looks up a localized string similar to **{0}** is requesting support..
         /// </summary>
         public static string QuestionForExpertSubHeaderText {
             get {
@@ -385,7 +430,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your request has been reopened. An expert will directly send you a chat message..
+        ///   Looks up a localized string similar to Reassign to me.
+        /// </summary>
+        public static string ReassignStatusTitle {
+            get {
+                return ResourceManager.GetString("ReassignStatusTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reopen.
+        /// </summary>
+        public static string ReopenActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("ReopenActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reopen and assign to me.
+        /// </summary>
+        public static string ReopenAssignToMeActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("ReopenAssignToMeActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request is open again. An expert will directly send you a chat message..
         /// </summary>
         public static string ReopenedTicketUserNotification {
             get {
@@ -457,7 +529,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request is now assigned. Assigned by {0}..
+        ///   Looks up a localized string similar to This request is now assigned. Assigned to {0}..
         /// </summary>
         public static string SMEAssignedStatus {
             get {
@@ -468,14 +540,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Everyone there is a new request coming in, please see the details below:.
         /// </summary>
-        public static string SmeAttentionText {
+        public static string SMEAttentionText {
             get {
-                return ResourceManager.GetString("SmeAttentionText", resourceCulture);
+                return ResourceManager.GetString("SMEAttentionText", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request is now closed. Closed by {0}..
+        ///   Looks up a localized string similar to This request is now closed. Closed by {0}..
         /// </summary>
         public static string SMEClosedStatus {
             get {
@@ -484,11 +556,47 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The request is now open. Reopened by {0}. .
+        ///   Looks up a localized string similar to This request is now unassigned. Last updated by {0}. .
         /// </summary>
         public static string SMEOpenedStatus {
             get {
                 return ResourceManager.GetString("SMEOpenedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Assigned to {0}.
+        /// </summary>
+        public static string SMETicketAssignedStatus {
+            get {
+                return ResourceManager.GetString("SMETicketAssignedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closed.
+        /// </summary>
+        public static string SMETicketClosedStatus {
+            get {
+                return ResourceManager.GetString("SMETicketClosedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassigned.
+        /// </summary>
+        public static string SMETicketUnassignedStatus {
+            get {
+                return ResourceManager.GetString("SMETicketUnassignedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RE: {0}.
+        /// </summary>
+        public static string SMEUserChatMessage {
+            get {
+                return ResourceManager.GetString("SMEUserChatMessage", resourceCulture);
             }
         }
         
@@ -606,6 +714,60 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string TitleText {
             get {
                 return ResourceManager.GetString("TitleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassign.
+        /// </summary>
+        public static string UnassignActionChoiceTitle {
+            get {
+                return ResourceManager.GetString("UnassignActionChoiceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassigned.
+        /// </summary>
+        public static string UnassignedStatusValue {
+            get {
+                return ResourceManager.GetString("UnassignedStatusValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassigned.
+        /// </summary>
+        public static string UnassignedUserNotificationStatus {
+            get {
+                return ResourceManager.GetString("UnassignedUserNotificationStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unassign.
+        /// </summary>
+        public static string UnassignStatusTitle {
+            get {
+                return ResourceManager.GetString("UnassignStatusTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Question asked:.
+        /// </summary>
+        public static string UserQuestionFactSetTitle {
+            get {
+                return ResourceManager.GetString("UserQuestionFactSetTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View article.
+        /// </summary>
+        public static string ViewArticleButtonText {
+            get {
+                return ResourceManager.GetString("ViewArticleButtonText", resourceCulture);
             }
         }
         
