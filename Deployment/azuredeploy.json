@@ -39,6 +39,22 @@
         "description": "Semicolon-delimited list of the user principal names (UPNs) allowed to access the configuration app."
       }
     },
+    "appDescription": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "A friendly FAQ bot that answers questions and connects you to experts.",
+      "metadata": {
+          "description": "The description for the app."
+      }
+    },
+    "appIconUrl": {
+        "type": "string",
+        "minLength": 1,
+        "defaultValue": "https://raw.githubusercontent.com/OfficeDev/microsoft-teams-faqplusplus-app/master/Manifest/color.png",
+        "metadata": {
+            "description": "The link to the icon for the app. It must resolve to a PNG file."
+        }
+    },
     "tenantId": {
       "type": "string",
       "defaultValue": "[subscription().tenantId]",
@@ -302,6 +318,8 @@
       "kind": "sdk",
       "properties": {
         "displayName": "[variables('botName')]",
+        "description": "[parameters('appDescription')]",
+        "iconUrl": "[parameters('appIconUrl')]",
         "msaAppId": "[parameters('botClientId')]",
         "endpoint": "[concat(variables('botAppUrl'), '/api/messages')]",
         "developerAppInsightKey": "[reference(resourceId('Microsoft.Insights/components', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
