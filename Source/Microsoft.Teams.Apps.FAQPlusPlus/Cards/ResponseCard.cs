@@ -7,7 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using System.Collections.Generic;
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -16,12 +16,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class ResponseCard
     {
         /// <summary>
-        /// This method will construct the response card when user asks a question to QnA Maker through bot.
+        /// This method will construct the response card - when user asks a question to QnA Maker through bot.
         /// </summary>
-        /// <param name="question">Actual question from the QnA maker service.</param>
+        /// <param name="question">Actual question from the QnA Maker service.</param>
         /// <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
-        /// <returns>Card attachment as Json string.</returns>
+        /// <returns>QnA response card.</returns>
         public static Attachment GetCard(string question, string answer, string userQuestion)
         {
             AdaptiveCard responseCard = new AdaptiveCard("1.0")
@@ -47,122 +47,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 },
                 Actions = new List<AdaptiveAction>
                 {
-                    new AdaptiveShowCardAction()
+                    new AdaptiveSubmitAction
                     {
                         Title = Resource.AskAnExpertButtonText,
-                        Card = new AdaptiveCard("1.0")
+                        Data = new
                         {
-                            Body = new List<AdaptiveElement>
+                            msteams = new CardAction
                             {
-                                new AdaptiveTextBlock
-                                {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Text = Resource.TitleText,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextBlock
-                                {
-                                    Text = Resource.MandatoryFieldText,
-                                    Color = AdaptiveTextColor.Attention,
-                                    Spacing = AdaptiveSpacing.Small,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextInput
-                                {
-                                    Placeholder = Resource.ShowCardTitleText,
-                                    Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
-                                    IsMultiline = false
-                                },
-                                new AdaptiveTextBlock
-                                {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Text = Resource.DescriptionText,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextInput
-                                {
-                                    Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
-                                    Value = userQuestion,
-                                    IsMultiline = true
-                                }
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = Resource.AskAnExpertDisplayText,
+                                Text = FaqPlusPlusBot.AskAnExpert
                             },
-                            Actions = new List<AdaptiveAction>
-                            {
-                                new AdaptiveSubmitAction
-                                {
-                                    Title = Resource.SubmitButtonText,
-                                    Data = new
-                                    {
-                                         msteams = new CardAction
-                                         {
-                                            Type = ActionTypes.MessageBack,
-                                            DisplayText = Resource.AskAnExpertDisplayText,
-                                            Text = SubmitUserRequestPayload.QuestionForExpertAction
-                                         },
-                                        UserQuestion = userQuestion,
-                                        SmeAnswer = answer
-                                    }
-                                }
-                            }
+                            UserQuestion = userQuestion,
+                            SmeAnswer = answer
                         }
                     },
-                    new AdaptiveShowCardAction
+                    new AdaptiveSubmitAction
                     {
                         Title = Resource.ShareFeedbackButtonText,
-                        Card = new AdaptiveCard("1.0")
+                        Data = new
                         {
-                            Body = new List<AdaptiveElement>
+                            msteams = new CardAction
                             {
-                                new AdaptiveTextBlock
-                                {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Text = Resource.TitleText,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextBlock
-                                {
-                                    Text = Resource.MandatoryFieldText,
-                                    Color = AdaptiveTextColor.Attention,
-                                    Spacing = AdaptiveSpacing.Small,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextInput
-                                {
-                                    Placeholder = Resource.ShowCardTitleText,
-                                    Id = nameof(SubmitUserRequestPayload.FeedbackUserTitleText),
-                                    IsMultiline = false
-                                },
-                                new AdaptiveTextBlock
-                                {
-                                    Weight = AdaptiveTextWeight.Bolder,
-                                    Text = Resource.DescriptionText,
-                                    Wrap = true
-                                },
-                                new AdaptiveTextInput
-                                {
-                                    Id = nameof(SubmitUserRequestPayload.ResultsFeedback),
-                                    IsMultiline = true,
-                                    Placeholder = Resource.Resultsfeedbackdetails
-                                }
+                                Type = ActionTypes.MessageBack,
+                                DisplayText = Resource.ShareFeedbackDisplayText,
+                                Text = FaqPlusPlusBot.Feedback
                             },
-                            Actions = new List<AdaptiveAction>
-                            {
-                                new AdaptiveSubmitAction
-                                {
-                                    Title = Resource.SubmitButtonText,
-                                    Data = new
-                                    {
-                                        msteams = new CardAction
-                                        {
-                                            Type = ActionTypes.MessageBack,
-                                            DisplayText = Resource.ShareFeedbackDisplayText,
-                                            Text = SubmitUserRequestPayload.ResultsFeedbackAction
-                                        },
-                                        UserQuestion = userQuestion,
-                                        SmeAnswer = answer
-                                    },
-                                }
-                            }
+                             UserQuestion = userQuestion,
+                             SmeAnswer = answer
                         }
                     }
                 }

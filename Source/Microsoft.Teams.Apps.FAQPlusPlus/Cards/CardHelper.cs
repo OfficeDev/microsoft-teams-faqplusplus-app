@@ -14,7 +14,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class CardHelper
     {
         /// <summary>
-        /// Maximum length of the knowledge base answer to show
+        /// Maximum length of the knowledge base answer to show.
         /// </summary>
         public const int KnowledgeBaseAnswerMaxDisplayLength = 500;
 
@@ -82,16 +82,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 return Resource.SMETicketClosedStatus;
             }
-        }
-
-        /// <summary>
-        /// Return "N/A" if the given text is null or empty, or the text unchanged, otherwise.
-        /// </summary>
-        /// <param name="value">String value.</param>
-        /// <returns>A string or N/A.</returns>
-        public static string ConvertNullOrEmptyToNotApplicable(string value)
-        {
-            return !string.IsNullOrWhiteSpace(value) ? value : Resource.NonApplicableString;
         }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource {
@@ -97,6 +97,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The expert will respond to you directly with a chat message..
+        /// </summary>
+        public static string AskAnExpertSubheaderText {
+            get {
+                return ResourceManager.GetString("AskAnExpertSubheaderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ask an expert.
         /// </summary>
         public static string AskAnExpertText1 {
@@ -106,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If my answer isn&apos;t satisfactory, just let me know. I will connect you with our very capable experts!.
+        ///   Looks up a localized string similar to If my answer isn&apos;t satisfactory, I&apos;ll connect you to an expert..
         /// </summary>
         public static string AskAnExpertText2 {
             get {
@@ -241,7 +250,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to I didn&apos;t find anything apt for your request. Do you want me to ask an expert?.
+        ///   Looks up a localized string similar to I couldn&apos;t find anything apt for your request. Do you want me to ask an expert?.
         /// </summary>
         public static string CustomMessage {
             get {
@@ -259,11 +268,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description: .
+        ///   Looks up a localized string similar to Description:.
+        /// </summary>
+        public static string DescriptionFact {
+            get {
+                return ResourceManager.GetString("DescriptionFact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string DescriptionText {
             get {
                 return ResourceManager.GetString("DescriptionText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to **{0}** has shared the feedback..
+        /// </summary>
+        public static string FeedbackAlertText {
+            get {
+                return ResourceManager.GetString("FeedbackAlertText", resourceCulture);
             }
         }
         
@@ -286,16 +313,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **{0}** is sharing feedback. Details as follows:.
+        ///   Looks up a localized string similar to Feedback(*Required*).
         /// </summary>
-        public static string FeedbackSubHeaderText {
+        public static string FeedbackRatingRequired {
             get {
-                return ResourceManager.GetString("FeedbackSubHeaderText", resourceCulture);
+                return ResourceManager.GetString("FeedbackRatingRequired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Help me become better! Please share feedback on how I am doing so that my expert team can coach me to better help you..
+        ///   Looks up a localized string similar to Tell my team of experts how I&apos;m doing so they can help me improve..
         /// </summary>
         public static string FeedbackText1 {
             get {
@@ -304,7 +331,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ask a question!.
+        ///   Looks up a localized string similar to Ask a question.
         /// </summary>
         public static string FunctionCardText1 {
             get {
@@ -313,7 +340,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can ask me a question by typing in the chat box below and I&apos;ll tell you what I know about it..
+        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below and I&apos;ll either answer it or refer you to an expert..
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -331,6 +358,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Helpful.
+        /// </summary>
+        public static string HelpfulRatingText {
+            get {
+                return ResourceManager.GetString("HelpfulRatingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Knowledge base entry:.
         /// </summary>
         public static string KBEntryFactTitle {
@@ -340,11 +376,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title field is mandatory..
+        ///   Looks up a localized string similar to Title field is mandatory.
         /// </summary>
-        public static string MandatoryFieldText {
+        public static string MandatoryTitleFieldText {
             get {
-                return ResourceManager.GetString("MandatoryFieldText", resourceCulture);
+                return ResourceManager.GetString("MandatoryTitleFieldText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Needs Improvement.
+        /// </summary>
+        public static string NeedsImprovementRatingText {
+            get {
+                return ResourceManager.GetString("NeedsImprovementRatingText", resourceCulture);
             }
         }
         
@@ -430,6 +475,24 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rating:.
+        /// </summary>
+        public static string RatingFactTitle {
+            get {
+                return ResourceManager.GetString("RatingFactTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rating is mandatory.
+        /// </summary>
+        public static string RatingMandatoryText {
+            get {
+                return ResourceManager.GetString("RatingMandatoryText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reassign to me.
         /// </summary>
         public static string ReassignStatusTitle {
@@ -511,7 +574,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Share feedback.
+        ///   Looks up a localized string similar to Share app feedback.
         /// </summary>
         public static string ShareFeedbackTitleText {
             get {
@@ -628,11 +691,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Take a tour.
+        /// </summary>
+        public static string TakeATourButtonText {
+            get {
+                return ResourceManager.GetString("TakeATourButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click chat with user button to initiate a direct chat..
         /// </summary>
-        public static string TeamChatCardContent {
+        public static string TeamChatContent {
             get {
-                return ResourceManager.GetString("TeamChatCardContent", resourceCulture);
+                return ResourceManager.GetString("TeamChatContent", resourceCulture);
             }
         }
         
@@ -646,7 +718,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi SME Team, you are supposed to take questions from the user. If you want to ask me a question, please install me in your personal scope. To know better about me please do team tour..
+        ///   Looks up a localized string similar to Hello, I don&apos;t support bot commands in the Team. Here is a quick tour of how I can help..
         /// </summary>
         public static string TeamCustomMessage {
             get {
@@ -655,65 +727,65 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can see what users need help with.
+        ///   Looks up a localized string similar to You can see what users need help with..
         /// </summary>
-        public static string TeamFunctionCardContent {
+        public static string TeamNotificationContent {
             get {
-                return ResourceManager.GetString("TeamFunctionCardContent", resourceCulture);
+                return ResourceManager.GetString("TeamNotificationContent", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Receive notifications from end users.
         /// </summary>
-        public static string TeamFunctionCardHeaderText {
+        public static string TeamNotificationHeaderText {
             get {
-                return ResourceManager.GetString("TeamFunctionCardHeaderText", resourceCulture);
+                return ResourceManager.GetString("TeamNotificationHeaderText", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Mark requests assigned or closed to keep track of queries..
         /// </summary>
-        public static string TeamQueryCardContent {
+        public static string TeamTicketSystemContent {
             get {
-                return ResourceManager.GetString("TeamQueryCardContent", resourceCulture);
+                return ResourceManager.GetString("TeamTicketSystemContent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ticket system.
+        ///   Looks up a localized string similar to Manage queries.
         /// </summary>
-        public static string TeamQueryHeaderText {
+        public static string TeamTicketSystemHeaderText {
             get {
-                return ResourceManager.GetString("TeamQueryHeaderText", resourceCulture);
+                return ResourceManager.GetString("TeamTicketSystemHeaderText", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thank you for your feedback. You are helping me become more helpful. I will share it with experts..
+        ///   Looks up a localized string similar to Thanks for your feedback! I&apos;ve shared it with the experts. This helps me learn and improve..
         /// </summary>
-        public static string ThankYouCardContent {
+        public static string ThankYouTextContent {
             get {
-                return ResourceManager.GetString("ThankYouCardContent", resourceCulture);
+                return ResourceManager.GetString("ThankYouTextContent", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Thank you!.
+        ///   Looks up a localized string similar to Title:.
         /// </summary>
-        public static string ThankYouCardTitleText {
+        public static string TitleFact {
             get {
-                return ResourceManager.GetString("ThankYouCardTitleText", resourceCulture);
+                return ResourceManager.GetString("TitleFact", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title: .
+        ///   Looks up a localized string similar to Title(*Required*).
         /// </summary>
-        public static string TitleText {
+        public static string TitleRequiredText {
             get {
-                return ResourceManager.GetString("TitleText", resourceCulture);
+                return ResourceManager.GetString("TitleRequiredText", resourceCulture);
             }
         }
         
@@ -754,11 +826,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Question asked:.
+        ///   Looks up a localized string similar to Unhelpful.
         /// </summary>
-        public static string UserQuestionFactSetTitle {
+        public static string UnhelpfulRatingText {
             get {
-                return ResourceManager.GetString("UserQuestionFactSetTitle", resourceCulture);
+                return ResourceManager.GetString("UnhelpfulRatingText", resourceCulture);
             }
         }
         
@@ -772,20 +844,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hi! I am {0}, thank you for having me in your SME team!. I am a friendly HR bot can be used by any team or individual within the org. As an SME you and your team members can do following things using bot.\n- Can Self assign the tickets raised by the users.\n- Can directly chat with end user using chat buttons.\n- Your team can keep track of all the user queries using status fields like open assign and close..
+        ///   Looks up a localized string similar to Hello team,   
+        ///
+        ///I am your friendly Q&amp;A bot that helps you provide support to people who interact with me and need more assistance..
         /// </summary>
         public static string WelcomeTeamCardContent {
             get {
                 return ResourceManager.GetString("WelcomeTeamCardContent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hello {0} !.
-        /// </summary>
-        public static string WelcomeTeamCardTitleText {
-            get {
-                return ResourceManager.GetString("WelcomeTeamCardTitleText", resourceCulture);
             }
         }
     }

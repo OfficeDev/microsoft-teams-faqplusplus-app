@@ -152,7 +152,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 factList.Add(new AdaptiveFact
                 {
-                    Title = Resource.DescriptionText,
+                    Title = Resource.DescriptionFact,
                     Value = this.Ticket.Description,
                 });
             }
