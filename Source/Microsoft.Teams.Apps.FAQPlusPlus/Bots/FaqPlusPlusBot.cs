@@ -320,14 +320,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 {
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
+                    var askAnExpertPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
+
                     // Validate required fields
-                    if (string.IsNullOrWhiteSpace(payload.QuestionUserTitleText))
+                    if (string.IsNullOrWhiteSpace(askAnExpertPayload.Title))
                     {
                         var updateCardActivity = new Activity(ActivityTypes.Message)
                         {
                             Id = turnContext.Activity.ReplyToId,
                             Conversation = turnContext.Activity.Conversation,
-                            Attachments = new List<Attachment> { AskAnExpertCard.GetCard(payload) },
+                            Attachments = new List<Attachment> { AskAnExpertCard.GetCard(askAnExpertPayload) },
                         };
                         await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
                         return;
@@ -335,7 +337,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
 
-                    newTicket = await this.CreateTicketAsync(message, payload, userDetails);
+                    newTicket = await this.CreateTicketAsync(message, askAnExpertPayload, userDetails);
                     smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
                     userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
                     break;
@@ -612,23 +614,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         // Create a new ticket from the input
-        private async Task<TicketEntity> CreateTicketAsync(IMessageActivity message, SubmitUserRequestPayload payload, TeamsChannelAccount member)
+        private async Task<TicketEntity> CreateTicketAsync(IMessageActivity message, AskAnExpertCardPayload data, TeamsChannelAccount member)
         {
             TicketEntity ticketEntity = new TicketEntity
             {
                 TicketId = Guid.NewGuid().ToString(),
                 Status = (int)TicketState.Open,
                 DateCreated = DateTime.UtcNow,
-                Title = payload.QuestionUserTitleText,
-                Description = payload.QuestionForExpert,
+                Title = data.Title,
+                Description = data.Description,
                 RequesterName = member.Name,
                 RequesterUserPrincipalName = member.UserPrincipalName,
                 RequesterGivenName = member.GivenName,
                 RequesterConversationId = message.Conversation.Id,
                 LastModifiedByName = message.From.Name,
                 LastModifiedByObjectId = message.From.AadObjectId,
-                UserQuestion = payload.UserQuestion,
-                KnowledgeBaseAnswer = payload.SmeAnswer
+                UserQuestion = data.UserQuestion,
+                KnowledgeBaseAnswer = data.KnowledgeBaseAnswer
             };
 
             await this.ticketsProvider.SaveOrUpdateTicketAsync(ticketEntity);

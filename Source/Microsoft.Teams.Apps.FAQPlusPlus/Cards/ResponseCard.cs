@@ -74,8 +74,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 DisplayText = Resource.ShareFeedbackDisplayText,
                                 Text = FaqPlusPlusBot.ShareFeedback,
                             },
-                             UserQuestion = userQuestion,
-                             KnowledgeBaseAnswer = answer,
+                            UserQuestion = userQuestion,
+                            KnowledgeBaseAnswer = answer,
                         }
                     }
                 }

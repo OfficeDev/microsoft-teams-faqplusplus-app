@@ -15,12 +15,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class AskAnExpertCard
     {
         /// <summary>
+        /// Text associated with ask an expert command
+        /// </summary>
+        public const string AskAnExpertSubmitText = "QuestionForExpert";
+
+        /// <summary>
         /// This method will construct the card for ask an expert, when invoked from the bot menu.
         /// </summary>
         /// <returns>Ask an expert card.</returns>
         public static Attachment GetCard()
         {
-            return GetCard(false);
+            return GetCard(false, new AskAnExpertCardPayload());
         }
 
         /// <summary>
@@ -30,30 +35,32 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Ask an expert card.</returns>
         public static Attachment GetCard(ResponseCardPayload payload)
         {
-            // Pre-populate the description with the user's question
-            var description = payload.UserQuestion;
-            return GetCard(false, description, payload.UserQuestion, payload.KnowledgeBaseAnswer);
+            var data = new AskAnExpertCardPayload
+            {
+                Description = payload.UserQuestion,     // Pre-populate the description with the user's question
+                UserQuestion = payload.UserQuestion,
+                KnowledgeBaseAnswer = payload.KnowledgeBaseAnswer,
+            };
+            return GetCard(false, data);
         }
 
         /// <summary>
         /// This method will construct the card for ask an expert, when invoked from the ask an expert card submit.
         /// </summary>
-        /// <param name="payload">Payload from the response card.</param>
+        /// <param name="payload">Payload from the ask an expert card.</param>
         /// <returns>Ask an expert card.</returns>
-        public static Attachment GetCard(SubmitUserRequestPayload payload)
+        public static Attachment GetCard(AskAnExpertCardPayload payload)
         {
-            return GetCard(true, payload.QuestionForExpert, payload.UserQuestion, payload.SmeAnswer);
+            return GetCard(true, payload);
         }
 
         /// <summary>
         /// This method will construct the card for ask an expert bot menu.
         /// </summary>
         /// <param name="showValidationErrors">Determines whether we show validation errors.</param>
-        /// <param name="description">User activity text.</param>
-        /// <param name="userQuestion">The original text that the user entered.</param>
-        /// <param name="knowledgeBaseAnswer">The response that the bot retrieves after querying the knowledge base.</param>
+        /// <param name="data">Data from the ask an expert card.</param>
         /// <returns>Ask an expert card.</returns>
-        private static Attachment GetCard(bool showValidationErrors = false, string description = null, string userQuestion = null, string knowledgeBaseAnswer = null)
+        private static Attachment GetCard(bool showValidationErrors, AskAnExpertCardPayload data)
         {
             AdaptiveCard askAnExpertCard = new AdaptiveCard("1.0")
             {
@@ -93,7 +100,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 {
                                     new AdaptiveTextBlock
                                     {
-                                        Text = showValidationErrors ? Resource.MandatoryTitleFieldText : string.Empty,
+                                        Text = (showValidationErrors && string.IsNullOrWhiteSpace(data.Title)) ? Resource.MandatoryTitleFieldText : string.Empty,
                                         Color = AdaptiveTextColor.Attention,
                                         HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
                                         Wrap = true
@@ -104,10 +111,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextInput
                     {
-                        Id = nameof(SubmitUserRequestPayload.QuestionUserTitleText),
+                        Id = nameof(AskAnExpertCardPayload.Title),
                         Placeholder = Resource.ShowCardTitleText,
                         IsMultiline = false,
-                        Spacing = AdaptiveSpacing.Small
+                        Spacing = AdaptiveSpacing.Small,
+                        Value = data.Title,
                     },
                     new AdaptiveTextBlock
                     {
@@ -117,11 +125,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextInput
                     {
-                        Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
+                        Id = nameof(AskAnExpertCardPayload.Description),
                         Placeholder = Resource.AskAnExpertPlaceholderText,
                         IsMultiline = true,
                         Spacing = AdaptiveSpacing.Small,
-                        Value = description,
+                        Value = data.Description,
                     }
                 },
                 Actions = new List<AdaptiveAction>
@@ -129,17 +137,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.AskAnExpertButtonText,
-                        Data = new
+                        Data = new AskAnExpertCardPayload
                         {
-                            msteams = new CardAction
+                            MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Resource.AskAnExpertDisplayText,
-                                Text = SubmitUserRequestPayload.QuestionForExpertAction
+                                Text = AskAnExpertSubmitText,
                             },
-                            UserQuestion = userQuestion,
-                            SmeAnswer = knowledgeBaseAnswer,
-                            QuestionForExpert = description,
+                            UserQuestion = data.UserQuestion,
+                            KnowledgeBaseAnswer = data.KnowledgeBaseAnswer,
                         },
                     }
                 }
