@@ -45,7 +45,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 DisplayText = Resource.AskAnExpertDisplayText,
                                 Text = FaqPlusPlusBot.AskAnExpert
                             },
-                             UserQuestion = userQuestion
+                            UserQuestion = userQuestion
                         },
                     }
                 }

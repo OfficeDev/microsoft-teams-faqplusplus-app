@@ -18,26 +18,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Validations
     public static class UserInputValidations
     {
         /// <summary>
-        ///  Validates the user on submit action for ask an expert scenario.
-        /// </summary>
-        /// <param name="payload">The adaptive card payload.</param>
-        /// <param name="turnContext">The current turn.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <returns>Return bool value.</returns>
-        public static async Task<bool> ValidateQuestionForExpert(SubmitUserRequestPayload payload, ITurnContext turnContext, CancellationToken cancellationToken)
-        {
-            payload.QuestionUserTitleText = payload.QuestionUserTitleText ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(payload.QuestionUserTitleText))
-            {
-                await turnContext.UpdateActivityAsync(GetCardActivity(turnContext, AskAnExpertCard.GetCard(true, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer), cancellationToken), cancellationToken);
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
         ///  Validates the user on submit action for share feedback scenario.
         /// </summary>
         /// <param name="payload">The adaptive card payload.</param>

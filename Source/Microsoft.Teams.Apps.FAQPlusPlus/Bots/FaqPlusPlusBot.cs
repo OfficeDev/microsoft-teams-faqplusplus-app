@@ -51,7 +51,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <summary>
         /// Feedback - text that renders share feedback card.
         /// </summary>
-        public const string Feedback = "share feedback";
+        public const string ShareFeedback = "share feedback";
 
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
@@ -232,7 +232,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard()));
                     break;
 
-                case Feedback:
+                case ShareFeedback:
                     this.telemetryClient.TrackTrace("Sending user feedback card");
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard()));
                     break;
@@ -302,23 +302,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (message.Text)
             {
                 case AskAnExpert:
-                    this.telemetryClient.TrackTrace("Sending user ask an expert card");
-
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
+                {
+                    this.telemetryClient.TrackTrace("Sending user ask an expert card (from answer)");
+                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(responseCardPayload)));
                     break;
+                }
 
-                case Feedback:
-                    this.telemetryClient.TrackTrace("Sending user share feedback card");
-
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
+                case ShareFeedback:
+                {
+                    this.telemetryClient.TrackTrace("Sending user share feedback card (from answer)");
+                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, responseCardPayload.UserQuestion, string.Empty, responseCardPayload.KnowledgeBaseAnswer)));
                     break;
+                }
 
                 case SubmitUserRequestPayload.QuestionForExpertAction:
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
-                    // Validates the required title field in ask an expert card.
-                    if (!await UserInputValidations.ValidateQuestionForExpert(payload, turnContext, cancellationToken))
+                    // Validate required fields
+                    if (string.IsNullOrWhiteSpace(payload.QuestionUserTitleText))
                     {
+                        var updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { AskAnExpertCard.GetCard(payload) },
+                        };
+                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
                         return;
                     }
 
