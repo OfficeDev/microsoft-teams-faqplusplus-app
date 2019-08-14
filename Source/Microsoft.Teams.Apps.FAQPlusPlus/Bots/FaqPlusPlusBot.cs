@@ -290,8 +290,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Submits the question or feedback to the SME team
         private async Task OnAdaptiveCardSubmitInPersonalChatAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            var payload = ((JObject)message.Value).ToObject<SubmitUserRequestPayload>();
-
             Attachment smeTeamCard = null;      // Notification to SME team
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
@@ -316,7 +314,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
                 }
 
-                case SubmitUserRequestPayload.QuestionForExpertAction:
+                case AskAnExpertCard.AskAnExpertSubmitText:
                 {
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
@@ -343,18 +341,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     break;
                 }
 
-                case SubmitUserRequestPayload.AppFeedbackAction:
+                case ShareFeedbackCard.ShareFeedbackSubmitText:
                 {
-                    this.telemetryClient.TrackTrace($"Received general app feedback");
+                    this.telemetryClient.TrackTrace($"Received app feedback");
+
+                    var shareFeedbackPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
 
                     // Validate required fields
-                    if (string.IsNullOrWhiteSpace(payload.FeedbackRatingAction))
+                    if (!Enum.TryParse(shareFeedbackPayload.Rating, out FeedbackRating rating))
                     {
                         var updateCardActivity = new Activity(ActivityTypes.Message)
                         {
                             Id = turnContext.Activity.ReplyToId,
                             Conversation = turnContext.Activity.Conversation,
-                            Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(payload) },
+                            Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackPayload) },
                         };
                         await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
                         return;
@@ -362,7 +362,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                     var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
 
-                    smeTeamCard = SmeFeedbackCard.GetCard(payload, userDetails);
+                    smeTeamCard = SmeFeedbackCard.GetCard(shareFeedbackPayload, userDetails);
                     await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
                     break;
                 }
