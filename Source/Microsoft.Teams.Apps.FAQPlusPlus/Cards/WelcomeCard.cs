@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
     ///  This class process Welcome Card, when bot is installed by the user in personal scope.
@@ -18,16 +19,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// This method will construct the user welcome card when bot is added in personal scope.
         /// </summary>
         /// <param name="welcomeText">Gets welcome text.</param>
-        /// <returns>Card attachment as Json string.</returns>
+        /// <returns>User welcome card.</returns>
         public static Attachment GetCard(string welcomeText)
         {
-            string[] welcomeTextValues = welcomeText.Split(';');
-            var welcomeText1 = welcomeTextValues[0];
-            var messageText1 = welcomeTextValues[1];
-            var welcomeCardBulletText = welcomeTextValues[2];
-            var messageText2 = welcomeTextValues[3];
-            var takeATourButtonText = welcomeTextValues[4];
-
             AdaptiveCard userWelcomeCard = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -36,32 +30,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
                         Size = AdaptiveTextSize.Small,
-                        Spacing = AdaptiveSpacing.Small,
-                        Text = welcomeText1,
-                        Wrap = true
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                        Size = AdaptiveTextSize.Small,
-                        Spacing = AdaptiveSpacing.Small,
-                        Text = messageText1,
-                        Wrap = true
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                        Size = AdaptiveTextSize.Small,
-                        Spacing = AdaptiveSpacing.None,
-                        Text = welcomeCardBulletText,
-                        Wrap = true
-                    },
-                    new AdaptiveTextBlock
-                    {
-                        HorizontalAlignment = AdaptiveHorizontalAlignment.Left,
-                        Size = AdaptiveTextSize.Small,
-                        Spacing = AdaptiveSpacing.Small,
-                        Text = messageText2,
+                        Text = welcomeText,
                         Wrap = true
                     }
                 },
@@ -69,13 +38,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 {
                     new AdaptiveSubmitAction
                     {
-                        Title = takeATourButtonText,
+                        Title = Resource.TakeATourButtonText,
                         Data = new
                         {
                             msteams = new CardAction
                             {
                               Type = ActionTypes.MessageBack,
-                              DisplayText = takeATourButtonText,
+                              DisplayText = Resource.TakeATourButtonText,
                               Text = FaqPlusPlusBot.TakeATour
                             }
                         },

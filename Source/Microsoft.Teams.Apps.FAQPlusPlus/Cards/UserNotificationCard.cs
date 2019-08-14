@@ -106,7 +106,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
 
             factList.Add(new AdaptiveFact
             {
-                Title = Resource.TitleText,
+                Title = Resource.TitleFact,
                 Value = CardHelper.TruncateStringIfLonger(this.ticket.Title, CardHelper.TitleMaxDisplayLength),
             });
 
@@ -114,7 +114,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 factList.Add(new AdaptiveFact
                 {
-                    Title = Resource.DescriptionText,
+                    Title = Resource.DescriptionFact,
                     Value = CardHelper.TruncateStringIfLonger(this.ticket.Description, CardHelper.DescriptionMaxDisplayLength),
                 });
             }
