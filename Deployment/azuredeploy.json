@@ -533,5 +533,19 @@
         }
       ]
     }
-  ]
+  ],
+  "outputs": {
+    "outputBotId": {
+      "type": "string",
+      "value": "[parameters('botClientId')]"
+    },
+    "outputBotEndpoint": {
+      "type":"string",
+      "value": "[concat(variables('botAppUrl'), '/api/messages')]"
+    },
+    "outputConfigAppUrl": {
+      "type": "string",
+      "value": "[variables('configAppUrl')]"
+    }
+  }
 }
