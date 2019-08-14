@@ -37,7 +37,7 @@
     {
       "entityId": "help",
       "name": "Help",
-      "contentUrl": "https://<APP_DOMAIN>/help",
+      "contentUrl": "https://<APP_DOMAIN>/help?theme={theme}",
       "scopes": [
         "personal"
       ]
