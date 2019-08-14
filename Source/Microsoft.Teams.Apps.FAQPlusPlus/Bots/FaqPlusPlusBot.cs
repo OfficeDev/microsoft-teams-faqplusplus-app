@@ -22,7 +22,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Validations;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -297,13 +296,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
 
-            var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
-
             switch (message.Text)
             {
                 case AskAnExpert:
                 {
                     this.telemetryClient.TrackTrace("Sending user ask an expert card (from answer)");
+
                     var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(responseCardPayload)));
                     break;
@@ -312,12 +310,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case ShareFeedback:
                 {
                     this.telemetryClient.TrackTrace("Sending user share feedback card (from answer)");
+
                     var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, responseCardPayload.UserQuestion, string.Empty, responseCardPayload.KnowledgeBaseAnswer)));
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(responseCardPayload)));
                     break;
                 }
 
                 case SubmitUserRequestPayload.QuestionForExpertAction:
+                {
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
                     // Validate required fields
@@ -333,23 +333,37 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                         return;
                     }
 
+                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+
                     newTicket = await this.CreateTicketAsync(message, payload, userDetails);
                     smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
                     userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
                     break;
+                }
 
                 case SubmitUserRequestPayload.AppFeedbackAction:
+                {
                     this.telemetryClient.TrackTrace($"Received general app feedback");
 
-                    // Validates the required rating field in share feedback card.
-                    if (!await UserInputValidations.ValidateFeedback(payload, turnContext, cancellationToken))
+                    // Validate required fields
+                    if (string.IsNullOrWhiteSpace(payload.FeedbackRatingAction))
                     {
+                        var updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(payload) },
+                        };
+                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
                         return;
                     }
+
+                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
 
                     smeTeamCard = SmeFeedbackCard.GetCard(payload, userDetails);
                     await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
                     break;
+                }
 
                 default:
                     this.telemetryClient.TrackTrace($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);

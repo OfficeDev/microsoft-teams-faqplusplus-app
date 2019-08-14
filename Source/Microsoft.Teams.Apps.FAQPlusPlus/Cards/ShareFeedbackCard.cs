@@ -16,19 +16,46 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class ShareFeedbackCard
     {
         /// <summary>
+        /// This method will construct the card for share feedback, when invoked from the bot menu.
+        /// </summary>
+        /// <returns>Ask an expert card.</returns>
+        public static Attachment GetCard()
+        {
+            return GetCard(false);
+        }
+
+        /// <summary>
+        /// This method will construct the card for share feedback, when invoked from the response card.
+        /// </summary>
+        /// <param name="payload">Payload from the response card.</param>
+        /// <returns>Ask an expert card.</returns>
+        public static Attachment GetCard(ResponseCardPayload payload)
+        {
+            // Pre-populate the description with the user's question
+            var description = payload.UserQuestion;
+            return GetCard(false, description, payload.UserQuestion, payload.KnowledgeBaseAnswer);
+        }
+
+        /// <summary>
+        /// This method will construct the card for share feedback, when invoked from the feedback card submit.
+        /// </summary>
+        /// <param name="payload">Payload from the response card.</param>
+        /// <returns>Ask an expert card.</returns>
+        public static Attachment GetCard(SubmitUserRequestPayload payload)
+        {
+            return GetCard(true, payload.QuestionForExpert, payload.UserQuestion, payload.SmeAnswer);
+        }
+
+        /// <summary>
         /// This method will construct the card  for share feedback bot menu.
         /// </summary>
-        /// <param name="isRatingRequired">Flag to determine rating value.</param>
-        /// <param name="userQuestionText">Question asked by the user to bot.</param>
-        /// <param name="userDescriptionText">User activity text.</param>
-        /// <param name="qnaAswerText">The response that the bot retrieves after querying the knowledge base.</param>
+        /// <param name="showValidationErrors">Flag to determine rating value.</param>
+        /// <param name="description">User activity text.</param>
+        /// <param name="userQuestion">Question asked by the user to bot.</param>
+        /// <param name="knowledgeBaseAnswer">The response that the bot retrieves after querying the knowledge base.</param>
         /// <returns>Share feedback card.</returns>
-        public static Attachment GetCard(bool isRatingRequired = false, string userQuestionText = "", string userDescriptionText = "", string qnaAswerText = "")
+        private static Attachment GetCard(bool showValidationErrors, string description = "", string userQuestion = "", string knowledgeBaseAnswer = "")
         {
-            string cardTitleText = !string.IsNullOrWhiteSpace(userQuestionText) ? Resource.ResultsFeedbackText : Resource.ShareFeedbackTitleText;
-            userDescriptionText = userDescriptionText ?? string.Empty;
-            userQuestionText = userQuestionText ?? string.Empty;
-            qnaAswerText = qnaAswerText ?? string.Empty;
             AdaptiveCard shareFeedbackCard = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
@@ -36,7 +63,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveTextBlock
                     {
                         Weight = AdaptiveTextWeight.Bolder,
-                        Text = cardTitleText,
+                        Text = !string.IsNullOrWhiteSpace(userQuestion) ? Resource.ResultsFeedbackText : Resource.ShareFeedbackTitleText,
                         Size = AdaptiveTextSize.Large,
                         Wrap = true
                     },
@@ -62,7 +89,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 {
                                     new AdaptiveTextBlock
                                     {
-                                        Text = isRatingRequired ? Resource.RatingMandatoryText : string.Empty,
+                                        Text = showValidationErrors ? Resource.RatingMandatoryText : string.Empty,
                                         Color = AdaptiveTextColor.Attention,
                                         HorizontalAlignment = AdaptiveHorizontalAlignment.Right,
                                         Wrap = true
@@ -73,11 +100,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveChoiceSetInput
                     {
-                         Id = nameof(SubmitUserRequestPayload.FeedbackRatingAction),
-                         IsMultiSelect = false,
-                         Style = AdaptiveChoiceInputStyle.Compact,
-                         Choices = new List<AdaptiveChoice>
-                         {
+                        Id = nameof(SubmitUserRequestPayload.FeedbackRatingAction),
+                        IsMultiSelect = false,
+                        Style = AdaptiveChoiceInputStyle.Compact,
+                        Choices = new List<AdaptiveChoice>
+                        {
                             new AdaptiveChoice
                             {
                                 Title = Resource.HelpfulRatingText,
@@ -93,7 +120,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 Title = Resource.UnhelpfulRatingText,
                                 Value = SubmitUserRequestPayload.UnhelpfulRatingAction,
                             },
-                         }
+                        }
                     },
                     new AdaptiveTextBlock
                     {
@@ -107,7 +134,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         Id = nameof(SubmitUserRequestPayload.QuestionForExpert),
                         Placeholder = Resource.FeedbackDescriptionPlaceholderText,
                         IsMultiline = true,
-                        Value = string.IsNullOrWhiteSpace(userDescriptionText) ? userQuestionText : userDescriptionText,
+                        Value = description,
                     }
                 },
                 Actions = new List<AdaptiveAction>
@@ -123,9 +150,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                                 DisplayText = Resource.ShareFeedbackDisplayText,
                                 Text = SubmitUserRequestPayload.AppFeedbackAction
                             },
-                           UserQuestion = !string.IsNullOrWhiteSpace(userQuestionText) ? userQuestionText : string.Empty,
-                           SmeAnswer = !string.IsNullOrWhiteSpace(qnaAswerText) ? qnaAswerText : string.Empty,
-                           QuestionForExpert = !string.IsNullOrWhiteSpace(userDescriptionText) ? userDescriptionText : string.Empty,
+                            UserQuestion = userQuestion,
+                            SmeAnswer = knowledgeBaseAnswer,
+                            QuestionForExpert = description,
                         },
                     }
                 }

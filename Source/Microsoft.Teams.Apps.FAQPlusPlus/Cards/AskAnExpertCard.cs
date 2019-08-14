@@ -36,7 +36,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// This method will construct the card for ask an expert, when invoked from the adaptive card submit action.
+        /// This method will construct the card for ask an expert, when invoked from the ask an expert card submit.
         /// </summary>
         /// <param name="payload">Payload from the response card.</param>
         /// <returns>Ask an expert card.</returns>
@@ -55,8 +55,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Ask an expert card.</returns>
         private static Attachment GetCard(bool showValidationErrors = false, string description = null, string userQuestion = null, string knowledgeBaseAnswer = null)
         {
-            description = description ?? string.Empty;
-            knowledgeBaseAnswer = knowledgeBaseAnswer ?? string.Empty;
             AdaptiveCard askAnExpertCard = new AdaptiveCard("1.0")
             {
                 Body = new List<AdaptiveElement>
