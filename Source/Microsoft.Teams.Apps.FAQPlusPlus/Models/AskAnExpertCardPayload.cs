@@ -7,7 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
     /// <summary>
     /// Represents the submit data associated with the Ask An Expert card.
     /// </summary>
-    public class AskAnExpertCardPayload : TeamsAdaptiveCardSubmitActionData
+    public class AskAnExpertCardPayload : TeamsAdaptiveSubmitActionData
     {
         /// <summary>
         /// Gets or sets the user title text for ask an expert button.

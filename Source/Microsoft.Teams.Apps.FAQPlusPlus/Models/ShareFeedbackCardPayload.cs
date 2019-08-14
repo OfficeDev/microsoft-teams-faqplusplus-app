@@ -8,7 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
     /// This model class is responsible to model user activity with bot-
     /// asking a question or providing feedback on app or on results given by the bot to the user.
     /// </summary>
-    public class ShareFeedbackCardPayload : TeamsAdaptiveCardSubmitActionData
+    public class ShareFeedbackCardPayload : TeamsAdaptiveSubmitActionData
     {
         /// <summary>
         /// Gets or sets the action when user submits feedback rating.

@@ -1,4 +1,4 @@
-﻿// <copyright file="TeamsAdaptiveCardSubmitActionData.cs" company="Microsoft">
+﻿// <copyright file="TeamsAdaptiveSubmitActionData.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
@@ -10,7 +10,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
     /// <summary>
     /// Defines Teams-specific behavior for an adaptive card submit action.
     /// </summary>
-    public class TeamsAdaptiveCardSubmitActionData
+    public class TeamsAdaptiveSubmitActionData
     {
         /// <summary>
         /// Gets or sets the Teams-specific action

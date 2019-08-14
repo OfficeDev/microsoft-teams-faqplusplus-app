@@ -7,7 +7,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Models
     /// <summary>
     /// Represents the payload of a response card.
     /// </summary>
-    public class ResponseCardPayload : TeamsAdaptiveCardSubmitActionData
+    public class ResponseCardPayload : TeamsAdaptiveSubmitActionData
     {
         /// <summary>
         /// Gets or sets the question that was asked originally asked by the user.
