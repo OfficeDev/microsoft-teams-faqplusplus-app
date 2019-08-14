@@ -39,7 +39,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// </summary>
         /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
-        public Attachment ToAttachment(DateTimeOffset? activityLocalTimestamp)
+        public Attachment ToAttachment(DateTimeOffset? localTimestamp)
         {
             var card = new AdaptiveCard("1.0")
             {
@@ -152,7 +152,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                 factList.Add(new AdaptiveFact
                 {
-                    Title = Resource.DescriptionText,
+                    Title = Resource.DescriptionFact,
                     Value = this.Ticket.Description,
                 });
             }

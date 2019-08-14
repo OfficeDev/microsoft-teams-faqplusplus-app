@@ -85,16 +85,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         }
 
         /// <summary>
-        /// Return "N/A" if the given text is null or empty, or the text unchanged, otherwise.
-        /// </summary>
-        /// <param name="value">String value.</param>
-        /// <returns>A string or N/A.</returns>
-        public static string ConvertNullOrEmptyToNotApplicable(string value)
-        {
-            return !string.IsNullOrWhiteSpace(value) ? value : Resource.NonApplicableString;
-        }
-
-        /// <summary>
         /// Returns a string that will display the given date and time in the user's local time zone, when placed in an adaptive card.
         /// </summary>
         /// <param name="dateTime">The date and time to format.</param>

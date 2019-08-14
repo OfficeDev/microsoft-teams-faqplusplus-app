@@ -27,8 +27,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <returns>Sme facing feedback notification card.</returns>
         public static Attachment GetCard(SubmitUserRequestPayload payload, TeamsChannelAccount userDetails)
         {
-            payload.QuestionForExpert = CardHelper.TruncateStringIfLonger(payload.QuestionForExpert, CardHelper.UserDescriptionMaxLength);
-            payload.SmeAnswer = CardHelper.TruncateStringIfLonger(payload.SmeAnswer, CardHelper.KbAnswerMaxLength);
+            payload.QuestionForExpert = CardHelper.TruncateStringIfLonger(payload.QuestionForExpert, CardHelper.DescriptionMaxDisplayLength);
+            payload.SmeAnswer = CardHelper.TruncateStringIfLonger(payload.SmeAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength);
             var chatTextButton = string.Format(Resource.ChatTextButton, userDetails.GivenName);
 
             // Constructing adaptive card that is sent to SME team.

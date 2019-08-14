@@ -208,7 +208,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 var teamDetails = ((JObject)turnContext.Activity.ChannelData).ToObject<TeamsChannelData>();
                 var botDisplayName = turnContext.Activity.Recipient.Name;
-                var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard(botDisplayName, teamDetails.Team.Name);
+                var teamWelcomeCardAttachment = WelcomeTeamCard.GetCard();
                 await this.SendCardToTeamAsync(turnContext, teamWelcomeCardAttachment, teamDetails.Team.Id, cancellationToken);
             }
         }
@@ -316,6 +316,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case SubmitUserRequestPayload.QuestionForExpertAction:
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
+                    // Validates the required title field in ask an expert card.
                     if (!await UserInputValidations.ValidateQuestionForExpert(payload, turnContext, cancellationToken))
                     {
                         return;
@@ -329,6 +330,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 case SubmitUserRequestPayload.AppFeedbackAction:
                     this.telemetryClient.TrackTrace($"Received general app feedback");
 
+                    // Validates the required rating field in share feedback card.
                     if (!await UserInputValidations.ValidateFeedback(payload, turnContext, cancellationToken))
                     {
                         return;
