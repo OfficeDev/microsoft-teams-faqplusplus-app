@@ -22,15 +22,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// This method will construct the card for SME team which will have the
         /// feedback details given by the user.
         /// </summary>
-        /// <param name="payload">user activity payload</param>
+        /// <param name="data">user activity payload</param>
         /// <param name="userDetails">User details.</param>
         /// <returns>Sme facing feedback notification card.</returns>
-        public static Attachment GetCard(SubmitUserRequestPayload payload, TeamsChannelAccount userDetails)
+        public static Attachment GetCard(ShareFeedbackCardPayload data, TeamsChannelAccount userDetails)
         {
-            payload.QuestionForExpert = CardHelper.TruncateStringIfLonger(payload.QuestionForExpert, CardHelper.DescriptionMaxDisplayLength);
-            payload.SmeAnswer = CardHelper.TruncateStringIfLonger(payload.SmeAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength);
-            var chatTextButton = string.Format(Resource.ChatTextButton, userDetails.GivenName);
-
             // Constructing adaptive card that is sent to SME team.
             AdaptiveCard smeFeedbackCard = new AdaptiveCard("1.0")
             {
@@ -43,13 +39,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                            new AdaptiveFact()
                            {
                                Title = Resource.RatingFactTitle,
-                               Value = payload.FeedbackRatingAction
+                               Value = GetRatingDisplayText(data.Rating),
                            }
                        },
                    },
                     new AdaptiveTextBlock()
                     {
-                        Text = string.Format(Resource.FeedbackAlertText, userDetails.Name, payload.QuestionForExpert),
+                        Text = string.Format(Resource.FeedbackAlertText, userDetails.Name),
                         Wrap = true
                     }
                },
@@ -57,14 +53,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                {
                    new AdaptiveOpenUrlAction
                    {
-                       Title = chatTextButton,
+                       Title = string.Format(Resource.ChatTextButton, userDetails.GivenName),
                        UrlString = $"https://teams.microsoft.com/l/chat/0/0?users={Uri.EscapeDataString(userDetails.UserPrincipalName)}"
                    }
                }
             };
 
             // Description fact is available in the card only when user enters description text.
-            if (!string.IsNullOrWhiteSpace(payload.QuestionForExpert))
+            if (!string.IsNullOrWhiteSpace(data.Description))
             {
                 smeFeedbackCard.Body.Add(new AdaptiveFactSet
                 {
@@ -73,14 +69,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveFact()
                         {
                             Title = Resource.DescriptionFact,
-                            Value = payload.QuestionForExpert
+                            Value = CardHelper.TruncateStringIfLonger(data.Description, CardHelper.DescriptionMaxDisplayLength),
                         },
                     }
                 });
             }
 
             // Question asked fact and view article show card is available when feedback is on QnA Maker response.
-            if (!string.IsNullOrWhiteSpace(payload.SmeAnswer) && !string.IsNullOrWhiteSpace(payload.UserQuestion))
+            if (!string.IsNullOrWhiteSpace(data.KnowledgeBaseAnswer) && !string.IsNullOrWhiteSpace(data.UserQuestion))
             {
                 smeFeedbackCard.Body.Add(new AdaptiveFactSet
                 {
@@ -89,7 +85,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                         new AdaptiveFact()
                         {
                             Title = Resource.QuestionAskedFactTitle,
-                            Value = payload.UserQuestion
+                            Value = data.UserQuestion,
                         },
                     }
                 });
@@ -104,7 +100,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                             {
                                new AdaptiveTextBlock
                                {
-                                   Text = payload.SmeAnswer,
+                                   Text = CardHelper.TruncateStringIfLonger(data.KnowledgeBaseAnswer, CardHelper.KnowledgeBaseAnswerMaxDisplayLength),
                                    Wrap = true
                                }
                             }
@@ -118,6 +114,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 ContentType = AdaptiveCard.ContentType,
                 Content = smeFeedbackCard,
             };
+        }
+
+        // Return the display string for the given rating
+        private static string GetRatingDisplayText(string rating)
+        {
+            if (!Enum.TryParse(rating, out FeedbackRating value))
+            {
+                throw new ArgumentException($"{rating} is not a valid rating value", nameof(rating));
+            }
+
+            return Resource.ResourceManager.GetString($"{rating}RatingText");
         }
     }
 }

@@ -462,8 +462,8 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Title(*Required*)</value>
     <comment>Title(Required): label of the title text box.</comment>
   </data>
-  <data name="UnhelpfulRatingText" xml:space="preserve">
-    <value>Unhelpful</value>
+  <data name="NotHelpfulRatingText" xml:space="preserve">
+    <value>Not helpful</value>
     <comment>Unhelpful: available feedback rating scale.</comment>
   </data>
   <data name="ViewArticleButtonText" xml:space="preserve">

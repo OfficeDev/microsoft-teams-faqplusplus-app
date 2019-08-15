@@ -22,7 +22,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
-    using Microsoft.Teams.Apps.FAQPlusPlus.Validations;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
@@ -51,7 +50,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <summary>
         /// Feedback - text that renders share feedback card.
         /// </summary>
-        public const string Feedback = "share feedback";
+        public const string ShareFeedback = "share feedback";
 
         private readonly TelemetryClient telemetryClient;
         private readonly IConfigurationProvider configurationProvider;
@@ -232,7 +231,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard()));
                     break;
 
-                case Feedback:
+                case ShareFeedback:
                     this.telemetryClient.TrackTrace("Sending user feedback card");
                     await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard()));
                     break;
@@ -291,54 +290,82 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Submits the question or feedback to the SME team
         private async Task OnAdaptiveCardSubmitInPersonalChatAsync(IMessageActivity message, ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
-            var payload = ((JObject)message.Value).ToObject<SubmitUserRequestPayload>();
-
             Attachment smeTeamCard = null;      // Notification to SME team
             Attachment userCard = null;         // Acknowledgement to the user
             TicketEntity newTicket = null;      // New ticket
 
-            var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
-
             switch (message.Text)
             {
                 case AskAnExpert:
-                    this.telemetryClient.TrackTrace("Sending user ask an expert card");
+                {
+                    this.telemetryClient.TrackTrace("Sending user ask an expert card (from answer)");
 
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
+                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(responseCardPayload)));
                     break;
+                }
 
-                case Feedback:
-                    this.telemetryClient.TrackTrace("Sending user share feedback card");
+                case ShareFeedback:
+                {
+                    this.telemetryClient.TrackTrace("Sending user share feedback card (from answer)");
 
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(false, payload.UserQuestion, payload.QuestionForExpert, payload.SmeAnswer)));
+                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(responseCardPayload)));
                     break;
+                }
 
-                case SubmitUserRequestPayload.QuestionForExpertAction:
+                case AskAnExpertCard.AskAnExpertSubmitText:
+                {
                     this.telemetryClient.TrackTrace($"Received question for expert");
 
-                    // Validates the required title field in ask an expert card.
-                    if (!await UserInputValidations.ValidateQuestionForExpert(payload, turnContext, cancellationToken))
+                    var askAnExpertPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
+
+                    // Validate required fields
+                    if (string.IsNullOrWhiteSpace(askAnExpertPayload.Title))
                     {
+                        var updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { AskAnExpertCard.GetCard(askAnExpertPayload) },
+                        };
+                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
                         return;
                     }
 
-                    newTicket = await this.CreateTicketAsync(message, payload, userDetails);
+                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+
+                    newTicket = await this.CreateTicketAsync(message, askAnExpertPayload, userDetails);
                     smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
                     userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
                     break;
+                }
 
-                case SubmitUserRequestPayload.AppFeedbackAction:
-                    this.telemetryClient.TrackTrace($"Received general app feedback");
+                case ShareFeedbackCard.ShareFeedbackSubmitText:
+                {
+                    this.telemetryClient.TrackTrace($"Received app feedback");
 
-                    // Validates the required rating field in share feedback card.
-                    if (!await UserInputValidations.ValidateFeedback(payload, turnContext, cancellationToken))
+                    var shareFeedbackPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
+
+                    // Validate required fields
+                    if (!Enum.TryParse(shareFeedbackPayload.Rating, out FeedbackRating rating))
                     {
+                        var updateCardActivity = new Activity(ActivityTypes.Message)
+                        {
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackPayload) },
+                        };
+                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
                         return;
                     }
 
-                    smeTeamCard = SmeFeedbackCard.GetCard(payload, userDetails);
+                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+
+                    smeTeamCard = SmeFeedbackCard.GetCard(shareFeedbackPayload, userDetails);
                     await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
                     break;
+                }
 
                 default:
                     this.telemetryClient.TrackTrace($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
@@ -587,23 +614,23 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         // Create a new ticket from the input
-        private async Task<TicketEntity> CreateTicketAsync(IMessageActivity message, SubmitUserRequestPayload payload, TeamsChannelAccount member)
+        private async Task<TicketEntity> CreateTicketAsync(IMessageActivity message, AskAnExpertCardPayload data, TeamsChannelAccount member)
         {
             TicketEntity ticketEntity = new TicketEntity
             {
                 TicketId = Guid.NewGuid().ToString(),
                 Status = (int)TicketState.Open,
                 DateCreated = DateTime.UtcNow,
-                Title = payload.QuestionUserTitleText,
-                Description = payload.QuestionForExpert,
+                Title = data.Title,
+                Description = data.Description,
                 RequesterName = member.Name,
                 RequesterUserPrincipalName = member.UserPrincipalName,
                 RequesterGivenName = member.GivenName,
                 RequesterConversationId = message.Conversation.Id,
                 LastModifiedByName = message.From.Name,
                 LastModifiedByObjectId = message.From.AadObjectId,
-                UserQuestion = payload.UserQuestion,
-                KnowledgeBaseAnswer = payload.SmeAnswer
+                UserQuestion = data.UserQuestion,
+                KnowledgeBaseAnswer = data.KnowledgeBaseAnswer
             };
 
             await this.ticketsProvider.SaveOrUpdateTicketAsync(ticketEntity);
