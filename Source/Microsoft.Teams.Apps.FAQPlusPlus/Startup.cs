@@ -57,7 +57,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 this.Configuration["AppBaseUri"],
                 provider.GetRequiredService<MicrosoftAppCredentials>(),
                 provider.GetRequiredService<ITicketsProvider>()));
-            services.AddSingleton<TelemetryClient>();
+            services.AddApplicationInsightsTelemetry();
             services.AddSingleton<IQnAMakerFactory, QnAMakerFactory>();
             services.AddSingleton<ISearchService, SearchService>();
             services.AddSingleton<MessagingExtension>();

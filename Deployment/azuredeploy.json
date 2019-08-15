@@ -255,10 +255,6 @@
               "value": "[reference(resourceId('Microsoft.Insights/components/', variables('botAppInsightsName')), '2015-05-01').InstrumentationKey]"
             },
             {
-              "name": "ApplicationInsightsLogLevel",
-              "value": "Debug"
-            },
-            {
               "name": "ScoreThreshold",
               "value": "0.5"
             },
