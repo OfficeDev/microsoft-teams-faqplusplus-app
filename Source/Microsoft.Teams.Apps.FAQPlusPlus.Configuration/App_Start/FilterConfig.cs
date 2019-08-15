@@ -17,7 +17,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
         /// <param name="filters">Collection of global filters.</param>
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
-            filters.Add(new HandleErrorAttribute());
+            filters.Add(new ErrorHandler.AiHandleErrorAttribute());
         }
     }
 }
