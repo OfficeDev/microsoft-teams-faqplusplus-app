@@ -39,12 +39,20 @@
         "description": "Semicolon-delimited list of the user principal names (UPNs) allowed to access the configuration app."
       }
     },
+    "appDisplayName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "FAQ Plus",
+      "metadata": {
+        "description": "The app (and bot) display name."
+      }
+    },
     "appDescription": {
       "type": "string",
       "minLength": 1,
       "defaultValue": "A friendly FAQ bot that answers questions and connects you to experts.",
       "metadata": {
-          "description": "The description for the app."
+          "description": "The app (and bot) description."
       }
     },
     "appIconUrl": {
@@ -325,7 +333,7 @@
       },
       "kind": "sdk",
       "properties": {
-        "displayName": "[variables('botName')]",
+        "displayName": "[parameters('appDisplayName')]",
         "description": "[parameters('appDescription')]",
         "iconUrl": "[parameters('appIconUrl')]",
         "msaAppId": "[parameters('botClientId')]",
