@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -16,12 +17,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     public static class ResponseCard
     {
         /// <summary>
-        /// This method will construct the response card - when user asks a question to QnA Maker through bot.
+        /// Construct the response card - when user asks a question to QnA Maker through bot.
         /// </summary>
-        /// <param name="question">Actual question from the QnA Maker service.</param>
-        /// <param name="answer">The response that the bot retrieves after querying the knowledge base.</param>
+        /// <param name="question">Knowledgebase question, from QnA Maker service.</param>
+        /// <param name="answer">Knowledgebase answer, from QnA Maker service.</param>
         /// <param name="userQuestion">Actual question asked by the user to the bot.</param>
-        /// <returns>QnA response card.</returns>
+        /// <returns>Response card.</returns>
         public static Attachment GetCard(string question, string answer, string userQuestion)
         {
             AdaptiveCard responseCard = new AdaptiveCard("1.0")
@@ -32,17 +33,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     {
                         Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.ResponseHeaderText,
-                        Wrap = true
+                        Wrap = true,
                     },
                     new AdaptiveTextBlock
                     {
                         Text = question,
-                        Wrap = true
+                        Wrap = true,
                     },
                     new AdaptiveTextBlock
                     {
                         Text = answer,
-                        Wrap = true
+                        Wrap = true,
                     }
                 },
                 Actions = new List<AdaptiveAction>
@@ -50,31 +51,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.AskAnExpertButtonText,
-                        Data = new
+                        Data = new ResponseCardPayload
                         {
-                            msteams = new CardAction
+                            MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Resource.AskAnExpertDisplayText,
-                                Text = FaqPlusPlusBot.AskAnExpert
+                                Text = FaqPlusPlusBot.AskAnExpert,
                             },
                             UserQuestion = userQuestion,
-                            SmeAnswer = answer
+                            KnowledgeBaseAnswer = answer,
                         }
                     },
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.ShareFeedbackButtonText,
-                        Data = new
+                        Data = new ResponseCardPayload
                         {
-                            msteams = new CardAction
+                            MsTeams = new CardAction
                             {
                                 Type = ActionTypes.MessageBack,
                                 DisplayText = Resource.ShareFeedbackDisplayText,
-                                Text = FaqPlusPlusBot.Feedback
+                                Text = FaqPlusPlusBot.ShareFeedback,
                             },
-                             UserQuestion = userQuestion,
-                             SmeAnswer = answer
+                            UserQuestion = userQuestion,
+                            KnowledgeBaseAnswer = answer,
                         }
                     }
                 }

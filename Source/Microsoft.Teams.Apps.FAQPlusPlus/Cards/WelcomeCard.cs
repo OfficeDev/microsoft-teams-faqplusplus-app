@@ -8,6 +8,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
     using AdaptiveCards;
     using Microsoft.Bot.Schema;
     using Microsoft.Teams.Apps.FAQPlusPlus.Bots;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
 
     /// <summary>
@@ -39,9 +40,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     new AdaptiveSubmitAction
                     {
                         Title = Resource.TakeATourButtonText,
-                        Data = new
+                        Data = new TeamsAdaptiveSubmitActionData
                         {
-                            msteams = new CardAction
+                            MsTeams = new CardAction
                             {
                               Type = ActionTypes.MessageBack,
                               DisplayText = Resource.TakeATourButtonText,
