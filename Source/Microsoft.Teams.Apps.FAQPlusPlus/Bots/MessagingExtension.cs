@@ -40,8 +40,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly Common.Providers.IConfigurationProvider configurationProvider;
         private readonly string appID;
         private readonly BotFrameworkAdapter botAdapter;
-        private readonly IMemoryCache memoryCache;
-        private readonly int cacheExpiryInDays;
+        private readonly IMemoryCache accessCache;
+        private readonly int accessCacheExpiryInDays;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
@@ -67,8 +67,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.configurationProvider = configurationProvider;
             this.appID = this.configuration["MicrosoftAppId"];
             this.botAdapter = (BotFrameworkAdapter)this.adapter;
-            this.memoryCache = memoryCache;
-            this.cacheExpiryInDays = Convert.ToInt32(this.configuration["CacheExpiryInDays"]);
+            this.accessCache = memoryCache;
+            this.accessCacheExpiryInDays = Convert.ToInt32(this.configuration["AccessCacheExpiryInDays"]);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         // Check for current user id in cache and add id of current user to cache if they are not added before
                         // once they are validated againt sme roster
-                        if (!this.memoryCache.TryGetValue(currentUserId, out string membersCacheEntry))
+                        if (!this.accessCache.TryGetValue(currentUserId, out string membersCacheEntry))
                         {
                             var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
                             foreach (var member in members)
@@ -243,8 +243,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                                     membersCacheEntry = member.Id;
                                     isUserPartOfRoster = true;
 
-                                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(this.cacheExpiryInDays));
-                                    this.memoryCache.Set(currentUserId, membersCacheEntry, cacheEntryOptions);
+                                    var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(this.accessCacheExpiryInDays));
+                                    this.accessCache.Set(currentUserId, membersCacheEntry, cacheEntryOptions);
                                     break;
                                 }
                             }

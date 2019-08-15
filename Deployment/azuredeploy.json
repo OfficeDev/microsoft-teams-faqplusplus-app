@@ -265,6 +265,14 @@
             {
               "name": "SearchServiceQueryApiKey",
               "value": "[listQueryKeys(resourceId('Microsoft.Search/searchServices/', variables('azureSearchName')), '2015-08-19').value[0].key]"
+            },
+            {
+              "name": "AccessCacheExpiryInDays",
+              "value": "5"
+            },
+            {
+              "name": "SearchIndexingIntervalInMinutes",
+              "value": "10"
             }
           ]
         }
@@ -375,7 +383,7 @@
           "appSettings": [
             {
               "name": "SITE_ROLE",
-              "value": "config"
+              "value": "configuration"
             },
             {
               "name": "StorageConnectionString",
