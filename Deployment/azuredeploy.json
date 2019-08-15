@@ -559,5 +559,19 @@
         }
       ]
     }
-  ]
+  ],
+  "outputs": {
+    "BOT_ID": {
+      "type": "string",
+      "value": "[parameters('botClientId')]"
+    },
+    "APP_DOMAIN": {
+      "type":"string",
+      "value": "[variables('botAppDomain')]"
+    },
+    "configurationAppUrl": {
+      "type": "string",
+      "value": "[variables('configAppUrl')]"
+    }
+  }
 }
