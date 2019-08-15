@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AskAnExpertPlaceholderText" xml:space="preserve">
-    <value>Type your detailed question and supporting details here.</value>
+    <value>Type your detailed question and supporting details here (500 characters max)</value>
     <comment>Ask an expert placeholder text.</comment>
   </data>
   <data name="AskAnExpertText1" xml:space="preserve">
@@ -126,7 +126,7 @@
     <comment>Title of the ask an expert card.</comment>
   </data>
   <data name="AskAnExpertText2" xml:space="preserve">
-    <value>If my answer isn't satisfactory, I'll connect you to an expert.</value>
+    <value>...If my answer isn't satisfactory... I'll connect you to an expert.</value>
     <comment>Helps the user in understanding there is an expert team to connect to.</comment>
   </data>
   <data name="FeedbackText1" xml:space="preserve">
@@ -138,7 +138,7 @@
     <comment>Explains what bot does and possible questions.</comment>
   </data>
   <data name="FunctionCardText2" xml:space="preserve">
-    <value>You can ask me a question by typing it in the chat box below and I'll either answer it or refer you to an expert.</value>
+    <value>You can ask me a question by typing it in the chat box below  I'll try my best to answer it...</value>
     <comment>Suggests the user to ask question.</comment>
   </data>
   <data name="ShareFeedbackButtonText" xml:space="preserve">
@@ -150,7 +150,7 @@
     <comment>Description text is the label of description text box.</comment>
   </data>
   <data name="FeedbackDescriptionPlaceholderText" xml:space="preserve">
-    <value>Enter your feedback and supporting details here.</value>
+    <value>Enter your feedback and supporting details here (500 characters max)</value>
     <comment>Placeholder label where the user enters feedback in the text box.</comment>
   </data>
   <data name="FeedbackHeaderText" xml:space="preserve">
@@ -268,7 +268,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Created: one of the available fact set in notification cards- created is the title for created date value.</comment>
   </data>
   <data name="ShowCardTitleText" xml:space="preserve">
-    <value>Enter short title here</value>
+    <value>Enter short title here (50 characters max)</value>
     <comment>Label text where users enters title for his question or feedback. </comment>
   </data>
   <data name="KBEntryFactTitle" xml:space="preserve">
@@ -292,7 +292,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>This text is used as title for results feedback card.</comment>
   </data>
   <data name="FeedbackAlertText" xml:space="preserve">
-    <value>**{0}** has shared the feedback.</value>
+    <value>**{0}** has shared the feedback</value>
     <comment>Text in the SME feedback card, The placeholder {0} represents the name of the person sharing the feedback. The placeholder {1} represents the feedback type.</comment>
   </data>
   <data name="ShareFeedbackTitleText" xml:space="preserve">
@@ -431,7 +431,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Available factset in user notification and SME facing cards.</comment>
   </data>
   <data name="FeedbackRatingRequired" xml:space="preserve">
-    <value>Feedback(*Required*)</value>
+    <value>Feedback (Required)</value>
     <comment>Feedback(Required): label for the feedback rating dropdown.</comment>
   </data>
   <data name="HelpfulRatingText" xml:space="preserve">
@@ -442,8 +442,8 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <value>Needs Improvement</value>
     <comment>Needs improvement: available feedback rating scale.</comment>
   </data>
-  <data name="RatingFactTitle" xml:space="preserve">
-    <value>Rating:</value>
+  <data name="RatingTitle" xml:space="preserve">
+    <value>Rating</value>
     <comment>Rating fact is used in SME facing feedback card to show the rating submitted by the user from the rating dropdown in share feedback card.</comment>
   </data>
   <data name="RatingMandatoryText" xml:space="preserve">
@@ -459,7 +459,7 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
     <comment>Title fact is used to show the title entered by the user for his inquiry.</comment>
   </data>
   <data name="TitleRequiredText" xml:space="preserve">
-    <value>Title(*Required*)</value>
+    <value>Title (Required)</value>
     <comment>Title(Required): label of the title text box.</comment>
   </data>
   <data name="NotHelpfulRatingText" xml:space="preserve">
@@ -469,5 +469,9 @@ I am your friendly Q&amp;A bot that helps you provide support to people who inte
   <data name="ViewArticleButtonText" xml:space="preserve">
     <value>View article</value>
     <comment>The necessary string for the view article button</comment>
+  </data>
+  <data name="SMEFeedbackHeaderText" xml:space="preserve">
+    <value>Feedback</value>
+    <comment>Title text for SME facing feedback card.</comment>
   </data>
 </root>
