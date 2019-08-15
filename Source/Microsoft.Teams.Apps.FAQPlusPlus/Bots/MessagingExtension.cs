@@ -1,6 +1,7 @@
 ﻿// <copyright file="MessagingExtension.cs" company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
+
 namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 {
     using System;
@@ -27,11 +28,11 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     /// </summary>
     public class MessagingExtension
     {
-        private const int TextTrimLengthForThumbnailCard = 45;
         private const string SearchTextParameterName = "searchText";        // parameter name in the manifest file
         private const string RecentCommandId = "recents";
         private const string OpenCommandId = "openrequests";
         private const string AssignedCommandId = "assignedrequests";
+        private const int DefaultAccessCacheExpiryInDays = 5;
 
         private readonly ISearchService searchService;
         private readonly TelemetryClient telemetryClient;
@@ -68,7 +69,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.appID = this.configuration["MicrosoftAppId"];
             this.botAdapter = (BotFrameworkAdapter)this.adapter;
             this.accessCache = memoryCache;
+
             this.accessCacheExpiryInDays = Convert.ToInt32(this.configuration["AccessCacheExpiryInDays"]);
+            if (this.accessCacheExpiryInDays <= 0)
+            {
+                this.accessCacheExpiryInDays = DefaultAccessCacheExpiryInDays;
+            }
         }
 
         /// <summary>
@@ -183,15 +189,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         // Get the text for the preview card for the result
         private string GetPreviewCardText(TicketEntity ticket, string commandId, DateTimeOffset? localTimestamp)
         {
-            var text = $@"
-            <div>
-                <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetFormattedDateInUserTimeZone(ticket.DateCreated, localTimestamp))} | {HttpUtility.HtmlEncode(ticket.RequesterName)}</div>";
-            if (!commandId.Equals(OpenCommandId))
-            {
-                text = text + $"<div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetTicketDisplayStatusForSme(ticket))}</div>";
-            }
+            var line2 = !commandId.Equals(OpenCommandId) ?
+                $"<div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetTicketDisplayStatusForSme(ticket))}</div>" :
+                string.Empty;
 
-            text = text + $"</div>";
+            var text = $@"
+<div>
+    <div style='white-space:nowrap'>{HttpUtility.HtmlEncode(CardHelper.GetFormattedDateInUserTimeZone(ticket.DateCreated, localTimestamp))} | {HttpUtility.HtmlEncode(ticket.RequesterName)}</div>
+    {line2}
+</div>";
             return text.Trim();
         }
 
@@ -226,14 +232,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 conversationReference.Conversation = conversationAccount;
 
                 string currentUserId = turnContext.Activity.From.Id;
-                await this.botAdapter.ContinueConversationAsync(
-                    this.appID,
-                    conversationReference,
-                    async (newTurnContext, newCancellationToken) =>
-                    {
-                        // Check for current user id in cache and add id of current user to cache if they are not added before
-                        // once they are validated againt sme roster
-                        if (!this.accessCache.TryGetValue(currentUserId, out string membersCacheEntry))
+
+                // Check for current user id in cache and add id of current user to cache if they are not added before
+                // once they are validated againt SME roster
+                if (!this.accessCache.TryGetValue(currentUserId, out string membersCacheEntry))
+                {
+                    await this.botAdapter.ContinueConversationAsync(
+                        this.appID,
+                        conversationReference,
+                        async (newTurnContext, newCancellationToken) =>
                         {
                             var members = await this.botAdapter.GetConversationMembersAsync(newTurnContext, default(CancellationToken));
                             foreach (var member in members)
@@ -248,13 +255,13 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                                     break;
                                 }
                             }
-                        }
-                        else
-                        {
-                            isUserPartOfRoster = true;
-                        }
-                    },
-                default(CancellationToken));
+                        },
+                        default(CancellationToken));
+                }
+                else
+                {
+                    isUserPartOfRoster = true;
+                }
             }
             catch (Exception error)
             {
