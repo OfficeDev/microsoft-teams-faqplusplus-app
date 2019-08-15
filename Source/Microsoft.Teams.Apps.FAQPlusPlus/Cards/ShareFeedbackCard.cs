@@ -132,7 +132,6 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveTextBlock
                     {
-                        Weight = AdaptiveTextWeight.Bolder,
                         Text = Resource.DescriptionText,
                         Wrap = true,
                     },

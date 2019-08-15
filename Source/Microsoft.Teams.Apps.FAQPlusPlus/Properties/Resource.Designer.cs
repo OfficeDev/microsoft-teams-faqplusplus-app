@@ -19,7 +19,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource {
@@ -88,7 +88,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type your detailed question and supporting details here..
+        ///   Looks up a localized string similar to Type your detailed question and supporting details here (500 characters max).
         /// </summary>
         public static string AskAnExpertPlaceholderText {
             get {
@@ -115,7 +115,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to If my answer isn&apos;t satisfactory, I&apos;ll connect you to an expert..
+        ///   Looks up a localized string similar to ...If my answer isn&apos;t satisfactory... I&apos;ll connect you to an expert..
         /// </summary>
         public static string AskAnExpertText2 {
             get {
@@ -286,7 +286,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to **{0}** has shared the feedback..
+        ///   Looks up a localized string similar to **{0}** has shared the feedback.
         /// </summary>
         public static string FeedbackAlertText {
             get {
@@ -295,7 +295,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter your feedback and supporting details here..
+        ///   Looks up a localized string similar to Enter your feedback and supporting details here (500 characters max).
         /// </summary>
         public static string FeedbackDescriptionPlaceholderText {
             get {
@@ -313,7 +313,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Feedback(*Required*).
+        ///   Looks up a localized string similar to Feedback (Required).
         /// </summary>
         public static string FeedbackRatingRequired {
             get {
@@ -340,7 +340,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below and I&apos;ll either answer it or refer you to an expert..
+        ///   Looks up a localized string similar to You can ask me a question by typing it in the chat box below  I&apos;ll try my best to answer it....
         /// </summary>
         public static string FunctionCardText2 {
             get {
@@ -484,20 +484,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rating:.
-        /// </summary>
-        public static string RatingFactTitle {
-            get {
-                return ResourceManager.GetString("RatingFactTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Rating is mandatory.
         /// </summary>
         public static string RatingMandatoryText {
             get {
                 return ResourceManager.GetString("RatingMandatoryText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rating.
+        /// </summary>
+        public static string RatingTitle {
+            get {
+                return ResourceManager.GetString("RatingTitle", resourceCulture);
             }
         }
         
@@ -592,7 +592,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter short title here.
+        ///   Looks up a localized string similar to Enter short title here (50 characters max).
         /// </summary>
         public static string ShowCardTitleText {
             get {
@@ -624,6 +624,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         public static string SMEClosedStatus {
             get {
                 return ResourceManager.GetString("SMEClosedStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Feedback.
+        /// </summary>
+        public static string SMEFeedbackHeaderText {
+            get {
+                return ResourceManager.GetString("SMEFeedbackHeaderText", resourceCulture);
             }
         }
         
@@ -790,7 +799,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title(*Required*).
+        ///   Looks up a localized string similar to Title (Required).
         /// </summary>
         public static string TitleRequiredText {
             get {

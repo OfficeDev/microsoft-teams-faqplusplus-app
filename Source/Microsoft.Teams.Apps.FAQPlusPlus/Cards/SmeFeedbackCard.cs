@@ -32,22 +32,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             {
                Body = new List<AdaptiveElement>
                {
-                   new AdaptiveFactSet
+                   new AdaptiveTextBlock()
                    {
-                       Facts = new List<AdaptiveFact>
-                       {
-                           new AdaptiveFact()
-                           {
-                               Title = Resource.RatingFactTitle,
-                               Value = GetRatingDisplayText(data.Rating),
-                           }
-                       },
+                       Text = Resource.SMEFeedbackHeaderText,
+                       Weight = AdaptiveTextWeight.Bolder,
+                       Size = AdaptiveTextSize.Medium,
                    },
-                    new AdaptiveTextBlock()
-                    {
-                        Text = string.Format(Resource.FeedbackAlertText, userDetails.Name),
-                        Wrap = true
-                    }
+                   new AdaptiveTextBlock()
+                   {
+                       Text = string.Format(Resource.FeedbackAlertText, userDetails.Name),
+                       Wrap = true,
+                   },
+                   new AdaptiveTextBlock()
+                   {
+                       Text = Resource.RatingTitle,
+                       Weight = AdaptiveTextWeight.Bolder,
+                       Wrap = true,
+                   },
+                   new AdaptiveTextBlock()
+                   {
+                       Text = GetRatingDisplayText(data.Rating),
+                       Spacing = AdaptiveSpacing.None,
+                       Wrap = true,
+                   },
                },
                Actions = new List<AdaptiveAction>
                {
@@ -62,16 +69,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             // Description fact is available in the card only when user enters description text.
             if (!string.IsNullOrWhiteSpace(data.Description))
             {
-                smeFeedbackCard.Body.Add(new AdaptiveFactSet
+                smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
                 {
-                    Facts = new List<AdaptiveFact>
-                    {
-                        new AdaptiveFact()
-                        {
-                            Title = Resource.DescriptionFact,
-                            Value = CardHelper.TruncateStringIfLonger(data.Description, CardHelper.DescriptionMaxDisplayLength),
-                        },
-                    }
+                    Text = Resource.DescriptionText,
+                    Weight = AdaptiveTextWeight.Bolder,
+                    Wrap = true,
+                });
+                smeFeedbackCard.Body.Add(new AdaptiveTextBlock()
+                {
+                    Text = CardHelper.TruncateStringIfLonger(data.Description, CardHelper.DescriptionMaxDisplayLength),
+                    Spacing = AdaptiveSpacing.None,
+                    Wrap = true,
                 });
             }
 
