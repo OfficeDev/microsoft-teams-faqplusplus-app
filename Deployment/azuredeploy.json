@@ -561,11 +561,11 @@
     }
   ],
   "outputs": {
-    "BOT_ID": {
+    "botId": {
       "type": "string",
       "value": "[parameters('botClientId')]"
     },
-    "APP_DOMAIN": {
+    "appDomain": {
       "type":"string",
       "value": "[variables('botAppDomain')]"
     },

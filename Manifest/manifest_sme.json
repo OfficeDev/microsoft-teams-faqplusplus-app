@@ -5,10 +5,10 @@
   "id": "187ed479-726e-4824-83c9-3f6f8248e594",
   "packageName": "com.microsoft.teams.faqplus.experts",
   "developer": {
-    "name": "<COMPANY_NAME>",
-    "websiteUrl": "<WEBSITE_URL>",
-    "privacyUrl": "<PRIVACY_URL>",
-    "termsOfUseUrl": "<TERMS_OF_USE_URL>"
+    "name": "<<companyName>>",
+    "websiteUrl": "<<websiteUrl>>",
+    "privacyUrl": "<<privacyUrl>>",
+    "termsOfUseUrl": "<<termsOfUseUrl>>"
   },
   "icons": {
     "color": "color.png",
@@ -24,7 +24,7 @@
   "accentColor": "#64A2CC",
   "bots": [
     {
-      "botId": "<BOT_ID>",
+      "botId": "<<botId>>",
       "scopes": [
         "personal",
         "team"
@@ -37,7 +37,7 @@
     {
       "entityId": "help",
       "name": "Help",
-      "contentUrl": "https://<APP_DOMAIN>/help?theme={theme}",
+      "contentUrl": "https://<<appDomain>>/help?theme={theme}",
       "scopes": [
         "personal"
       ]
@@ -45,7 +45,7 @@
   ],
   "composeExtensions": [
     {
-      "botId": "<BOT_ID>",
+      "botId": "<<botId>>",
       "canUpdateConfiguration": false,
       "commands": [
         {
@@ -107,6 +107,6 @@
     "messageTeamMembers"
   ],
   "validDomains": [
-    "<APP_DOMAIN>"
+    "<<appDomain>>"
   ]
 }
