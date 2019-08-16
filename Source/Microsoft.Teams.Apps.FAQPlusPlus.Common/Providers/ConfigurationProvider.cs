@@ -75,6 +75,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
         /// <returns><see cref="Task"/> that represents configuration entity is saved or updated.</returns>
         private async Task<TableResult> StoreOrUpdateEntityAsync(ConfigurationEntity entity)
         {
+            await this.EnsureInitializedAsync();
+
             TableOperation addOrUpdateOperation = TableOperation.InsertOrReplace(entity);
 
             return await this.configurationCloudTable.ExecuteAsync(addOrUpdateOperation);
@@ -90,11 +92,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             CloudTableClient cloudTableClient = storageAccount.CreateCloudTableClient();
             this.configurationCloudTable = cloudTableClient.GetTableReference(StorageInfo.ConfigurationTableName);
-            if (await this.configurationCloudTable.CreateIfNotExistsAsync())
-            {
-                await this.SaveOrUpdateEntityAsync(Resource.DefaultHelpTabText, ConfigurationEntityTypes.HelpTabText);
-                await this.SaveOrUpdateEntityAsync(Resource.DefaultWelcomeMessage, ConfigurationEntityTypes.WelcomeMessageText);
-            }
+            await this.configurationCloudTable.CreateIfNotExistsAsync();
         }
 
         /// <summary>
