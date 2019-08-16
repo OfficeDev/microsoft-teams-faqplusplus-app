@@ -18,6 +18,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
     using Microsoft.Extensions.Configuration;
     using Microsoft.Teams.Apps.FAQPlusPlus.Cards;
     using Microsoft.Teams.Apps.FAQPlusPlus.Common.Models;
+    using Microsoft.Teams.Apps.FAQPlusPlus.Common.Providers;
     using Microsoft.Teams.Apps.FAQPlusPlus.Models;
     using Microsoft.Teams.Apps.FAQPlusPlus.Properties;
     using Microsoft.Teams.Apps.FAQPlusPlus.Services;
@@ -43,6 +44,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly BotFrameworkAdapter botAdapter;
         private readonly IMemoryCache accessCache;
         private readonly int accessCacheExpiryInDays;
+        private readonly ITicketsProvider ticketsProvider;
+        private readonly Lazy<Task> initializeTicketsProviderTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
@@ -53,13 +56,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="adapter">adapter DI.</param>
         /// <param name="configurationProvider">configurationProvider DI.</param>
         /// <param name="memoryCache">IMemoryCache DI.</param>
+        /// <param name="ticketsProvider">ITicketsProvider DI.</param>
         public MessagingExtension(
             ISearchService searchService,
             TelemetryClient telemetryClient,
             IConfiguration configuration,
             IBotFrameworkHttpAdapter adapter,
             Common.Providers.IConfigurationProvider configurationProvider,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            ITicketsProvider ticketsProvider)
         {
             this.searchService = searchService;
             this.telemetryClient = telemetryClient;
@@ -69,12 +74,16 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.appID = this.configuration["MicrosoftAppId"];
             this.botAdapter = (BotFrameworkAdapter)this.adapter;
             this.accessCache = memoryCache;
+            this.ticketsProvider = ticketsProvider;
 
             this.accessCacheExpiryInDays = Convert.ToInt32(this.configuration["AccessCacheExpiryInDays"]);
             if (this.accessCacheExpiryInDays <= 0)
             {
                 this.accessCacheExpiryInDays = DefaultAccessCacheExpiryInDays;
             }
+
+            // Ensure that the tables for the tickets are created by running a dummy query against the provider
+            this.initializeTicketsProviderTask = new Lazy<Task>(() => this.ticketsProvider.GetTicketAsync(string.Empty));
         }
 
         /// <summary>
@@ -92,6 +101,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     {
                         var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContext.Activity.Value.ToString());
                         var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
+
+                        await this.EnsureTicketsProviderInitializedAsync();
 
                         return new InvokeResponse
                         {
@@ -271,6 +282,15 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
 
             return isUserPartOfRoster;
+        }
+
+        /// <summary>
+        /// Ensures that tickets table is created by running a dummy query against it
+        /// </summary>
+        /// <returns>Task</returns>
+        private Task EnsureTicketsProviderInitializedAsync()
+        {
+            return this.initializeTicketsProviderTask.Value;
         }
     }
 }
