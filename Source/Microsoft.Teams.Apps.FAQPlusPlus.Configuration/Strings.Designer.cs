@@ -61,6 +61,35 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hi, I&apos;m your friendly Q&amp;A bot. You can ask me questions, and I&apos;ll do my best to answer. If I can&apos;t help, I&apos;ll connect you to an expert.
+        ///
+        ///My key features:
+        ///
+        ///* Ask a question, get an answer
+        ///* Ask an expert
+        ///* Share feedback.
+        /// </summary>
+        public static string DefaultHelpTabText {
+            get {
+                return ResourceManager.GetString("DefaultHelpTabText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hi, I&apos;m your friendly Q&amp;A bot. You can ask me questions, and I&apos;ll do my best to answer. If I can&apos;t help, I&apos;ll connect you to an expert.
+        ///
+        ///You can ask the following questions:
+        ///* How do you work?
+        ///* Which benefits are available?
+        ///* What things are available here right now?.
+        /// </summary>
+        public static string DefaultWelcomeMessage {
+            get {
+                return ResourceManager.GetString("DefaultWelcomeMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provide text which will be displayed in Help tab of the bot and then click on Ok to add or Edit to modify.
         /// </summary>
         public static string HelpTabTextToolTipHoverMessage {

@@ -175,6 +175,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>Welcome message</returns>
         public async Task<string> GetSavedWelcomeMessageAsync()
         {
+            var welcomeText = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
+            if (welcomeText.Equals(string.Empty))
+            {
+                await this.SaveWelcomeMessageAsync(Strings.DefaultWelcomeMessage);
+            }
+
             return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.WelcomeMessageText);
         }
 
@@ -203,6 +209,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration.Controllers
         /// <returns>Help tab text</returns>
         public async Task<string> GetSavedHelpTabTextAsync()
         {
+            var helpText = await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
+            if (helpText.Equals(string.Empty))
+            {
+                await this.SaveHelpTabTextAsync(Strings.DefaultHelpTabText);
+            }
+
             return await this.configurationPovider.GetSavedEntityDetailAsync(ConfigurationEntityTypes.HelpTabText);
         }
 
