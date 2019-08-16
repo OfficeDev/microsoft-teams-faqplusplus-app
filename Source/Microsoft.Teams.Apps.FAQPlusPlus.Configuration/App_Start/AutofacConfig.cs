@@ -50,10 +50,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
         private static string StripRouteFromQnAMakerEndpoint(string endpoint)
         {
             const string apiRoute = "/qnamaker/v4.0";
+
             if (endpoint.EndsWith(apiRoute, System.StringComparison.OrdinalIgnoreCase))
             {
                 endpoint = endpoint.Substring(0, endpoint.Length - apiRoute.Length);
             }
+
             return endpoint;
         }
     }

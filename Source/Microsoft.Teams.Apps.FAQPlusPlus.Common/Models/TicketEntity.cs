@@ -143,7 +143,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Common.Models
         /// </summary>
         [IsSortable]
         [JsonProperty("Timestamp")]
-        public DateTimeOffset Timestamp { get; }
+        public new DateTimeOffset Timestamp => base.Timestamp;
 
         /// <summary>
         /// Checks whether or not a ticket is assigned.

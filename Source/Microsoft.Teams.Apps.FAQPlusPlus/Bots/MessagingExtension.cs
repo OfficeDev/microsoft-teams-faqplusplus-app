@@ -44,8 +44,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly BotFrameworkAdapter botAdapter;
         private readonly IMemoryCache accessCache;
         private readonly int accessCacheExpiryInDays;
-        private readonly Lazy<Task> initializeTask;
         private readonly ITicketsProvider ticketsProvider;
+        private readonly Lazy<Task> initializeTicketsProviderTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MessagingExtension"/> class.
@@ -82,7 +82,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                 this.accessCacheExpiryInDays = DefaultAccessCacheExpiryInDays;
             }
 
-            this.initializeTask = new Lazy<Task>(() => this.InitializeAsync());
+            // Ensure that the tables for the tickets are created by running a dummy query against the provider
+            this.initializeTicketsProviderTask = new Lazy<Task>(() => this.ticketsProvider.GetTicketAsync(string.Empty));
         }
 
         /// <summary>
@@ -94,14 +95,14 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                await this.EnsureInitializedAsync();
-
                 if (turnContext.Activity.Name == "composeExtension/query")
                 {
                     if (await this.IsMemberOfSmeTeamAsync(turnContext))
                     {
                         var messageExtensionQuery = JsonConvert.DeserializeObject<MessagingExtensionQuery>(turnContext.Activity.Value.ToString());
                         var searchQuery = this.GetSearchQueryString(messageExtensionQuery);
+
+                        await this.EnsureTicketsProviderInitializedAsync();
 
                         return new InvokeResponse
                         {
@@ -284,21 +285,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         /// <summary>
-        /// Ensures that ticket table is created and indexed in not done
-        /// </summary>
-        /// <returns><see cref="Task"/> representing the asynchronous operation task which represents table is created if its not existing.</returns>
-        private async Task InitializeAsync()
-        {
-            await this.ticketsProvider.GetTicketAsync("");
-        }
-
-        /// <summary>
-        /// Initialization of InitializeAsync method which will help in creating table if not created
+        /// Ensures that tickets table is created by running a dummy query against it
         /// </summary>
         /// <returns>Task</returns>
-        private async Task EnsureInitializedAsync()
+        private Task EnsureTicketsProviderInitializedAsync()
         {
-            await this.initializeTask.Value;
+            return this.initializeTicketsProviderTask.Value;
         }
     }
 }
