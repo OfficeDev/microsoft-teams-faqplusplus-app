@@ -59,6 +59,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly string appBaseUri;
         private readonly MicrosoftAppCredentials microsoftAppCredentials;
         private readonly ITicketsProvider ticketsProvider;
+        private readonly string tenantId;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -68,6 +69,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         /// <param name="messageExtension">Messaging extension instance</param>
         /// <param name="appBaseUri">Base URI at which the app is served</param>
+        /// <param name="tenantId">Tenant ID from configuration</param>
         /// <param name="microsoftAppCredentials">Microsoft app credentials to use</param>
         /// <param name="ticketsProvider">The tickets provider.</param>
         public FaqPlusPlusBot(
@@ -76,6 +78,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IQnAMakerFactory qnaMakerFactory,
             MessagingExtension messageExtension,
             string appBaseUri,
+            string tenantId,
             MicrosoftAppCredentials microsoftAppCredentials,
             ITicketsProvider ticketsProvider)
         {
@@ -86,21 +89,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.appBaseUri = appBaseUri;
             this.microsoftAppCredentials = microsoftAppCredentials;
             this.ticketsProvider = ticketsProvider;
+            this.tenantId = tenantId;
         }
 
         /// <inheritdoc/>
         public override Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
-            switch (turnContext.Activity.Type)
+            if (this.IsValidTenantId(turnContext))
             {
-                case ActivityTypes.Message:
-                    return this.OnMessageActivityAsync(new DelegatingTurnContext<IMessageActivity>(turnContext), cancellationToken);
+                switch (turnContext.Activity.Type)
+                {
+                    case ActivityTypes.Message:
+                        return this.OnMessageActivityAsync(new DelegatingTurnContext<IMessageActivity>(turnContext), cancellationToken);
 
-                case ActivityTypes.Invoke:
-                    return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
+                    case ActivityTypes.Invoke:
+                        return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
 
-                default:
-                    return base.OnTurnAsync(turnContext, cancellationToken);
+                    default:
+                        return base.OnTurnAsync(turnContext, cancellationToken);
+                }
+            }
+            else
+            {
+                return base.OnTurnAsync(turnContext, cancellationToken);
             }
         }
 
@@ -111,26 +122,29 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                var message = turnContext.Activity;
-
-                this.telemetryClient.TrackTrace($"Received message activity");
-                this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
-
-                await this.SendTypingIndicatorAsync(turnContext);
-
-                switch (message.Conversation.ConversationType)
+                if (this.IsValidTenantId(turnContext))
                 {
-                    case "personal":
-                        await this.OnMessageActivityInPersonalChatAsync(message, turnContext, cancellationToken);
-                        break;
+                    var message = turnContext.Activity;
 
-                    case "channel":
-                        await this.OnMessageActivityInChannelAsync(message, turnContext, cancellationToken);
-                        break;
+                    this.telemetryClient.TrackTrace($"Received message activity");
+                    this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
 
-                    default:
-                        this.telemetryClient.TrackTrace($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
-                        break;
+                    await this.SendTypingIndicatorAsync(turnContext);
+
+                    switch (message.Conversation.ConversationType)
+                    {
+                        case "personal":
+                            await this.OnMessageActivityInPersonalChatAsync(message, turnContext, cancellationToken);
+                            break;
+
+                        case "channel":
+                            await this.OnMessageActivityInChannelAsync(message, turnContext, cancellationToken);
+                            break;
+
+                        default:
+                            this.telemetryClient.TrackTrace($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
@@ -147,31 +161,34 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                var activity = turnContext.Activity;
-
-                this.telemetryClient.TrackTrace($"Received conversationUpdate activity");
-                this.telemetryClient.TrackTrace($"conversationType: {activity.Conversation.ConversationType}, membersAdded: {activity.MembersAdded?.Count()}, membersRemoved: {activity.MembersRemoved?.Count()}");
-
-                if (activity.MembersAdded?.Count() > 0)
+                if (this.IsValidTenantId(turnContext))
                 {
-                    switch (activity.Conversation.ConversationType)
+                    var activity = turnContext.Activity;
+
+                    this.telemetryClient.TrackTrace($"Received conversationUpdate activity");
+                    this.telemetryClient.TrackTrace($"conversationType: {activity.Conversation.ConversationType}, membersAdded: {activity.MembersAdded?.Count()}, membersRemoved: {activity.MembersRemoved?.Count()}");
+
+                    if (activity.MembersAdded?.Count() > 0)
                     {
-                        case "personal":
-                            await this.OnMembersAddedToPersonalChatAsync(activity.MembersAdded, turnContext, cancellationToken);
-                            break;
+                        switch (activity.Conversation.ConversationType)
+                        {
+                            case "personal":
+                                await this.OnMembersAddedToPersonalChatAsync(activity.MembersAdded, turnContext, cancellationToken);
+                                break;
 
-                        case "channel":
-                            await this.OnMembersAddedToTeamAsync(activity.MembersAdded, turnContext, cancellationToken);
-                            break;
+                            case "channel":
+                                await this.OnMembersAddedToTeamAsync(activity.MembersAdded, turnContext, cancellationToken);
+                                break;
 
-                        default:
-                            this.telemetryClient.TrackTrace($"Ignoring event from conversation type {activity.Conversation.ConversationType}");
-                            break;
+                            default:
+                                this.telemetryClient.TrackTrace($"Ignoring event from conversation type {activity.Conversation.ConversationType}");
+                                break;
+                        }
                     }
-                }
-                else
-                {
-                    this.telemetryClient.TrackTrace($"Ignoring conversationUpdate that was not a membersAdded event");
+                    else
+                    {
+                        this.telemetryClient.TrackTrace($"Ignoring conversationUpdate that was not a membersAdded event");
+                    }
                 }
             }
             catch (Exception ex)
@@ -636,6 +653,22 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await this.ticketsProvider.SaveOrUpdateTicketAsync(ticketEntity);
 
             return ticketEntity;
+        }
+
+        // Verify if the current user tenant Id is the same tenant Id used when application was configured
+        private bool IsValidTenantId(ITurnContext turnContext)
+        {
+            var currentTenantId = turnContext.Activity.Conversation.TenantId;
+
+            if (currentTenantId.Equals(this.tenantId))
+            {
+                return true;
+            }
+            else
+            {
+                this.telemetryClient.TrackTrace($"Invalid tenant id: " + this.tenantId + " tried accessing the application");
+                return false;
+            }
         }
     }
 }
