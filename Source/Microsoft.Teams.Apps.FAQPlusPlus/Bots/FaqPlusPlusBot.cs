@@ -69,7 +69,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         /// <param name="messageExtension">Messaging extension instance</param>
         /// <param name="appBaseUri">Base URI at which the app is served</param>
-        /// <param name="tenantId">Tenant ID from configuration</param>
+        /// <param name="tenantId">Tenant Id from configuration</param>
         /// <param name="microsoftAppCredentials">Microsoft app credentials to use</param>
         /// <param name="ticketsProvider">The tickets provider.</param>
         public FaqPlusPlusBot(
@@ -314,75 +314,75 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (message.Text)
             {
                 case AskAnExpert:
-                {
-                    this.telemetryClient.TrackTrace("Sending user ask an expert card (from answer)");
+                    {
+                        this.telemetryClient.TrackTrace("Sending user ask an expert card (from answer)");
 
-                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(responseCardPayload)));
-                    break;
-                }
+                        var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(responseCardPayload)));
+                        break;
+                    }
 
                 case ShareFeedback:
-                {
-                    this.telemetryClient.TrackTrace("Sending user share feedback card (from answer)");
+                    {
+                        this.telemetryClient.TrackTrace("Sending user share feedback card (from answer)");
 
-                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(responseCardPayload)));
-                    break;
-                }
+                        var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(responseCardPayload)));
+                        break;
+                    }
 
                 case AskAnExpertCard.AskAnExpertSubmitText:
-                {
-                    this.telemetryClient.TrackTrace($"Received question for expert");
-
-                    var askAnExpertPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
-
-                    // Validate required fields
-                    if (string.IsNullOrWhiteSpace(askAnExpertPayload.Title))
                     {
-                        var updateCardActivity = new Activity(ActivityTypes.Message)
+                        this.telemetryClient.TrackTrace($"Received question for expert");
+
+                        var askAnExpertPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
+
+                        // Validate required fields
+                        if (string.IsNullOrWhiteSpace(askAnExpertPayload.Title))
                         {
-                            Id = turnContext.Activity.ReplyToId,
-                            Conversation = turnContext.Activity.Conversation,
-                            Attachments = new List<Attachment> { AskAnExpertCard.GetCard(askAnExpertPayload) },
-                        };
-                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
-                        return;
+                            var updateCardActivity = new Activity(ActivityTypes.Message)
+                            {
+                                Id = turnContext.Activity.ReplyToId,
+                                Conversation = turnContext.Activity.Conversation,
+                                Attachments = new List<Attachment> { AskAnExpertCard.GetCard(askAnExpertPayload) },
+                            };
+                            await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
+                            return;
+                        }
+
+                        var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+
+                        newTicket = await this.CreateTicketAsync(message, askAnExpertPayload, userDetails);
+                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
+                        userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
+                        break;
                     }
-
-                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
-
-                    newTicket = await this.CreateTicketAsync(message, askAnExpertPayload, userDetails);
-                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
-                    userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
-                    break;
-                }
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
-                {
-                    this.telemetryClient.TrackTrace($"Received app feedback");
-
-                    var shareFeedbackPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
-
-                    // Validate required fields
-                    if (!Enum.TryParse(shareFeedbackPayload.Rating, out FeedbackRating rating))
                     {
-                        var updateCardActivity = new Activity(ActivityTypes.Message)
+                        this.telemetryClient.TrackTrace($"Received app feedback");
+
+                        var shareFeedbackPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
+
+                        // Validate required fields
+                        if (!Enum.TryParse(shareFeedbackPayload.Rating, out FeedbackRating rating))
                         {
-                            Id = turnContext.Activity.ReplyToId,
-                            Conversation = turnContext.Activity.Conversation,
-                            Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackPayload) },
-                        };
-                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
-                        return;
+                            var updateCardActivity = new Activity(ActivityTypes.Message)
+                            {
+                                Id = turnContext.Activity.ReplyToId,
+                                Conversation = turnContext.Activity.Conversation,
+                                Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackPayload) },
+                            };
+                            await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
+                            return;
+                        }
+
+                        var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+
+                        smeTeamCard = SmeFeedbackCard.GetCard(shareFeedbackPayload, userDetails);
+                        await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
+                        break;
                     }
-
-                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
-
-                    smeTeamCard = SmeFeedbackCard.GetCard(shareFeedbackPayload, userDetails);
-                    await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
-                    break;
-                }
 
                 default:
                     this.telemetryClient.TrackTrace($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
