@@ -105,6 +105,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
                     case ActivityTypes.Invoke:
                         return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
 
+                    case ActivityTypes.ConversationUpdate:
+                        return this.OnConversationUpdateActivityAsync(new DelegatingTurnContext<IConversationUpdateActivity>(turnContext), cancellationToken);
+
                     default:
                         return base.OnTurnAsync(turnContext, cancellationToken);
                 }
@@ -122,29 +125,26 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                if (this.IsValidTenantId(turnContext))
+                var message = turnContext.Activity;
+
+                this.telemetryClient.TrackTrace($"Received message activity");
+                this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
+
+                await this.SendTypingIndicatorAsync(turnContext);
+
+                switch (message.Conversation.ConversationType)
                 {
-                    var message = turnContext.Activity;
+                    case "personal":
+                        await this.OnMessageActivityInPersonalChatAsync(message, turnContext, cancellationToken);
+                        break;
 
-                    this.telemetryClient.TrackTrace($"Received message activity");
-                    this.telemetryClient.TrackTrace($"from: {message.From?.Id}, conversation: {message.Conversation.Id}, replyToId: {message.ReplyToId}");
+                    case "channel":
+                        await this.OnMessageActivityInChannelAsync(message, turnContext, cancellationToken);
+                        break;
 
-                    await this.SendTypingIndicatorAsync(turnContext);
-
-                    switch (message.Conversation.ConversationType)
-                    {
-                        case "personal":
-                            await this.OnMessageActivityInPersonalChatAsync(message, turnContext, cancellationToken);
-                            break;
-
-                        case "channel":
-                            await this.OnMessageActivityInChannelAsync(message, turnContext, cancellationToken);
-                            break;
-
-                        default:
-                            this.telemetryClient.TrackTrace($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
-                            break;
-                    }
+                    default:
+                        this.telemetryClient.TrackTrace($"Received unexpected conversationType {message.Conversation.ConversationType}", SeverityLevel.Warning);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -161,34 +161,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         {
             try
             {
-                if (this.IsValidTenantId(turnContext))
+                var activity = turnContext.Activity;
+
+                this.telemetryClient.TrackTrace($"Received conversationUpdate activity");
+                this.telemetryClient.TrackTrace($"conversationType: {activity.Conversation.ConversationType}, membersAdded: {activity.MembersAdded?.Count()}, membersRemoved: {activity.MembersRemoved?.Count()}");
+
+                if (activity.MembersAdded?.Count() > 0)
                 {
-                    var activity = turnContext.Activity;
-
-                    this.telemetryClient.TrackTrace($"Received conversationUpdate activity");
-                    this.telemetryClient.TrackTrace($"conversationType: {activity.Conversation.ConversationType}, membersAdded: {activity.MembersAdded?.Count()}, membersRemoved: {activity.MembersRemoved?.Count()}");
-
-                    if (activity.MembersAdded?.Count() > 0)
+                    switch (activity.Conversation.ConversationType)
                     {
-                        switch (activity.Conversation.ConversationType)
-                        {
-                            case "personal":
-                                await this.OnMembersAddedToPersonalChatAsync(activity.MembersAdded, turnContext, cancellationToken);
-                                break;
+                        case "personal":
+                            await this.OnMembersAddedToPersonalChatAsync(activity.MembersAdded, turnContext, cancellationToken);
+                            break;
 
-                            case "channel":
-                                await this.OnMembersAddedToTeamAsync(activity.MembersAdded, turnContext, cancellationToken);
-                                break;
+                        case "channel":
+                            await this.OnMembersAddedToTeamAsync(activity.MembersAdded, turnContext, cancellationToken);
+                            break;
 
-                            default:
-                                this.telemetryClient.TrackTrace($"Ignoring event from conversation type {activity.Conversation.ConversationType}");
-                                break;
-                        }
+                        default:
+                            this.telemetryClient.TrackTrace($"Ignoring event from conversation type {activity.Conversation.ConversationType}");
+                            break;
                     }
-                    else
-                    {
-                        this.telemetryClient.TrackTrace($"Ignoring conversationUpdate that was not a membersAdded event");
-                    }
+                }
+                else
+                {
+                    this.telemetryClient.TrackTrace($"Ignoring conversationUpdate that was not a membersAdded event");
                 }
             }
             catch (Exception ex)
@@ -666,7 +663,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             }
             else
             {
-                this.telemetryClient.TrackTrace($"Invalid tenant id: " + this.tenantId + " tried accessing the application");
+                this.telemetryClient.TrackTrace($"Invalid tenant id: {currentTenantId} tried accessing the application");
                 return false;
             }
         }
