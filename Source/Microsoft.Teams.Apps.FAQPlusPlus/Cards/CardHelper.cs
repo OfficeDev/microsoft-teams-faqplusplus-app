@@ -90,11 +90,17 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <param name="dateTime">The date and time to format.</param>
         /// <param name="userLocalTime">The sender's local time, as determined by the local timestamp of the activity.</param>
         /// <returns>A datetime string.</returns>
-        public static string GetFormattedDateInUserTimeZone(DateTime dateTime, DateTimeOffset? userLocalTime)
+        public static string GetFormattedDateInUserTimeZone(DateTime dateTime, DateTimeOffset? userLocalTime = null)
         {
-            // Adaptive card on mobile has a bug where it does not support DATE and TIME, so for now we convert the date and time manually
-            // TODO: Change to use DATE() function
-            return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToShortDateString();
+            if (userLocalTime == null)
+            {
+                var timestamp = dateTime.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                return "{{DATE(" + timestamp + ", SHORT)}}";
+            }
+            else
+            {
+                return dateTime.Add(userLocalTime?.Offset ?? TimeSpan.FromMinutes(0)).ToShortDateString();
+            }
         }
     }
 }
