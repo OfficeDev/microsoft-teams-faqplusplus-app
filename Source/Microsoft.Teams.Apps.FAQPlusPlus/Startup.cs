@@ -55,6 +55,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus
                 provider.GetRequiredService<IQnAMakerFactory>(),
                 provider.GetRequiredService<MessagingExtension>(),
                 this.Configuration["AppBaseUri"],
+                this.Configuration["TenantId"],
                 provider.GetRequiredService<MicrosoftAppCredentials>(),
                 provider.GetRequiredService<ITicketsProvider>()));
             services.AddApplicationInsightsTelemetry();

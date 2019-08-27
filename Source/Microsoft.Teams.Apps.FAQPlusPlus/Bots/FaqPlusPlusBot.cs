@@ -59,6 +59,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly string appBaseUri;
         private readonly MicrosoftAppCredentials microsoftAppCredentials;
         private readonly ITicketsProvider ticketsProvider;
+        private readonly string expectedTenantId;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -68,6 +69,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         /// <param name="messageExtension">Messaging extension instance</param>
         /// <param name="appBaseUri">Base URI at which the app is served</param>
+        /// <param name="expectedTenantId">The expected Tenant Id (from configuration)</param>
         /// <param name="microsoftAppCredentials">Microsoft app credentials to use</param>
         /// <param name="ticketsProvider">The tickets provider.</param>
         public FaqPlusPlusBot(
@@ -76,6 +78,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IQnAMakerFactory qnaMakerFactory,
             MessagingExtension messageExtension,
             string appBaseUri,
+            string expectedTenantId,
             MicrosoftAppCredentials microsoftAppCredentials,
             ITicketsProvider ticketsProvider)
         {
@@ -86,11 +89,18 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.appBaseUri = appBaseUri;
             this.microsoftAppCredentials = microsoftAppCredentials;
             this.ticketsProvider = ticketsProvider;
+            this.expectedTenantId = expectedTenantId;
         }
 
         /// <inheritdoc/>
         public override Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (!this.IsActivityFromExpectedTenant(turnContext))
+            {
+                this.telemetryClient.TrackTrace($"Unexpected tenant id {turnContext.Activity.Conversation.TenantId}", SeverityLevel.Warning);
+                return Task.CompletedTask;
+            }
+
             switch (turnContext.Activity.Type)
             {
                 case ActivityTypes.Message:
@@ -98,6 +108,9 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
 
                 case ActivityTypes.Invoke:
                     return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
+
+                case ActivityTypes.ConversationUpdate:
+                    return this.OnConversationUpdateActivityAsync(new DelegatingTurnContext<IConversationUpdateActivity>(turnContext), cancellationToken);
 
                 default:
                     return base.OnTurnAsync(turnContext, cancellationToken);
@@ -636,6 +649,12 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             await this.ticketsProvider.SaveOrUpdateTicketAsync(ticketEntity);
 
             return ticketEntity;
+        }
+
+        // Verify if the tenant Id in the message is the same tenant Id used when application was configured
+        private bool IsActivityFromExpectedTenant(ITurnContext turnContext)
+        {
+            return turnContext.Activity.Conversation.TenantId == this.expectedTenantId;
         }
     }
 }
