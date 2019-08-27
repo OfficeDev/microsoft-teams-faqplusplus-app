@@ -59,7 +59,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         private readonly string appBaseUri;
         private readonly MicrosoftAppCredentials microsoftAppCredentials;
         private readonly ITicketsProvider ticketsProvider;
-        private readonly string tenantId;
+        private readonly string expectedTenantId;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FaqPlusPlusBot"/> class.
@@ -69,7 +69,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         /// <param name="qnaMakerFactory">QnAMaker factory instance</param>
         /// <param name="messageExtension">Messaging extension instance</param>
         /// <param name="appBaseUri">Base URI at which the app is served</param>
-        /// <param name="tenantId">Tenant Id from configuration</param>
+        /// <param name="expectedTenantId">The expected Tenant Id (from configuration)</param>
         /// <param name="microsoftAppCredentials">Microsoft app credentials to use</param>
         /// <param name="ticketsProvider">The tickets provider.</param>
         public FaqPlusPlusBot(
@@ -78,7 +78,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             IQnAMakerFactory qnaMakerFactory,
             MessagingExtension messageExtension,
             string appBaseUri,
-            string tenantId,
+            string expectedTenantId,
             MicrosoftAppCredentials microsoftAppCredentials,
             ITicketsProvider ticketsProvider)
         {
@@ -89,32 +89,31 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             this.appBaseUri = appBaseUri;
             this.microsoftAppCredentials = microsoftAppCredentials;
             this.ticketsProvider = ticketsProvider;
-            this.tenantId = tenantId;
+            this.expectedTenantId = expectedTenantId;
         }
 
         /// <inheritdoc/>
         public override Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (this.IsValidTenantId(turnContext))
+            if (!this.IsActivityFromExpectedTenant(turnContext))
             {
-                switch (turnContext.Activity.Type)
-                {
-                    case ActivityTypes.Message:
-                        return this.OnMessageActivityAsync(new DelegatingTurnContext<IMessageActivity>(turnContext), cancellationToken);
-
-                    case ActivityTypes.Invoke:
-                        return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
-
-                    case ActivityTypes.ConversationUpdate:
-                        return this.OnConversationUpdateActivityAsync(new DelegatingTurnContext<IConversationUpdateActivity>(turnContext), cancellationToken);
-
-                    default:
-                        return base.OnTurnAsync(turnContext, cancellationToken);
-                }
+                this.telemetryClient.TrackTrace($"Unexpected tenant id {turnContext.Activity.Conversation.TenantId}", SeverityLevel.Warning);
+                return Task.CompletedTask;
             }
-            else
+
+            switch (turnContext.Activity.Type)
             {
-                return base.OnTurnAsync(turnContext, cancellationToken);
+                case ActivityTypes.Message:
+                    return this.OnMessageActivityAsync(new DelegatingTurnContext<IMessageActivity>(turnContext), cancellationToken);
+
+                case ActivityTypes.Invoke:
+                    return this.OnInvokeActivityAsync(new DelegatingTurnContext<IInvokeActivity>(turnContext), cancellationToken);
+
+                case ActivityTypes.ConversationUpdate:
+                    return this.OnConversationUpdateActivityAsync(new DelegatingTurnContext<IConversationUpdateActivity>(turnContext), cancellationToken);
+
+                default:
+                    return base.OnTurnAsync(turnContext, cancellationToken);
             }
         }
 
@@ -311,75 +310,75 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             switch (message.Text)
             {
                 case AskAnExpert:
-                    {
-                        this.telemetryClient.TrackTrace("Sending user ask an expert card (from answer)");
+                {
+                    this.telemetryClient.TrackTrace("Sending user ask an expert card (from answer)");
 
-                        var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(responseCardPayload)));
-                        break;
-                    }
+                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(AskAnExpertCard.GetCard(responseCardPayload)));
+                    break;
+                }
 
                 case ShareFeedback:
-                    {
-                        this.telemetryClient.TrackTrace("Sending user share feedback card (from answer)");
+                {
+                    this.telemetryClient.TrackTrace("Sending user share feedback card (from answer)");
 
-                        var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(responseCardPayload)));
-                        break;
-                    }
+                    var responseCardPayload = ((JObject)message.Value).ToObject<ResponseCardPayload>();
+                    await turnContext.SendActivityAsync(MessageFactory.Attachment(ShareFeedbackCard.GetCard(responseCardPayload)));
+                    break;
+                }
 
                 case AskAnExpertCard.AskAnExpertSubmitText:
+                {
+                    this.telemetryClient.TrackTrace($"Received question for expert");
+
+                    var askAnExpertPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
+
+                    // Validate required fields
+                    if (string.IsNullOrWhiteSpace(askAnExpertPayload.Title))
                     {
-                        this.telemetryClient.TrackTrace($"Received question for expert");
-
-                        var askAnExpertPayload = ((JObject)message.Value).ToObject<AskAnExpertCardPayload>();
-
-                        // Validate required fields
-                        if (string.IsNullOrWhiteSpace(askAnExpertPayload.Title))
+                        var updateCardActivity = new Activity(ActivityTypes.Message)
                         {
-                            var updateCardActivity = new Activity(ActivityTypes.Message)
-                            {
-                                Id = turnContext.Activity.ReplyToId,
-                                Conversation = turnContext.Activity.Conversation,
-                                Attachments = new List<Attachment> { AskAnExpertCard.GetCard(askAnExpertPayload) },
-                            };
-                            await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
-                            return;
-                        }
-
-                        var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
-
-                        newTicket = await this.CreateTicketAsync(message, askAnExpertPayload, userDetails);
-                        smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
-                        userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
-                        break;
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { AskAnExpertCard.GetCard(askAnExpertPayload) },
+                        };
+                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
+                        return;
                     }
+
+                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+
+                    newTicket = await this.CreateTicketAsync(message, askAnExpertPayload, userDetails);
+                    smeTeamCard = new SmeTicketCard(newTicket).ToAttachment(message.LocalTimestamp);
+                    userCard = new UserNotificationCard(newTicket).ToAttachment(Resource.NotificationCardContent, message.LocalTimestamp);
+                    break;
+                }
 
                 case ShareFeedbackCard.ShareFeedbackSubmitText:
+                {
+                    this.telemetryClient.TrackTrace($"Received app feedback");
+
+                    var shareFeedbackPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
+
+                    // Validate required fields
+                    if (!Enum.TryParse(shareFeedbackPayload.Rating, out FeedbackRating rating))
                     {
-                        this.telemetryClient.TrackTrace($"Received app feedback");
-
-                        var shareFeedbackPayload = ((JObject)message.Value).ToObject<ShareFeedbackCardPayload>();
-
-                        // Validate required fields
-                        if (!Enum.TryParse(shareFeedbackPayload.Rating, out FeedbackRating rating))
+                        var updateCardActivity = new Activity(ActivityTypes.Message)
                         {
-                            var updateCardActivity = new Activity(ActivityTypes.Message)
-                            {
-                                Id = turnContext.Activity.ReplyToId,
-                                Conversation = turnContext.Activity.Conversation,
-                                Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackPayload) },
-                            };
-                            await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
-                            return;
-                        }
-
-                        var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
-
-                        smeTeamCard = SmeFeedbackCard.GetCard(shareFeedbackPayload, userDetails);
-                        await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
-                        break;
+                            Id = turnContext.Activity.ReplyToId,
+                            Conversation = turnContext.Activity.Conversation,
+                            Attachments = new List<Attachment> { ShareFeedbackCard.GetCard(shareFeedbackPayload) },
+                        };
+                        await turnContext.UpdateActivityAsync(updateCardActivity, cancellationToken);
+                        return;
                     }
+
+                    var userDetails = await this.GetUserDetailsInPersonalChatAsync(turnContext, cancellationToken);
+
+                    smeTeamCard = SmeFeedbackCard.GetCard(shareFeedbackPayload, userDetails);
+                    await turnContext.SendActivityAsync(MessageFactory.Text(Resource.ThankYouTextContent));
+                    break;
+                }
 
                 default:
                     this.telemetryClient.TrackTrace($"Unexpected text in submit payload: {message.Text}", SeverityLevel.Warning);
@@ -652,20 +651,10 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
             return ticketEntity;
         }
 
-        // Verify if the current user tenant Id is the same tenant Id used when application was configured
-        private bool IsValidTenantId(ITurnContext turnContext)
+        // Verify if the tenant Id in the message is the same tenant Id used when application was configured
+        private bool IsActivityFromExpectedTenant(ITurnContext turnContext)
         {
-            var currentTenantId = turnContext.Activity.Conversation.TenantId;
-
-            if (currentTenantId.Equals(this.tenantId))
-            {
-                return true;
-            }
-            else
-            {
-                this.telemetryClient.TrackTrace($"Invalid tenant id: {currentTenantId} tried accessing the application");
-                return false;
-            }
+            return turnContext.Activity.Conversation.TenantId == this.expectedTenantId;
         }
     }
 }
