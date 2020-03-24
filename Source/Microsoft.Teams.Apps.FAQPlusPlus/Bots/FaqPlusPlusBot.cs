@@ -581,11 +581,20 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Bots
         }
 
         // Send typing indicator to the user.
-        private Task SendTypingIndicatorAsync(ITurnContext turnContext)
+        private async Task SendTypingIndicatorAsync(ITurnContext turnContext)
         {
-            var typingActivity = turnContext.Activity.CreateReply();
-            typingActivity.Type = ActivityTypes.Typing;
-            return turnContext.SendActivityAsync(typingActivity);
+            try
+            {
+                var typingActivity = turnContext.Activity.CreateReply();
+                typingActivity.Type = ActivityTypes.Typing;
+                await turnContext.SendActivityAsync(typingActivity);
+            }
+            catch (Exception ex)
+            {
+                // Do not fail on errors sending the typing indicator
+                this.telemetryClient.TrackTrace($"Failed to send a typing indicator: {ex.Message}", SeverityLevel.Warning);
+                this.telemetryClient.TrackException(ex);
+            }
         }
 
         /// <summary>
