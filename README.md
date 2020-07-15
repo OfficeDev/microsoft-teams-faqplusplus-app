@@ -1,7 +1,9 @@
-# FAQ Plus App Template
+# DEPRECATED - FAQ Plus App Template (version 1)
 
-| [Documentation](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/Deployment-guide) | [Architecture](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/Solution-overview) |
-| ---- | ---- | ---- |
+**Note:** Version 1 of the FAQ Plus app template has been deprecated and is no longer maintained. Please consider using the version with the latest updates available on the new repository [here](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2). The latest version of FAQ Plus has many improvements and features over version 1 available in this repository.
+
+| [FAQ Plus (latest version)](https://github.com/OfficeDev/microsoft-teams-apps-faqplusv2) | [Documentation](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki) | [Deployment guide](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/Deployment-guide) | [Architecture](https://github.com/OfficeDev/microsoft-teams-faqplusplus-app/wiki/Solution-overview) |
+| ---- | ---- | ---- | ---- |
 
 Chatbots are an easy way to provide answers to frequently asked questions by users. However, most chatbots fail to engage with users in a meaningful way because there is no human in the loop when the chatbot fails.  
 
