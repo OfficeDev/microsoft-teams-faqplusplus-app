@@ -37,9 +37,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Returns an attachment based on the state and information of the ticket.
         /// </summary>
-        /// <param name="localTimestamp">Local timestamp of the user activity.</param>
         /// <returns>Returns the attachment that will be sent in a message.</returns>
-        public Attachment ToAttachment(DateTimeOffset? localTimestamp)
+        public Attachment ToAttachment()
         {
             var card = new AdaptiveCard("1.0")
             {
@@ -59,7 +58,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveFactSet
                     {
-                        Facts = this.BuildFactSet(localTimestamp),
+                        Facts = this.BuildFactSet(),
                     },
                 },
                 Actions = this.BuildActions(),
@@ -142,9 +141,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// <summary>
         /// Return the appropriate fact set based on the state and information in the ticket.
         /// </summary>
-        /// <param name="localTimestamp">The current timestamp.</param>
         /// <returns>The fact set showing the necessary details.</returns>
-        private List<AdaptiveFact> BuildFactSet(DateTimeOffset? localTimestamp)
+        private List<AdaptiveFact> BuildFactSet()
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
 
@@ -177,7 +175,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Resource.ClosedFactTitle,
-                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.Ticket.DateClosed.Value, localTimestamp),
+                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.Ticket.DateClosed.Value),
                 });
             }
 

@@ -32,9 +32,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Returns a user notification card for the ticket.
         /// </summary>
         /// <param name="message">The status message to add to the card</param>
-        /// <param name="activityLocalTimestamp">Local time stamp of user activity.</param>
         /// <returns>An adaptive card as an attachment</returns>
-        public Attachment ToAttachment(string message, DateTimeOffset? activityLocalTimestamp)
+        public Attachment ToAttachment(string message)
         {
             var card = new AdaptiveCard("1.0")
             {
@@ -47,7 +46,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                     },
                     new AdaptiveFactSet
                     {
-                      Facts = this.BuildFactSet(this.ticket, activityLocalTimestamp)
+                      Facts = this.BuildFactSet(this.ticket)
                     },
                 },
                 Actions = this.BuildActions(this.ticket),
@@ -94,9 +93,8 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
         /// Building the fact set to render out the user facing details.
         /// </summary>
         /// <param name="ticket">The current ticket information.</param>
-        /// <param name="activityLocalTimestamp">The local timestamp.</param>
         /// <returns>The adaptive facts.</returns>
-        private List<AdaptiveFact> BuildFactSet(TicketEntity ticket, DateTimeOffset? activityLocalTimestamp)
+        private List<AdaptiveFact> BuildFactSet(TicketEntity ticket)
         {
             List<AdaptiveFact> factList = new List<AdaptiveFact>();
             factList.Add(new AdaptiveFact
@@ -123,7 +121,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
             factList.Add(new AdaptiveFact
             {
                 Title = Resource.DateCreatedDisplayFactTitle,
-                Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated, activityLocalTimestamp),
+                Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateCreated),
             });
 
             if (ticket.Status == (int)TicketState.Closed)
@@ -131,7 +129,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Cards
                 factList.Add(new AdaptiveFact
                 {
                     Title = Resource.ClosedFactTitle,
-                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateClosed.Value, activityLocalTimestamp),
+                    Value = CardHelper.GetFormattedDateInUserTimeZone(this.ticket.DateClosed.Value),
                 });
             }
 
