@@ -59,7 +59,7 @@ namespace Microsoft.Teams.Apps.FAQPlusPlus.Configuration
                         if (upn == null
                             || !validUpns.Contains(upn, StringComparer.OrdinalIgnoreCase))
                         {
-                            context.OwinContext.Response.Redirect("/Account/InvalidUser");
+                            context.OwinContext.Response.Redirect("/Account/InvalidUser?upn=" + upn);
                             context.HandleResponse();
                         }
 
